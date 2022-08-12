@@ -1,0 +1,7 @@
+.DS_Store
+
+/venv
+/backup
+/__pycache__
+
+.mapbox_token
