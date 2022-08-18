@@ -41,7 +41,7 @@ df_deployments = df[df["MissionType"] == "Operation"]
 df_presence = df[df["MissionType"] == "MillitaryPresence"]
 
 
-def update_map():
+def update_map(selected_year):
     # data
     def get_data(dfn, name):
         year = str(dfn.Year.iloc[0])
@@ -75,75 +75,75 @@ def update_map():
         )
         return data
 
-    # customise
-    sliders = dict(
-        active=0,
-        yanchor="top",
-        xanchor="left",
-        currentvalue={
-            "font": {"size": 20},
-            "prefix": "Year:",
-            "visible": True,
-            "xanchor": "right",
-        },
-        transition={"duration": 300, "easing": "cubic-in-out"},
-        pad={"b": 10, "t": 50},
-        len=0.9,
-        x=0.1,
-        y=0,
-        steps=[
-            {
-                "args": [
-                    [str(year)],
-                    {
-                        "frame": {"duration": 300},
-                        "mode": "immediate",
-                        "transition": {"duration": 0},
-                    },
-                ],
-                "label": str(year),
-                "method": "animate",
-            }
-            for year in np.sort(df["Year"].unique())
-        ],
-    )
+    # # customise
+    # sliders = dict(
+    #     active=0,
+    #     yanchor="top",
+    #     xanchor="left",
+    #     currentvalue={
+    #         "font": {"size": 20},
+    #         "prefix": "Year:",
+    #         "visible": True,
+    #         "xanchor": "right",
+    #     },
+    #     transition={"duration": 300, "easing": "cubic-in-out"},
+    #     pad={"b": 10, "t": 50},
+    #     len=0.9,
+    #     x=0.1,
+    #     y=0,
+    #     steps=[
+    #         {
+    #             "args": [
+    #                 [str(year)],
+    #                 {
+    #                     "frame": {"duration": 300},
+    #                     "mode": "immediate",
+    #                     "transition": {"duration": 0},
+    #                 },
+    #             ],
+    #             "label": str(year),
+    #             "method": "animate",
+    #         }
+    #         for year in np.sort(df["Year"].unique())
+    #     ],
+    # )
 
-    buttons = dict(
-        buttons=[
-            {
-                "args": [
-                    None,
-                    {
-                        "frame": {"duration": 500},
-                        "fromcurrent": True,
-                        "transition": {"duration": 300, "easing": "quadratic-in-out"},
-                    },
-                ],
-                "label": "Play",
-                "method": "animate",
-            },
-            {
-                "args": [
-                    [None],
-                    {
-                        "frame": {"duration": 0},
-                        "mode": "immediate",
-                        "transition": {"duration": 0},
-                    },
-                ],
-                "label": "Pause",
-                "method": "animate",
-            },
-        ],
-        direction="left",
-        pad={"r": 10, "t": 87},
-        showactive=False,
-        type="buttons",
-        x=0.1,
-        xanchor="right",
-        y=0,
-        yanchor="top",
-    )
+    # buttons = dict(
+    #     buttons=[
+    #         {
+    #             "args": [
+    #                 None,
+    #                 {
+    #                     "frame": {"duration": 500},
+    #                     "fromcurrent": True,
+    #                     "transition": {"duration": 300, "easing": "quadratic-in-out"},
+    #                 },
+    #             ],
+    #             "label": "Play",
+    #             "method": "animate",
+    #         },
+    #         {
+    #             "args": [
+    #                 [None],
+    #                 {
+    #                     "frame": {"duration": 0},
+    #                     "mode": "immediate",
+    #                     "transition": {"duration": 0},
+    #                 },
+    #             ],
+    #             "label": "Pause",
+    #             "method": "animate",
+    #         },
+    #     ],
+    #     direction="left",
+    #     pad={"r": 10, "t": 87},
+    #     showactive=False,
+    #     type="buttons",
+    #     x=0.1,
+    #     xanchor="right",
+    #     y=0,
+    #     yanchor="top",
+    # )
 
     legend = dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="right", x=1)
 
@@ -161,42 +161,39 @@ def update_map():
             zoom=1.5,
         ),
         legend=legend,
-        updatemenus=[buttons],
-        sliders=[sliders],
+        # updatemenus=[buttons],
+        # sliders=[sliders],
         hoverlabel=hoverlabel,
     )
 
     # filter
-    dfp = df_deployments
+    dfp = df_deployments[df_deployments["Year"] == selected_year]
 
     # generate
     data = [
         get_data(
-            dfp.loc[
-                (dfp["Country"] == country)
-                & (dfp["Year"] == np.sort(dfp["Year"].unique())[0])
-            ],
+            dfp.loc[(dfp["Country"] == country)],
             country,
         )
         for country in dfp["Country"].unique()
     ]
-    frames = [
-        go.Frame(
-            data=[
-                get_data(
-                    dfp.loc[(dfp["Country"] == country) & (dfp["Year"] == year)],
-                    country,
-                )
-                for country in dfp["Country"].unique()
-            ],
-            name=str(year),
-        )
-        for year in np.sort(dfp["Year"].unique())
-    ]
+    # frames = [
+    #     go.Frame(
+    #         data=[
+    #             get_data(
+    #                 dfp.loc[(dfp["Country"] == country) & (dfp["Year"] == year)],
+    #                 country,
+    #             )
+    #             for country in dfp["Country"].unique()
+    #         ],
+    #         name=str(year),
+    #     )
+    #     for year in np.sort(dfp["Year"].unique())
+    # ]
 
     figure = go.Figure(
         data=data,
-        frames=frames,
+        # frames=frames,
         layout=layout,
     )
 
@@ -271,8 +268,17 @@ app.layout = html.Div(
                 html.Div(
                     dcc.Graph(
                         id="graph-map",
-                        figure=update_map(),
                         config={"displaylogo": False},
+                        animate=True,
+                        animation_options=dict(
+                            frame={
+                                "redraw": True,
+                            },
+                            transition={
+                                "duration": 3000,
+                                "ease": "cubic-in-out",
+                            },
+                        ),
                     ),
                 ),
                 dcc.Slider(
@@ -284,10 +290,6 @@ app.layout = html.Div(
                         str(year): str(year) for year in df_deployments["Year"].unique()
                     },
                     id="year-slider",
-                ),
-                dcc.Interval(
-                    id="interval",
-                    interval=2000,
                 ),
                 dcc.Store(id="selected-countries"),
                 dcc.Store(id="selected-year"),
@@ -318,16 +320,11 @@ app.layout = html.Div(
     Output(component_id="graph-line", component_property="figure"),
     Output(component_id="graph-sunburst", component_property="figure"),
     Output(component_id="selected-countries", component_property="data"),
-    Output(component_id="selected-year", component_property="data"),
     Input(component_id="graph-map", component_property="restyleData"),
-    Input(component_id="graph-map", component_property="figure"),
     Input(component_id="selected-countries", component_property="data"),
     Input(component_id="selected-year", component_property="data"),
-    Input(component_id="interval", component_property="n_intervals"),
 )
-def new_country_selection(
-    selection_changes, figure, selected_countries, selected_year, n_intervals
-):
+def new_country_selection(selection_changes, selected_countries, selected_year):
     if selected_countries is None:
         selected_countries = selected_countries_default
     else:
@@ -340,83 +337,28 @@ def new_country_selection(
         selected_year = pd.read_json(selected_year, typ="frame")
         actual_year = selected_year["year"].iloc[0]
 
-    print(actual_year)
-
-    slider_year = figure["layout"]["sliders"][0]["steps"][
-        figure["layout"]["sliders"][0]["active"]
-    ]["label"]
-
-    if str(slider_year) != str(actual_year):
-        actual_year = slider_year
-        selected_year["year"].iloc[0] = slider_year
-        return (
-            *update_dashboard(selected_countries, actual_year),
-            selected_countries.to_json(),
-            selected_year.to_json(),
-        )
-
-    elif selection_changes is not None:
+    if selection_changes is not None:
         selected_countries.iloc[selection_changes[1]] = list(
             map(lambda x: True if x == True else False, selection_changes[0]["visible"])
         )
-        return (
-            *update_dashboard(selected_countries, actual_year),
-            selected_countries.to_json(),
-            selected_year.to_json(),
-        )
-
-    elif n_intervals is None:
-        return (
-            *update_dashboard(selected_countries, actual_year),
-            selected_countries.to_json(),
-            selected_year.to_json(),
-        )
-
-    else:
-        raise PreventUpdate
+    return (
+        *update_dashboard(selected_countries, actual_year),
+        selected_countries.to_json(),
+    )
 
 
-@app.callback(Output("selected-year", "data"), Input("year-slider", "value"))
-def update_figure(actual_year):
+@app.callback(
+    Output(component_id="graph-map", component_property="figure"),
+    Output(component_id="selected-year", component_property="data"),
+    Input(component_id="graph-map", component_property="figure"),
+    Input(component_id="year-slider", component_property="value"),
+)
+def update_year(figure, actual_year):
+    figure = update_map(actual_year)
+    figure.update_layout()
     selected_year = selected_year_default
     selected_year["year"].iloc[0] = actual_year
-    return selected_year.to_json()
-
-
-# @app.callback(
-#     Output(component_id="graph-line", component_property="figure"),
-#     Output(component_id="graph-sunburst", component_property="figure"),
-#     Output(component_id="selected-year", component_property="data"),
-#     Input(component_id="interval", component_property="value"),
-#     Input(component_id="graph-map", component_property="figure"),
-#     Input(component_id="selected-year", component_property="data"),
-#     Input(component_id="selected-countries", component_property="data"),
-# )
-# def new_year_selection(n_intervals, figure, selected_year):
-#     if selected_year is None:
-#         selected_year = selected_year_default
-#     else:
-#         selected_year = pd.read_json(selected_year, typ="frame")
-#         actual_year = selected_year["year"].iloc[0]
-
-#     if selected_countries is None:
-#         selected_countries = selected_countries_default
-#     else:
-#         selected_countries = pd.read_json(selected_countries, typ="series")
-
-#     slider_year = figure["layout"]["sliders"][0]["steps"][
-#         figure["layout"]["sliders"][0]["active"]
-#     ]["label"]
-
-#     if slider_year != actual_year:
-#         print(slider_year)
-#         selected_year["year"].iloc[0] = slider_year
-#         return (
-#             *update_dashboard(selected_countries),
-#             selected_year.to_json(),
-#         )
-#     else:
-#         raise PreventUpdate
+    return figure, selected_year.to_json()
 
 
 # run
