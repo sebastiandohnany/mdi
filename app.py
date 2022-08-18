@@ -1,16 +1,21 @@
 # Run this app with `python app.py` and
 # visit http://127.0.0.1:8050/ in your web browser.
 
-from dash import Dash, html, dcc, Input, Output
+from dash import Dash, html, dcc, Input, Output, State
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
+from dash.exceptions import PreventUpdate
 
 
 import constants
 
-app = Dash("Military Deployments", title="Military Deployments")
+app = Dash(
+    "Military Deployments Index",
+    title="Military Deployments Index",
+    meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}],
+)
 
 mapbox_access_token = open(".mapbox_token").read()
 
@@ -26,15 +31,20 @@ rank_by_country = (
 )
 
 # selection
-selected_countries = pd.Series(data=dict.fromkeys(list(df.Country.unique()), True))
+selected_countries_default = pd.Series(
+    data=dict.fromkeys(list(df.Country.unique()), True)
+)
+selected_year_default = pd.DataFrame(data={"year": [2014]})
+
+# deployments and presence
+df_deployments = df[df["MissionType"] == "Operation"]
+df_presence = df[df["MissionType"] == "MillitaryPresence"]
 
 
 def update_map():
-    dfp = df[df["Mission Type"] == "Operation"]
-
-    def get_data(dfn):
+    # data
+    def get_data(dfn, name):
         year = str(dfn.Year.iloc[0])
-        name = dfn.Country.iloc[0]
         order = rank_by_country.filter(like=year, axis=0)
         legendrank = order.index.droplevel("Year").get_loc(name)
 
@@ -53,11 +63,6 @@ def update_map():
                 sizeref=30,
                 sizemin=2,
             ),
-            # hovertext=[
-            #     f'{row.Deployed}<br>{row.Country}<br>{row.Organisation}<br>{row["Mission Name"]}'
-            #     for i, row in dfn.iterrows()
-            # ],
-            # hoverinfo=["text", "name"],
             customdata=dfn,
             hovertemplate="<b>Country: %{customdata[5]}</b><br>"
             + "Theatre: %{customdata[2]} <br>"
@@ -70,6 +75,7 @@ def update_map():
         )
         return data
 
+    # customise
     sliders = dict(
         active=0,
         yanchor="top",
@@ -139,6 +145,8 @@ def update_map():
         yanchor="top",
     )
 
+    legend = dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="right", x=1)
+
     hoverlabel = dict(font_size=16)
 
     layout = dict(
@@ -152,24 +160,33 @@ def update_map():
             center=dict(lat=24, lon=0),
             zoom=1.5,
         ),
+        legend=legend,
         updatemenus=[buttons],
         sliders=[sliders],
         hoverlabel=hoverlabel,
     )
 
+    # filter
+    dfp = df_deployments
+
+    # generate
     data = [
         get_data(
             dfp.loc[
                 (dfp["Country"] == country)
                 & (dfp["Year"] == np.sort(dfp["Year"].unique())[0])
-            ]
+            ],
+            country,
         )
         for country in dfp["Country"].unique()
     ]
     frames = [
         go.Frame(
             data=[
-                get_data(dfp.loc[(dfp["Country"] == country) & (dfp["Year"] == year)])
+                get_data(
+                    dfp.loc[(dfp["Country"] == country) & (dfp["Year"] == year)],
+                    country,
+                )
                 for country in dfp["Country"].unique()
             ],
             name=str(year),
@@ -177,34 +194,73 @@ def update_map():
         for year in np.sort(dfp["Year"].unique())
     ]
 
-    figure = go.Figure(data=data, frames=frames, layout=layout)
+    figure = go.Figure(
+        data=data,
+        frames=frames,
+        layout=layout,
+    )
 
     return figure
 
 
-def update_dashboard(selected_countries):
-    dfp = df
+def update_line_plot(dfp):
+    def get_data(dfn, name):
+        dfg = dfn.groupby(["Year"])["Deployed"].sum()
+        data = go.Scatter(
+            x=dfg.index,
+            y=dfg.values,
+            name=name,
+            showlegend=False,
+            line=dict(color=dfn.Color.iloc[0]),
+        )
+        return data
+
+    data = [
+        get_data(dfp[dfp["Country"] == country], country)
+        for country in dfp["Country"].unique()
+    ]
+    figure = go.Figure(data=data)
+    return figure
+
+
+def update_pie_plot(dfp):
+    dfm = dfp.groupby(["Organisation", "MissionName"])["Deployed"].sum()
+    dfm = dfm.to_frame().reset_index()
+
+    dfo = dfp.groupby(["Organisation"])["Deployed"].sum()
+
+    data = go.Sunburst(
+        ids=list(dfm.Organisation.unique())
+        + [x + y for x, y in zip(list(dfm.Organisation), list(dfm.MissionName))],
+        labels=list(dfm.Organisation.unique()) + list(dfm.MissionName),
+        parents=[""] * len(dfm.Organisation.unique()) + list(dfm.Organisation),
+        values=list(dfo) + list(dfm.Deployed),
+        branchvalues="total",
+    )
+    figure = go.Figure(data=data)
+    return figure
+
+
+def update_dashboard(selected_countries, year):
+    dfp = df_deployments
 
     if selected_countries.value_counts()[True] == 1:
-        country = selected_countries[selected_countries == True].index[0]
-        dfp = dfp[dfp.Country == country]
+        countries = selected_countries[selected_countries == True].index
+        dfp = dfp.query("Country in @countries")
 
-        dfp = dfp.groupby(["Year"])["Deployed"].sum()
-        print(dfp)
-
-        data = go.Scatter(x=dfp.index, y=dfp.values)
-
-        figure = go.Figure(data=data)
-        return figure
+        return update_line_plot(dfp), update_pie_plot(dfp[dfp["Year"] == int(year)])
 
     elif selected_countries.value_counts()[True] == 2:
-        pass
+        countries = selected_countries[selected_countries == True].index
+        dfp = dfp.query("Country in @countries")
+
+        return update_line_plot(dfp), update_pie_plot(dfp[dfp["Year"] == int(year)])
 
     else:
-        data = go.Scatter(x=[1, 2, 3], y=[10, 12, 14])
+        countries = selected_countries[selected_countries == True].index
+        dfp = dfp.query("Country in @countries")
 
-        figure = go.Figure(data=data)
-        return figure
+        return update_line_plot(dfp), update_pie_plot(dfp[dfp["Year"] == int(year)])
 
 
 # layout
@@ -216,16 +272,37 @@ app.layout = html.Div(
                     dcc.Graph(
                         id="graph-map",
                         figure=update_map(),
-                    )
+                        config={"displaylogo": False},
+                    ),
                 ),
+                dcc.Slider(
+                    df_deployments["Year"].min(),
+                    df_deployments["Year"].max(),
+                    step=None,
+                    value=df_deployments["Year"].min(),
+                    marks={
+                        str(year): str(year) for year in df_deployments["Year"].unique()
+                    },
+                    id="year-slider",
+                ),
+                dcc.Interval(
+                    id="interval",
+                    interval=2000,
+                ),
+                dcc.Store(id="selected-countries"),
+                dcc.Store(id="selected-year"),
             ],
         ),
-        html.P(id="selected-countries"),
         html.Div(
             children=[
                 html.Div(
                     dcc.Graph(
-                        id="graph-trend",
+                        id="graph-line",
+                    )
+                ),
+                html.Div(
+                    dcc.Graph(
+                        id="graph-sunburst",
                     )
                 ),
             ],
@@ -238,19 +315,108 @@ app.layout = html.Div(
 
 
 @app.callback(
-    Output(component_id="selected-countries", component_property="children"),
-    Output(component_id="graph-trend", component_property="figure"),
+    Output(component_id="graph-line", component_property="figure"),
+    Output(component_id="graph-sunburst", component_property="figure"),
+    Output(component_id="selected-countries", component_property="data"),
+    Output(component_id="selected-year", component_property="data"),
     Input(component_id="graph-map", component_property="restyleData"),
+    Input(component_id="graph-map", component_property="figure"),
+    Input(component_id="selected-countries", component_property="data"),
+    Input(component_id="selected-year", component_property="data"),
+    Input(component_id="interval", component_property="n_intervals"),
 )
-def new_country_selection(selection_changes):
-    if selection_changes is not None:
+def new_country_selection(
+    selection_changes, figure, selected_countries, selected_year, n_intervals
+):
+    if selected_countries is None:
+        selected_countries = selected_countries_default
+    else:
+        selected_countries = pd.read_json(selected_countries, typ="series")
+
+    if selected_year is None:
+        selected_year = selected_year_default
+        actual_year = selected_year["year"].iloc[0]
+    else:
+        selected_year = pd.read_json(selected_year, typ="frame")
+        actual_year = selected_year["year"].iloc[0]
+
+    print(actual_year)
+
+    slider_year = figure["layout"]["sliders"][0]["steps"][
+        figure["layout"]["sliders"][0]["active"]
+    ]["label"]
+
+    if str(slider_year) != str(actual_year):
+        actual_year = slider_year
+        selected_year["year"].iloc[0] = slider_year
+        return (
+            *update_dashboard(selected_countries, actual_year),
+            selected_countries.to_json(),
+            selected_year.to_json(),
+        )
+
+    elif selection_changes is not None:
         selected_countries.iloc[selection_changes[1]] = list(
             map(lambda x: True if x == True else False, selection_changes[0]["visible"])
         )
-    return (
-        f"Selected countries: {selected_countries} and changes: {selection_changes}",
-        update_dashboard(selected_countries),
-    )
+        return (
+            *update_dashboard(selected_countries, actual_year),
+            selected_countries.to_json(),
+            selected_year.to_json(),
+        )
+
+    elif n_intervals is None:
+        return (
+            *update_dashboard(selected_countries, actual_year),
+            selected_countries.to_json(),
+            selected_year.to_json(),
+        )
+
+    else:
+        raise PreventUpdate
+
+
+@app.callback(Output("selected-year", "data"), Input("year-slider", "value"))
+def update_figure(actual_year):
+    selected_year = selected_year_default
+    selected_year["year"].iloc[0] = actual_year
+    return selected_year.to_json()
+
+
+# @app.callback(
+#     Output(component_id="graph-line", component_property="figure"),
+#     Output(component_id="graph-sunburst", component_property="figure"),
+#     Output(component_id="selected-year", component_property="data"),
+#     Input(component_id="interval", component_property="value"),
+#     Input(component_id="graph-map", component_property="figure"),
+#     Input(component_id="selected-year", component_property="data"),
+#     Input(component_id="selected-countries", component_property="data"),
+# )
+# def new_year_selection(n_intervals, figure, selected_year):
+#     if selected_year is None:
+#         selected_year = selected_year_default
+#     else:
+#         selected_year = pd.read_json(selected_year, typ="frame")
+#         actual_year = selected_year["year"].iloc[0]
+
+#     if selected_countries is None:
+#         selected_countries = selected_countries_default
+#     else:
+#         selected_countries = pd.read_json(selected_countries, typ="series")
+
+#     slider_year = figure["layout"]["sliders"][0]["steps"][
+#         figure["layout"]["sliders"][0]["active"]
+#     ]["label"]
+
+#     if slider_year != actual_year:
+#         print(slider_year)
+#         selected_year["year"].iloc[0] = slider_year
+#         return (
+#             *update_dashboard(selected_countries),
+#             selected_year.to_json(),
+#         )
+#     else:
+#         raise PreventUpdate
 
 
 # run
