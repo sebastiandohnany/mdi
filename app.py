@@ -25,10 +25,10 @@ df = pd.read_excel("./data/MDVA_Deployments_LatLon.xlsx")
 # country colors
 df["Color"] = df["Country"].replace(to_replace=constants.country_colors)
 
-# order
-rank_by_country = (
-    df.groupby(["Year", "Country"])["Deployed"].sum().sort_values(ascending=False)
-)
+# # order
+# rank_by_country = (
+#     df.groupby(["Year", "Country"])["Deployed"].sum().sort_values(ascending=False)
+# )
 
 # selection
 selected_countries_default = pd.Series(
@@ -45,12 +45,22 @@ def update_map(selected_year):
     # data
     def get_data(dfn, name):
         year = str(dfn.Year.iloc[0])
-        order = rank_by_country.filter(like=year, axis=0)
-        legendrank = order.index.droplevel("Year").get_loc(name)
+        # order = rank_by_country.filter(like=year, axis=0)
+
+        legendrank = (
+            df_deployments.groupby(["Country"])["Deployed"]
+            .sum()
+            .sort_values(ascending=False)
+            .index.get_loc(name)
+        )
 
         data = go.Scattermapbox(
             name=name,
             legendrank=legendrank,
+            legendgroup=constants.country_regions.get(dfn.Country.iloc[0], "N/A"),
+            legendgrouptitle_text=constants.country_regions.get(
+                dfn.Country.iloc[0], "N/A"
+            ),
             lat=dfn.Lat,
             lon=dfn.Lon,
             mode="markers",
@@ -71,7 +81,7 @@ def update_map(selected_year):
             + "Mission Name: %{customdata[7]} <br>"
             + "Mission Type: %{customdata[8]} <br>"
             + "<extra></extra>",
-            showlegend=True,
+            showlegend=False,
         )
         return data
 
@@ -145,7 +155,17 @@ def update_map(selected_year):
     #     yanchor="top",
     # )
 
-    legend = dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="right", x=1)
+    legend = dict(
+        orientation="h",
+        yanchor="bottom",
+        y=-0.3,
+        xanchor="right",
+        x=1,
+        groupclick="toggleitem",
+        # itemclick="toggleothers",
+        # itemdoubleclick="toggleothers",
+        itemsizing="constant",
+    )
 
     hoverlabel = dict(font_size=16)
 
@@ -233,6 +253,17 @@ def update_pie_plot(dfp):
         parents=[""] * len(dfm.Organisation.unique()) + list(dfm.Organisation),
         values=list(dfo) + list(dfm.Deployed),
         branchvalues="total",
+        marker=go.sunburst.Marker(
+            colors=[
+                constants.organisation_colors.get(
+                    org,
+                    constants.country_colors.get(
+                        org, constants.organisation_colors.get("default")
+                    ),
+                )
+                for org in list(dfm.Organisation.unique())
+            ]
+        ),
     )
     figure = go.Figure(data=data)
     return figure
