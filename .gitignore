@@ -2,7 +2,10 @@
 
 /venv
 /backup
+*/__pycache__
 /__pycache__
 /temp
+
+~$*
 
 .mapbox_token

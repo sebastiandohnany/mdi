@@ -9,7 +9,7 @@ import numpy as np
 from dash.exceptions import PreventUpdate
 
 
-import constants
+import mdi.constants as constants
 
 app = Dash(
     "Military Deployments Index",
@@ -25,20 +25,17 @@ df = pd.read_excel("./data/MDVA_Deployments_LatLon.xlsx")
 # country colors
 df["Color"] = df["Country"].replace(to_replace=constants.country_colors)
 
-# # order
-# rank_by_country = (
-#     df.groupby(["Year", "Country"])["Deployed"].sum().sort_values(ascending=False)
-# )
-
-# selection
-selected_countries_default = pd.Series(
-    data=dict.fromkeys(list(df.Country.unique()), True)
-)
-selected_year_default = pd.DataFrame(data={"year": [2014]})
-
 # deployments and presence
 df_deployments = df[df["MissionType"] == "Operation"]
 df_presence = df[df["MissionType"] == "MillitaryPresence"]
+
+# selection
+selected_countries_default = pd.Series(
+    data=dict.fromkeys(
+        list(df_deployments.sort_values(by="Country").Country.unique()), True
+    )
+)
+selected_year_default = pd.DataFrame(data={"year": [2021]})
 
 
 def update_map(selected_year):
@@ -81,7 +78,7 @@ def update_map(selected_year):
             + "Mission Name: %{customdata[7]} <br>"
             + "Mission Type: %{customdata[8]} <br>"
             + "<extra></extra>",
-            showlegend=False,
+            showlegend=True,
         )
         return data
 
@@ -184,10 +181,13 @@ def update_map(selected_year):
         # updatemenus=[buttons],
         # sliders=[sliders],
         hoverlabel=hoverlabel,
+        uirevision="something",
     )
 
     # filter
-    dfp = df_deployments[df_deployments["Year"] == selected_year]
+    dfp = df_deployments[df_deployments["Year"] == selected_year].sort_values(
+        by="Country"
+    )
 
     # generate
     data = [
@@ -381,12 +381,19 @@ def new_country_selection(selection_changes, selected_countries, selected_year):
 @app.callback(
     Output(component_id="graph-map", component_property="figure"),
     Output(component_id="selected-year", component_property="data"),
-    Input(component_id="graph-map", component_property="figure"),
+    State(component_id="graph-map", component_property="relayoutData"),
     Input(component_id="year-slider", component_property="value"),
 )
-def update_year(figure, actual_year):
+def update_year(data, actual_year):
+    zoom = 1.5
+    center = dict(lat=24, lon=0)
+    if data:
+        zoom = data.get("mapbox.zoom", 1.5)
+        center = data.get("mapbox.center", dict(lat=24, lon=0))
+
     figure = update_map(actual_year)
-    figure.update_layout()
+    figure.update_layout(mapbox_zoom=zoom, mapbox_center=center)
+
     selected_year = selected_year_default
     selected_year["year"].iloc[0] = actual_year
     return figure, selected_year.to_json()
