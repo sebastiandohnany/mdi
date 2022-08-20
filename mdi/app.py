@@ -58,4 +58,4 @@ app.layout = html.Div(
     style={"fontFamily": constants.theme["fontFamily"]},
 )
 
-import mdi.map
+import mdi.countries
