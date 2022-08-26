@@ -10,8 +10,7 @@ import mdi.constants as constants
 
 
 # data
-from old_app_2 import df, df_deployments, df_presence, mapbox_access_token
-
+from .app import df, df_deployments, df_presence, mapbox_access_token
 
 # default store
 selected_countries_default = pd.Series(
@@ -130,11 +129,11 @@ def update_map(selected_year):
     # )
 
     legend = dict(
-        orientation="h",
-        yanchor="bottom",
-        y=-0.3,
-        xanchor="right",
-        x=1,
+        # orientation="h",
+        # yanchor="right",
+        # y=-0.3,
+        # xanchor="right",
+        # x=1,
         groupclick="toggleitem",
         itemsizing="constant",
     )
@@ -145,13 +144,14 @@ def update_map(selected_year):
         accesstoken=mapbox_access_token,
         center=dict(lat=24, lon=0),
         zoom=1.5,
+        style="light",
     )
 
     layout = dict(
-        title="Military Deployments",
+        title="",
         hovermode="closest",
-        height=1000,
-        margin=go.layout.Margin(l=20, r=20, t=40, b=20),
+        height=800,
+        margin=go.layout.Margin(l=0, r=0, t=0, b=0),
         mapbox=mapbox,
         legend=legend,
         hoverlabel=hoverlabel,
