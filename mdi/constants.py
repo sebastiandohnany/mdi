@@ -87,3 +87,8 @@ country_regions = {
     "KOR": "Eastern Asia",
     "default": "N/A",
 }
+
+card_style = {
+    'margin': '0.2rem 0.2rem 0.2rem 0.2rem',
+}
+

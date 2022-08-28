@@ -8,7 +8,7 @@ import plotly.graph_objects as go
 
 from .server import app
 import mdi.constants as constants
-
+from .plotting_functions import horizontal_bar_plot, percentage_calculate, summary_graph_card
 
 # data
 from .app import df, df_deployments, df_presence, mapbox_access_token
@@ -215,6 +215,7 @@ def update_line_plot(dfp):
         for country in dfp["Country"].unique()
     ]
     figure = go.Figure(data=data)
+    figure.update_layout(margin=dict(l=0, r=0, t=0, b=0), height=340)
     return figure
 
 
@@ -246,49 +247,12 @@ def update_pie_plot(dfp):
         ),
     )
     figure = go.Figure(data=data)
+    figure.update_layout(margin=dict(l=0, r=0, t=0, b=0))
     return figure
-
-def _bar_plot(values, countries, max_value, percentage=False):
-    fig = go.Figure(
-        data=[go.Bar(y=countries, x=values, orientation='h', marker=dict(color='rgba(255, 0, 0, 0.8)'))])
-
-    fig.add_trace(go.Bar(y=countries, x=[max_value - value for value in values], orientation='h',
-                         marker=dict(color='rgb(58, 59, 60)')))
-    fig.update_traces(width=0.2, hoverinfo='skip')
-    fig.update(layout_showlegend=False)
-    fig.update_layout(paper_bgcolor="rgb(0,0,0,0)", plot_bgcolor='rgba(0,0,0,0)', barmode='stack',
-                      yaxis={'categoryorder':'array', 'categoryarray':countries},
-                      font=dict(
-                          size=20)
-                      )
-    fig.update_xaxes(showticklabels=False)
-
-    annotations = []
-
-    for value, country in zip(values, countries):
-        value_str = str(value)
-        if percentage:
-            value_str = value_str + '%'
-
-        annotations.append(dict(xref='x1', yref='y1',
-                                y=country, x=max_value+max_value*0.03,
-                                text=value_str,
-                                font=dict(size=20),
-                                showarrow=False))
-    fig.update_layout(annotations=annotations)
-    return fig
-
-
-def percentage_calculate(n, d, scaling=1):
-    try:
-        number = (n/d) * scaling
-        return round(number, 2)
-    except ZeroDivisionError:
-        return 0
 
 
 def update_population_plot(df_deploy, df_population, year):
-    df =  pd.DataFrame(columns=['Country Name', 'Deployment Per Capita'])
+    df= pd.DataFrame(columns=['Country Name', 'Deployment Per Capita'])
 
     for country in df_population["Country"].unique():
         total_deployed = df_deploy[df_deploy["Country"] == country]['Deployed'].sum()
@@ -299,12 +263,18 @@ def update_population_plot(df_deploy, df_population, year):
                                          columns=['Country Name', 'Deployment Per Capita'])])
 
     df = df.sort_values(by=['Deployment Per Capita'], ascending=False)
-    deployment_mean = df["Deployment Per Capita"].mean()
+    deployment_mean = round(df["Deployment Per Capita"].mean(), 1)
 
     if df.shape[0] > 5:
         df = df.head(5)
-
-    return _bar_plot(df['Deployment Per Capita'].iloc[::-1].values, df['Country Name'].iloc[::-1].values, 15), deployment_mean
+        condensed=True
+    else:
+        condensed = False
+    fig = horizontal_bar_plot(df['Deployment Per Capita'].iloc[::-1].values,
+                              df['Country Name'].iloc[::-1].values,
+                              df['Deployment Per Capita'].iloc[::-1].values, 15, condensed=condensed)
+    #card = summary_graph_card(deployment_mean, "of deployed troops per 100,000 capita on average", fig)
+    return {"fig":fig, "mean":str(deployment_mean)}
 
 
 def update_active_plot(df_deploy, df_active):
@@ -315,16 +285,44 @@ def update_active_plot(df_deploy, df_active):
         active_personnel = int(df_active[df_active["Country"] == country]['Personnel_Count'])
         country_name = df_active[df_active["Country"] == country]['Country Name'].values[0]
 
-        df = pd.concat([df, pd.DataFrame([[country_name, percentage_calculate(total_deployed, active_personnel, 100)]],
-                                         columns=['Country Name', 'Active Personnel'])])
+        df = pd.concat([df, pd.DataFrame([[country_name, percentage_calculate(total_deployed, active_personnel, 100), total_deployed]],
+                                         columns=['Country Name', 'Percent of Active Personnel', 'Total Deployed'])])
 
-    df = df.sort_values(by=['Active Personnel'], ascending=False)
-    active_mean = df['Active Personnel'].mean
+    df = df.sort_values(by=['Percent of Active Personnel'], ascending=False)
+    active_mean = round((df['Percent of Active Personnel'].mean()),1)
 
     if df.shape[0] > 5:
         df = df.head(5)
+        condensed = True
+    else:
+        condensed = False
+    fig = horizontal_bar_plot(df['Percent of Active Personnel'].iloc[::-1].values,
+                              df['Country Name'].iloc[::-1].values,
+                              df['Percent of Active Personnel'].iloc[::-1].values,
+                              100, percentage=True, condensed=condensed)
+    #card = summary_graph_card(active_mean, "of available active duty personnel on average", fig)
+    return {"fig":fig, "mean":str(active_mean)+"%"}
 
-    return _bar_plot(df['Active Personnel'].iloc[::-1].values, df['Country Name'].iloc[::-1].values, 100, percentage=True), active_mean
+def update_deployed_meter_plot(df_deploy):
+    df = df_deploy.groupby(["Theatre"])["Deployed"].sum()
+    total_deployed = df_deploy["Deployed"].sum()
+    highest_percentage = percentage_calculate(df.max(), total_deployed, scaling=100)
+    fig = go.Figure(
+        data=[go.Indicator(value=highest_percentage,
+                           mode="gauge+number",
+                           gauge={'axis': {'visible': False, 'range': [0, 100]},
+                                  'bar': {'color': "rgba(255, 0, 0, 0.8)"},
+                                  'bordercolor': "white",
+                                  'steps': [
+                                      {'range': [0, highest_percentage], 'color': 'rgba(255, 0, 0, 0.8)'},
+                                      {'range': [highest_percentage, 100], 'color': 'rgb(58, 59, 60)'}]
+                                  },
+                           domain={'row': 0, 'column': 100},
+                           number= {'suffix': "%", "font":{"size":30}})]
+    )
+    fig.update_layout(margin=dict(l=0, r=0, t=1, b=0),
+                      height=150,)
+    return {"fig":fig, 'theatre':df.idxmax()}
 
 def update_dashboard(selected_countries, year):
     dfp = df_deployments
@@ -341,27 +339,40 @@ def update_dashboard(selected_countries, year):
     # TODO: maybe unnecessary to choose which one
 
     dfp_year = dfp[dfp["Year"] == int(year)]
+
+    population_data = update_population_plot(dfp_year, df_population, str(year))
+    active_mean = update_active_plot(dfp_year, df_active[df_active["Year"] == int(year)])
+    deploy_meter = update_deployed_meter_plot(dfp_year)
+
     if selected_countries.value_counts()[True] == 1:
-        return update_line_plot(dfp), update_pie_plot(dfp_year),
-#               update_population_plot(dfp_year, df_population, str(year))[0], \
-#               update_active_plot(dfp_year, df_active[df_active["Year"] == int(year)])[0]
+        return update_line_plot(dfp), update_pie_plot(dfp_year), \
+               population_data['fig'],population_data['mean'], \
+               active_mean['fig'], active_mean['mean'],\
+               deploy_meter['fig'], deploy_meter['theatre']
 
     elif selected_countries.value_counts()[True] == 2:
-        return update_line_plot(dfp), update_pie_plot(dfp[dfp["Year"] == int(year)]),
-#               update_population_plot(dfp_year, df_population, str(year))[0], \
-#               update_active_plot(dfp_year, df_active[df_active["Year"] == int(year)])[0]
+        return update_line_plot(dfp), update_pie_plot(dfp[dfp["Year"] == int(year)]), \
+               population_data['fig'],population_data['mean'], \
+               active_mean['fig'], active_mean['mean'], \
+               deploy_meter['fig'], deploy_meter['theatre']
+
 
     else:
-        return update_line_plot(dfp), update_pie_plot(dfp[dfp["Year"] == int(year)]),
-#               update_population_plot(dfp_year, df_population, str(year))[0], \
-#               update_active_plot(dfp_year, df_active[df_active["Year"] == int(year)])[0]
+        return update_line_plot(dfp), update_pie_plot(dfp[dfp["Year"] == int(year)]),\
+               population_data['fig'],population_data['mean'], \
+               active_mean['fig'], active_mean['mean'], \
+               deploy_meter['fig'], deploy_meter['theatre']
 
 
 @app.callback(
     Output(component_id="graph-line", component_property="figure"),
     Output(component_id="graph-sunburst", component_property="figure"),
-#    Output(component_id="graph-population", component_property="figure"),
-#    Output(component_id="graph-active", component_property="figure"),
+    Output(component_id="graph-population", component_property="figure"),
+    Output(component_id="mean-population", component_property="children"),
+    Output(component_id="graph-active", component_property="figure"),
+    Output(component_id="mean-active", component_property="children"),
+    Output(component_id="graph-theatre", component_property="figure"),
+    Output(component_id="name-theatre", component_property="children"),
     Input(component_id="selected-countries", component_property="data"),
     Input(component_id="selected-year", component_property="data"),
 )
