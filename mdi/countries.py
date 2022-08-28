@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from collections import Counter
 
 from dash import Input, Output, State, exceptions
 import plotly.express as px
@@ -247,31 +248,120 @@ def update_pie_plot(dfp):
     figure = go.Figure(data=data)
     return figure
 
+def _bar_plot(values, countries, max_value, percentage=False):
+    fig = go.Figure(
+        data=[go.Bar(y=countries, x=values, orientation='h', marker=dict(color='rgba(255, 0, 0, 0.8)'))])
+
+    fig.add_trace(go.Bar(y=countries, x=[max_value - value for value in values], orientation='h',
+                         marker=dict(color='rgb(58, 59, 60)')))
+    fig.update_traces(width=0.2, hoverinfo='skip')
+    fig.update(layout_showlegend=False)
+    fig.update_layout(paper_bgcolor="rgb(0,0,0,0)", plot_bgcolor='rgba(0,0,0,0)', barmode='stack',
+                      yaxis={'categoryorder':'array', 'categoryarray':countries},
+                      font=dict(
+                          size=20)
+                      )
+    fig.update_xaxes(showticklabels=False)
+
+    annotations = []
+
+    for value, country in zip(values, countries):
+        value_str = str(value)
+        if percentage:
+            value_str = value_str + '%'
+
+        annotations.append(dict(xref='x1', yref='y1',
+                                y=country, x=max_value+max_value*0.03,
+                                text=value_str,
+                                font=dict(size=20),
+                                showarrow=False))
+    fig.update_layout(annotations=annotations)
+    return fig
+
+
+def percentage_calculate(n, d, scaling=1):
+    try:
+        number = (n/d) * scaling
+        return round(number, 2)
+    except ZeroDivisionError:
+        return 0
+
+
+def update_population_plot(df_deploy, df_population, year):
+    df =  pd.DataFrame(columns=['Country Name', 'Deployment Per Capita'])
+
+    for country in df_population["Country"].unique():
+        total_deployed = df_deploy[df_deploy["Country"] == country]['Deployed'].sum()
+        population = int(df_population[df_population["Country"] == country][year])
+        country_name = df_population[df_population["Country"] == country]['Country Name'].values[0]
+
+        df = pd.concat([df, pd.DataFrame([[country_name, percentage_calculate(total_deployed, population, 100000)]],
+                                         columns=['Country Name', 'Deployment Per Capita'])])
+
+    df = df.sort_values(by=['Deployment Per Capita'], ascending=False)
+    deployment_mean = df["Deployment Per Capita"].mean()
+
+    if df.shape[0] > 5:
+        df = df.head(5)
+
+    return _bar_plot(df['Deployment Per Capita'].iloc[::-1].values, df['Country Name'].iloc[::-1].values, 15), deployment_mean
+
+
+def update_active_plot(df_deploy, df_active):
+    df = pd.DataFrame(columns=['Country Name', 'Active Personnel'])
+
+    for country in df_active["Country"].unique():
+        total_deployed = df_deploy[df_deploy["Country"] == country]['Deployed'].sum()
+        active_personnel = int(df_active[df_active["Country"] == country]['Personnel_Count'])
+        country_name = df_active[df_active["Country"] == country]['Country Name'].values[0]
+
+        df = pd.concat([df, pd.DataFrame([[country_name, percentage_calculate(total_deployed, active_personnel, 100)]],
+                                         columns=['Country Name', 'Active Personnel'])])
+
+    df = df.sort_values(by=['Active Personnel'], ascending=False)
+    active_mean = df['Active Personnel'].mean
+
+    if df.shape[0] > 5:
+        df = df.head(5)
+
+    return _bar_plot(df['Active Personnel'].iloc[::-1].values, df['Country Name'].iloc[::-1].values, 100, percentage=True), active_mean
 
 def update_dashboard(selected_countries, year):
     dfp = df_deployments
+    df_active = pd.read_excel("./temp/MDVA_active-duty.xlsx")
+    df_population = pd.read_csv("./temp/MDVA_population.csv", delimiter=',')
 
     if True not in selected_countries.values:
         raise exceptions.PreventUpdate
 
     countries = selected_countries[selected_countries == True].index
     dfp = dfp.query("Country in @countries")
-
+    df_active = df_active.query("Country in @countries")
+    df_population = df_population.query("Country in @countries")
     # TODO: maybe unnecessary to choose which one
 
+    dfp_year = dfp[dfp["Year"] == int(year)]
     if selected_countries.value_counts()[True] == 1:
-        return update_line_plot(dfp), update_pie_plot(dfp[dfp["Year"] == int(year)])
+        return update_line_plot(dfp), update_pie_plot(dfp_year),
+#               update_population_plot(dfp_year, df_population, str(year))[0], \
+#               update_active_plot(dfp_year, df_active[df_active["Year"] == int(year)])[0]
 
     elif selected_countries.value_counts()[True] == 2:
-        return update_line_plot(dfp), update_pie_plot(dfp[dfp["Year"] == int(year)])
+        return update_line_plot(dfp), update_pie_plot(dfp[dfp["Year"] == int(year)]),
+#               update_population_plot(dfp_year, df_population, str(year))[0], \
+#               update_active_plot(dfp_year, df_active[df_active["Year"] == int(year)])[0]
 
     else:
-        return update_line_plot(dfp), update_pie_plot(dfp[dfp["Year"] == int(year)])
+        return update_line_plot(dfp), update_pie_plot(dfp[dfp["Year"] == int(year)]),
+#               update_population_plot(dfp_year, df_population, str(year))[0], \
+#               update_active_plot(dfp_year, df_active[df_active["Year"] == int(year)])[0]
 
 
 @app.callback(
     Output(component_id="graph-line", component_property="figure"),
     Output(component_id="graph-sunburst", component_property="figure"),
+#    Output(component_id="graph-population", component_property="figure"),
+#    Output(component_id="graph-active", component_property="figure"),
     Input(component_id="selected-countries", component_property="data"),
     Input(component_id="selected-year", component_property="data"),
 )
