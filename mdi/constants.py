@@ -12,6 +12,7 @@ organisation_colors = {
     "OSCE": "rgb(5, 102, 8)",
     "MFO": "rgb(220, 107, 49)",
     "default": "rgb(0, 0, 139)",
+    "Other": "rgb(34, 139, 34)"
 }
 
 country_colors = {
@@ -89,6 +90,7 @@ country_regions = {
 }
 
 card_style = {
-    'margin': '0.2rem 0.2rem 0.2rem 0.2rem',
+    'margin': '0.2rem 0.2rem 0.8rem 0.2rem',
+    'background': '#fafafa'
 }
 

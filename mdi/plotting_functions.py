@@ -12,9 +12,17 @@ from .server import app
 import mdi.constants as constants
 
 
-def horizontal_bar_plot(values, countries, bar_labels, max_value, percentage=False, condensed=False):
+def percentage_calculate(n, d, scaling=1):
+    try:
+        number = (n/d) * scaling
+        return round(number, 1)
+    except ZeroDivisionError:
+        return 0
+
+
+def horizontal_bar_plot(values, countries, bar_labels, max_value, percentage=False, condensed=False, colour='rgba(255, 0, 0, 0.8)'):
     fig = go.Figure(
-        data=[go.Bar(y=countries, x=values, orientation='h', marker=dict(color='rgba(255, 0, 0, 0.8)'),
+        data=[go.Bar(y=countries, x=values, orientation='h', marker=dict(color=colour),
                      width=np.full(len(values), 0.2))],
         layout={
             'margin': {'pad': 20},
@@ -50,7 +58,7 @@ def horizontal_bar_plot(values, countries, bar_labels, max_value, percentage=Fal
             value_str = value_str + '%'
 
         annotations.append(dict(xref='x1', yref='y1',
-                                y=country, x=max_value+0.06*max_value,
+                                y=country, x=max_value+0.08*max_value,
                                 text=value_str,
                                 font=dict(size=15),
                                 showarrow=False))
@@ -58,25 +66,50 @@ def horizontal_bar_plot(values, countries, bar_labels, max_value, percentage=Fal
     return fig
 
 
-def percentage_calculate(n, d, scaling=1):
-    try:
-        number = (n/d) * scaling
-        return round(number, 1)
-    except ZeroDivisionError:
-        return 0
+def meter_plot(indicator_value, range):
+    fig = go.Figure(
+        data=[go.Indicator(value=indicator_value,
+                           mode="gauge+number",
+                           gauge={'axis': {'visible': False, 'range': [0, 100]},
+                                  'bar': {'color': "rgba(255, 0, 0, 0.8)"},
+                                  'bordercolor': "#fafafa",
+                                  'steps': [
+                                      {'range': [range['min'], indicator_value], 'color': 'rgba(255, 0, 0, 0.8)'},
+                                      {'range': [indicator_value, range['max']], 'color': 'rgb(58, 59, 60)'}]
+                                  },
+                           domain={'row': 0, 'column': 100},
+                           number={'suffix': "%", "font": {"size": 30}})]
+    )
+    fig.update_layout(margin=dict(l=0, r=0, t=1, b=0),
+                      height=150,
+                      paper_bgcolor="rgb(0,0,0,0)", plot_bgcolor='rgba(0,0,0,0)')
+    return fig
 
+def country_orgs_bar_plot(df, condensed=False):
+    fig = px.bar(df, x="Country", y="Deployed", color="Organisation",
+                 color_discrete_map={**constants.organisation_colors, **constants.country_colors})
+    if condensed:
+        fig.update_layout(
+            title_text="Top 5",
+            font=dict(
+                size=12,
+            ),
+            margin=dict(l=0, r=0, t=30, b=0)
+        )
+    fig.update_layout(paper_bgcolor="rgb(0,0,0,0)", plot_bgcolor='rgba(0,0,0,0)', legend=dict(bgcolor='rgba(0,0,0,0)'))
 
-def summary_graph_card(title, text, graph):
-    card = dbc.Card(dbc.CardBody([
+    return fig
+
+def summary_graph_card(title, text, graph, title_colour):
+    card = dbc.CardBody([
             html.H4(
                 title,
-                style={'color': 'red'}),
-            html.P(
+                style={'color': title_colour}),
+            html.H6(
                 text,
                 className='card-text',
-                style={'color': 'rgb(175, 173, 169)'},
             ),
-#            dcc.Graph(figure=graph)
-        ]))
+            dcc.Graph(figure=graph)
+        ])
 
     return card
