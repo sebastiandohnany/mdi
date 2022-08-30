@@ -101,7 +101,6 @@ app.layout = html.Div(
                                             dbc.Nav(
                                                 [
                                                     dbc.NavItem(button_howto),
-                                                    dbc.NavItem(button_github),
                                                 ],
                                                 navbar=True,
                                             ),
@@ -129,79 +128,88 @@ app.layout = html.Div(
                     [
                         dbc.Col(
                             [
-                                dbc.Card([
-                                    dbc.CardBody(
-                                        [
-                                            dcc.Graph(
-                                                id="graph-map",
-                                                config={"displaylogo": False},
-                                            ),
-                                        ],
-
-                                    )],
-                                    style=constants.card_style
+                                dbc.Card(
+                                    [
+                                        dbc.CardBody(
+                                            [
+                                                dcc.Graph(
+                                                    id="graph-map",
+                                                    config={"displaylogo": False},
+                                                ),
+                                            ],
+                                        )
+                                    ],
+                                    style=constants.card_style,
                                 ),
-                                dbc.Card([
-                                    dbc.CardBody(
-                                        [
-                                            html.P(
-                                                "Choose a year",
-                                                className="card-text",
-                                            ),
-                                            dcc.Slider(
-                                                id="year-slider",
-                                                min=df["Year"].min(),
-                                                max=df["Year"].max(),
-                                                step=None,
-                                                value=df["Year"].max(),
-                                                marks={
-                                                    str(year): str(year)
-                                                    for year in df["Year"].unique()
-                                                },
-                                            ),
-                                        ]
-                                    )],
-                                    style=constants.card_style
+                                dbc.Card(
+                                    [
+                                        dbc.CardBody(
+                                            [
+                                                html.P(
+                                                    "Choose a year",
+                                                    className="card-text",
+                                                ),
+                                                dcc.Slider(
+                                                    id="year-slider",
+                                                    min=df["Year"].min(),
+                                                    max=df["Year"].max(),
+                                                    step=None,
+                                                    value=df["Year"].max(),
+                                                    marks={
+                                                        str(year): str(year)
+                                                        for year in df["Year"].unique()
+                                                    },
+                                                ),
+                                            ]
+                                        )
+                                    ],
+                                    style=constants.card_style,
                                 ),
                             ],
                             md=7,
                         ),
                         dbc.Col(
                             [
-                                dbc.Card([
-                                    dbc.CardBody(
-                                        [
-                                            html.H4(
-                                                "Distribution between organisations and missions",
-                                                className="card-title",
-                                            ),
-                                            html.P(
-                                                "",
-                                                className="card-text",
-                                            ),
-                                            dcc.Graph(
-                                                id="graph-sunburst",
-                                            ),
-                                        ]
-                                    )],
-                                    style=constants.card_style
+                                dbc.Card(
+                                    [
+                                        dbc.CardBody(
+                                            [
+                                                html.H4(
+                                                    "Distribution between organisations and missions",
+                                                    className="card-title",
+                                                ),
+                                                html.P(
+                                                    "",
+                                                    className="card-text",
+                                                ),
+                                                dcc.Graph(
+                                                    id="graph-sunburst",
+                                                ),
+                                            ]
+                                        )
+                                    ],
+                                    style=constants.card_style,
                                 ),
-                                dbc.Card([
-                                    dbc.CardBody(
-                                        [
-                                            html.H4(
-                                                "Deployments over time",
-                                                className="card-title",
-                                            ),
-                                            html.P(
-                                                "",
-                                                className="card-text",
-                                            ),
-                                            html.Div([dcc.Graph(id="graph-line")],
-                                                     style={"width": "80%"}),
-                                        ]
-                                    )],
-                                    style=constants.card_style
+                                dbc.Card(
+                                    [
+                                        dbc.CardBody(
+                                            [
+                                                html.H4(
+                                                    "Deployments over time",
+                                                    className="card-title",
+                                                ),
+                                                html.P(
+                                                    "",
+                                                    className="card-text",
+                                                ),
+                                                html.Div(
+                                                    [dcc.Graph(id="graph-line")],
+                                                    style={"width": "80%"},
+                                                ),
+                                            ]
+                                        )
+                                    ],
+                                    style=constants.card_style,
                                 ),
                             ]
                         ),
@@ -210,62 +218,77 @@ app.layout = html.Div(
                 dbc.Row(
                     [
                         dbc.Col(
-                            dbc.Card([
-                                dbc.CardBody(
-                                    [
-                                        html.H4("", id="mean-active",
-                                                className="card-title", style={'color':'rgba(255, 0, 0, 0.8)'}
-                                                ),
-                                        html.H6(
+                            dbc.Card(
+                                [
+                                    dbc.CardBody(
+                                        [
+                                            html.H4(
+                                                "",
+                                                id="mean-active",
+                                                className="card-title",
+                                                style={"color": "rgba(255, 0, 0, 0.8)"},
+                                            ),
+                                            html.H6(
                                                 "of available active duty personnel on average"
-                                        ),
-                                        dcc.Graph(
-                                            id="graph-active",
-                                        ),
-                                    ]
-                                )],
-                                style=constants.card_style
+                                            ),
+                                            dcc.Graph(
+                                                id="graph-active",
+                                            ),
+                                        ]
+                                    )
+                                ],
+                                style=constants.card_style,
                             ),
                         ),
                         dbc.Col(
-                            dbc.Card([
-                                dbc.CardBody(
-                                    [
-                                        html.H4(
-                                            "", id="mean-population",
-                                            className="card-title", style={"color":'rgba(255, 0, 0, 0.8)'}
-                                        ),
-                                        html.H6(
-                                            "of deployed troops per 100,000 capita on average",
-                                            className="card-text",
-                                        ),
-                                        dcc.Graph(
-                                            id="graph-population",
-                                        ),
-                                    ]
-                                )],
-                                style=constants.card_style
+                            dbc.Card(
+                                [
+                                    dbc.CardBody(
+                                        [
+                                            html.H4(
+                                                "",
+                                                id="mean-population",
+                                                className="card-title",
+                                                style={"color": "rgba(255, 0, 0, 0.8)"},
+                                            ),
+                                            html.H6(
+                                                "of deployed troops per 100,000 capita on average",
+                                                className="card-text",
+                                            ),
+                                            dcc.Graph(
+                                                id="graph-population",
+                                            ),
+                                        ]
+                                    )
+                                ],
+                                style=constants.card_style,
                             ),
                         ),
                         dbc.Col(
                             [
-                                dbc.Card([
-                                    dbc.CardBody(
-                                        [
-                                            html.H4(
-                                                "", id="name-theatre",
-                                                className="card-title", style={"color":'rgba(255, 0, 0, 0.8)'}
-                                            ),
-                                            html.H6(
-                                                "top deployment theatre",
-                                                className="card-text",
-                                            ),
-                                            dcc.Graph(
-                                                id="graph-theatre",
-                                            ),
-                                        ]
-                                    )],
-                                    style=constants.card_style
+                                dbc.Card(
+                                    [
+                                        dbc.CardBody(
+                                            [
+                                                html.H4(
+                                                    "",
+                                                    id="name-theatre",
+                                                    className="card-title",
+                                                    style={
+                                                        "color": "rgba(255, 0, 0, 0.8)"
+                                                    },
+                                                ),
+                                                html.H6(
+                                                    "top deployment theatre",
+                                                    className="card-text",
+                                                ),
+                                                dcc.Graph(
+                                                    id="graph-theatre",
+                                                ),
+                                            ]
+                                        )
+                                    ],
+                                    style=constants.card_style,
                                 ),
                             ]
                         ),
