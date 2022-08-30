@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import os
 
 from dash import html, dcc, Input, Output, State
 
@@ -9,14 +10,19 @@ import mdi.constants as constants
 import dash_bootstrap_components as dbc
 import plotly.io as pio
 
+from dotenv import load_dotenv
+
+load_dotenv()
+ROOT = os.getenv("PROJECT_ROOT")
+
 pio.templates.default = "plotly_white"
 from dash_bootstrap_templates import load_figure_template
 
 load_figure_template("litera")
 
 # data
-df = pd.read_excel("./data/MDVA_Deployments_LatLon.xlsx")
-mapbox_access_token = open(".mapbox_token").read()
+df = pd.read_excel(ROOT + "data/MDVA_Deployments_LatLon.xlsx")
+mapbox_access_token = open(ROOT + ".mapbox_token").read()
 
 # country colors
 df["Color"] = df["Country"].replace(to_replace=constants.country_colors)
@@ -27,7 +33,7 @@ df_presence = df[df["MissionType"] == "MillitaryPresence"]
 
 
 # navbar
-with open("static/methodology.md", "r") as f:
+with open(ROOT + "static/methodology.md", "r") as f:
     howto_md = f.read()
 
 modal_overlay = dbc.Modal(
