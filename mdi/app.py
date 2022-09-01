@@ -4,10 +4,10 @@ import os
 
 from dash import html, dcc, Input, Output, State
 
-from mdi.server import app
+from .server import app
 
 server = app.server
-import mdi.constants as constants
+from . import constants
 
 import dash_bootstrap_components as dbc
 import plotly.io as pio

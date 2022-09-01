@@ -7,7 +7,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 from .server import app
-import mdi.constants as constants
+from . import constants
 from .plotting_functions import horizontal_bar_plot, percentage_calculate, summary_graph_card, meter_plot, \
     country_orgs_bar_plot
 

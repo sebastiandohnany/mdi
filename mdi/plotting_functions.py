@@ -9,7 +9,7 @@ import dash_bootstrap_components as dbc
 from dash import html, dcc, Input, Output, State
 
 from .server import app
-import mdi.constants as constants
+from . import constants
 
 
 def percentage_calculate(n, d, scaling=1):
