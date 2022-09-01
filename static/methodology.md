@@ -1,3 +1,6 @@
+# PLACEHOLDER
+
+
 The code of this app is [available here](https://github.com/plotly/dash-sample-apps/blob/master/apps/dash-image-segmentation/app.py). 
 
 This app uses machine learning in order to compute the segmentation of an
