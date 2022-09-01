@@ -223,7 +223,7 @@ app.layout = html.Div(
     ]
 )
 
-import mdi.countries
+from . import countries
 
 # Callback for modal popup
 @app.callback(
