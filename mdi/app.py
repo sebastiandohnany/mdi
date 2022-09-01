@@ -77,9 +77,7 @@ app.layout = html.Div(
                                 dbc.Col(
                                     html.Img(
                                         id="logo",
-                                        src=app.get_asset_url(
-                                            "../static/NSA-RSA-logo-small.png"
-                                        ),
+                                        src=app.get_asset_url("NSA-RSA-logo-small.png"),
                                         height="70px",
                                     ),
                                     md="auto",
