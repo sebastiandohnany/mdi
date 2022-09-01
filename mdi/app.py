@@ -5,6 +5,8 @@ import os
 from dash import html, dcc, Input, Output, State
 
 from mdi.server import app
+
+server = app.server
 import mdi.constants as constants
 
 import dash_bootstrap_components as dbc
@@ -176,10 +178,10 @@ app.layout = html.Div(
                         ),
                         dbc.Col(
                             [
-                                dbc.Card(id="card-sunburst", style=constants.card_style
+                                dbc.Card(
+                                    id="card-sunburst", style=constants.card_style
                                 ),
-                                dbc.Card(id="card-line", style=constants.card_style
-                                ),
+                                dbc.Card(id="card-line", style=constants.card_style),
                             ]
                         ),
                     ]
@@ -187,30 +189,28 @@ app.layout = html.Div(
                 dbc.Row(
                     [
                         dbc.Col(
-                            dbc.Card(id="card-active", style=constants.card_style
-                            ),
+                            dbc.Card(id="card-active", style=constants.card_style),
                         ),
                         dbc.Col(
-                            dbc.Card(id="card-population", style=constants.card_style
-                            ),
+                            dbc.Card(id="card-population", style=constants.card_style),
                         ),
                         dbc.Col(
-                            [
-                                dbc.Card(id="card-theatre", style=constants.card_style
-                                )
-                            ]
+                            [dbc.Card(id="card-theatre", style=constants.card_style)]
                         ),
                     ]
                 ),
                 dbc.Row(
                     [
                         dbc.Col(
-                            dbc.Card(id="card-bar-orgs", style=constants.card_style), md=4
+                            dbc.Card(id="card-bar-orgs", style=constants.card_style),
+                            md=4,
                         ),
                         dbc.Col(
-                            dbc.Card(id="card-countries-orgs", style=constants.card_style), md=8
+                            dbc.Card(
+                                id="card-countries-orgs", style=constants.card_style
+                            ),
+                            md=8,
                         ),
-
                     ]
                 ),
                 dcc.Store(id="selected-countries"),
