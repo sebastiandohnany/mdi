@@ -283,6 +283,7 @@ def update_pie_plot(dfp):
 def update_population_plot(df_deploy, df_population, year):
     df = pd.DataFrame(columns=["Country Name", "Deployment Per Capita"])
 
+    # Calculate deployment per 100,000 capita for each country
     for country in df_population["Country"].unique():
         total_deployed = df_deploy[df_deploy["Country"] == country]["Deployed"].sum()
         population = int(df_population[df_population["Country"] == country][year])
@@ -308,11 +309,14 @@ def update_population_plot(df_deploy, df_population, year):
     df = df.sort_values(by=["Deployment Per Capita"], ascending=False)
     deployment_mean = round(df["Deployment Per Capita"].mean(), 1)
 
+    #If more than 5 countries, select top 5
     if df.shape[0] > 5:
         df = df.head(5)
         condensed = True
     else:
         condensed = False
+
+    #Create a plot and a card
     fig = horizontal_bar_plot(
         df["Deployment Per Capita"].iloc[::-1].values,
         df["Country Name"].iloc[::-1].values,
@@ -364,11 +368,14 @@ def update_active_plot(df_deploy, df_active):
     df = df.sort_values(by=["Percent of Active Personnel"], ascending=False)
     active_mean = round((df["Percent of Active Personnel"].mean()), 1)
 
+    # If more than 5 countries, select top 5
     if df.shape[0] > 5:
         df = df.head(5)
         condensed = True
     else:
         condensed = False
+
+    # Create a plot and a card
     fig = horizontal_bar_plot(
         df["Percent of Active Personnel"].iloc[::-1].values,
         df["Country Name"].iloc[::-1].values,
@@ -391,10 +398,10 @@ def update_deployed_meter_plot(df_deploy):
     df = df_deploy.groupby(["Theatre"])["Deployed"].sum()
     total_deployed = df_deploy["Deployed"].sum()
 
-    # Theatre with highest percentage deployment
+    # Theatre with the highest percentage deployment
     highest_percentage = percentage_calculate(df.max(), total_deployed, scaling=100)
 
-    # Make figure and card
+    # Create a figure and a card
     fig = meter_plot(highest_percentage, {"min": 0, "max": 100})
     card = summary_graph_card(
         df.idxmax(), "top deployment theatre", fig, title_colour="rgba(255, 0, 0, 0.8)"
@@ -407,7 +414,7 @@ def update_total_deployment_plot(df_deploy):
     df = df_deploy.copy()
     condensed = False
 
-    # select top 5 deployment countries
+    # Select top 5 deployment countries
     if len(df_deploy["Country"].unique()) > 5:
         country_sum = (
             df_deploy.groupby(["Country"])["Deployed"]
@@ -436,7 +443,7 @@ def update_total_deployment_plot(df_deploy):
         .sort_values(by="Organisation")
     )
 
-    # Make figure and card
+    # Create a figure and a card
     fig = country_orgs_bar_plot(df, condensed=condensed)
     card = summary_graph_card(
         "Total deployed personnel",
@@ -451,7 +458,7 @@ def update_orgs_bar_plot(df_deploy):
     df = df_deploy.copy()
     total_deployed = df_deploy["Deployed"].sum()
 
-    # query top 5 organisations, rest goes under other
+    # Query top 5 organisations, rest goes under other
     top_orgs = (
         df.groupby(["Organisation"])
         .sum()
@@ -462,10 +469,11 @@ def update_orgs_bar_plot(df_deploy):
     deployed_numbers = list(top_orgs["Deployed"])
     deployed_numbers.append(other_orgs)
 
+    # Percentage of organisation deployment to total deployment
     deployment_percentage = [
         percentage_calculate(number, total_deployed, 100) for number in deployed_numbers
     ]
-
+    # Orgs names and colour
     deployed_names_orgs = list(top_orgs.index)
     deployed_names_orgs.append("Other")
 
@@ -479,6 +487,7 @@ def update_orgs_bar_plot(df_deploy):
         for org in deployed_names_orgs
     ]
 
+    # Create a figure and a card
     fig = horizontal_bar_plot(
         deployment_percentage[::-1],
         deployed_names_orgs[::-1],
@@ -512,45 +521,45 @@ def update_dashboard(selected_countries, year):
 
     dfp_year = dfp[dfp["Year"] == int(year)]
 
-    population_data = update_population_plot(dfp_year, df_population, str(year))
-    active_mean = update_active_plot(
+    population_card = update_population_plot(dfp_year, df_population, str(year))
+    active_card = update_active_plot(
         dfp_year, df_active[df_active["Year"] == int(year)]
     )
-    deploy_meter = update_deployed_meter_plot(dfp_year)
-    orgs_data = update_total_deployment_plot(dfp_year)
-    orgs_bar = update_orgs_bar_plot(dfp_year)
+    deploy_meter_card = update_deployed_meter_plot(dfp_year)
+    orgs_countries_card = update_total_deployment_plot(dfp_year)
+    orgs_bar_card = update_orgs_bar_plot(dfp_year)
 
     if selected_countries.value_counts()[True] == 1:
         return (
             update_line_plot(dfp),
             update_pie_plot(dfp_year),
-            population_data,
-            active_mean,
-            deploy_meter,
-            orgs_data,
-            orgs_bar,
+            population_card,
+            active_card,
+            deploy_meter_card,
+            orgs_countries_card,
+            orgs_bar_card,
         )
 
     elif selected_countries.value_counts()[True] == 2:
         return (
             update_line_plot(dfp),
             update_pie_plot(dfp[dfp["Year"] == int(year)]),
-            population_data,
-            active_mean,
-            deploy_meter,
-            orgs_data,
-            orgs_bar,
+            population_card,
+            active_card,
+            deploy_meter_card,
+            orgs_countries_card,
+            orgs_bar_card,
         )
 
     else:
         return (
             update_line_plot(dfp),
             update_pie_plot(dfp[dfp["Year"] == int(year)]),
-            population_data,
-            active_mean,
-            deploy_meter,
-            orgs_data,
-            orgs_bar,
+            population_card,
+            active_card,
+            deploy_meter_card,
+            orgs_countries_card,
+            orgs_bar_card,
         )
 
 
