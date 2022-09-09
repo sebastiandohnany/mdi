@@ -103,8 +103,14 @@ def meter_plot(indicator_value, absolute_value, range):
 def country_orgs_bar_plot(df, condensed=False):
     fig = px.bar(df, x="Country", y="Deployed",
                  color="Organisation",
-                 color_discrete_map={**constants.organisation_colors, **constants.country_colors}
+                 color_discrete_map={**constants.organisation_colors, **constants.country_colors},
+                 custom_data= ["Organisation", "Percentage of Total Deployment"]
                  )
+
+    fig.update_traces(hovertemplate="<b>Country: %{x}</b><br>"
+                                    + "Organisation: %{customdata[0]} <br>"
+                                    + "Deployed: %{y} <br>"
+                                    + "Percentage Deployed: %{customdata[1]} % <br>")
     if condensed:
         fig.update_layout(
             title_text="Top 5",

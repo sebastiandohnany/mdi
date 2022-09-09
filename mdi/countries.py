@@ -454,8 +454,12 @@ def update_total_deployment_plot(df_deploy):
         df.groupby(["Country", "Organisation"])["Deployed"]
         .sum()
         .reset_index()
-        .sort_values(by="Organisation")
     )
+    def _calc_total_deploy_precentage(row):
+        percentage = percentage_calculate(row["Deployed"], country_sum[country_sum.index==row["Country"]].values[0], scaling=100)
+        return percentage
+
+    df["Percentage of Total Deployment"] = df.apply(_calc_total_deploy_precentage, axis=1)
 
     # Create a figure and a card
     fig = country_orgs_bar_plot(df, condensed=condensed)
