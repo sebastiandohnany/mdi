@@ -7,7 +7,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 from .server import app
-from . import constants
+from . import constants, card_texts
 from .plotting_functions import (
     horizontal_bar_plot,
     percentage_calculate,
@@ -61,7 +61,7 @@ def update_map(selected_year):
             + "Mission Name: %{customdata[7]} <br>"
             + "Mission Type: %{customdata[8]} <br>"
             + "<extra></extra>",
-            showlegend=True,
+            showlegend=False,
         )
         return data
 
@@ -136,13 +136,14 @@ def update_map(selected_year):
     # )
 
     legend = dict(
-        # orientation="h",
+        orientation="h",
         # yanchor="right",
-        # y=-0.3,
-        # xanchor="right",
-        # x=1,
+        y=1,
+        # xanchor="left",
+        x=-0.5,
         groupclick="toggleitem",
         itemsizing="constant",
+        traceorder="grouped"
     )
 
     hoverlabel = dict(font_size=16)
@@ -157,14 +158,14 @@ def update_map(selected_year):
     layout = dict(
         title="",
         hovermode="closest",
-        height=800,
-        margin=go.layout.Margin(l=0, r=0, t=0, b=0),
+        height=600,
+        margin=go.layout.Margin(l=0, r=20, t=0, b=0),
         mapbox=mapbox,
         legend=legend,
         hoverlabel=hoverlabel,
         # updatemenus=[buttons],
         # sliders=[sliders],
-        font=dict(family=constants.theme["fontFamily"]),
+
         uirevision="perservere",
         paper_bgcolor="rgb(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
@@ -229,9 +230,16 @@ def update_line_plot(dfp):
         height=340,
         paper_bgcolor="rgb(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
+        xaxis_title="Year",
+        yaxis_title="Total Deployment",
     )
 
-    card = summary_graph_card("Deployments over time", "", figure, title_colour="black")
+    card = summary_graph_card(
+        card_texts.dot_title,
+        card_texts.dot_under_title,
+        card_texts.dot_info_circle,
+        figure,
+        title_colour="black")
 
     return card
 
@@ -271,8 +279,9 @@ def update_pie_plot(dfp):
     )
 
     card = summary_graph_card(
-        "Distribution between organisations and missions",
-        "",
+        card_texts.sbp_title,
+        card_texts.sbp_under_title,
+        card_texts.sbp_info_circle,
         figure,
         title_colour="black",
     )
@@ -321,12 +330,13 @@ def update_population_plot(df_deploy, df_population, year):
         df["Deployment Per Capita"].iloc[::-1].values,
         df["Country Name"].iloc[::-1].values,
         df["Deployment Per Capita"].iloc[::-1].values,
-        15,
+        20,
         condensed=condensed,
     )
     card = summary_graph_card(
         deployment_mean,
-        "of deployed troops per 100,000 capita on average",
+        card_texts.dpc_under_title,
+        card_texts.dpc_info_circle,
         fig,
         title_colour="rgba(255, 0, 0, 0.8)",
     )
@@ -387,7 +397,8 @@ def update_active_plot(df_deploy, df_active):
 
     card = summary_graph_card(
         str(active_mean) + "%",
-        "of available active duty personnel on average",
+        card_texts.dap_under_title,
+        card_texts.dap_info_circle,
         fig,
         title_colour="rgba(255, 0, 0, 0.8)",
     )
@@ -402,9 +413,12 @@ def update_deployed_meter_plot(df_deploy):
     highest_percentage = percentage_calculate(df.max(), total_deployed, scaling=100)
 
     # Create a figure and a card
-    fig = meter_plot(highest_percentage, {"min": 0, "max": 100})
+    fig = meter_plot(highest_percentage, df.max(), {"min": 0, "max": 100})
     card = summary_graph_card(
-        df.idxmax(), "top deployment theatre", fig, title_colour="rgba(255, 0, 0, 0.8)"
+        df.idxmax(),
+        card_texts.tdm_under_title,
+        card_texts.tdm_info_circle,
+        fig, title_colour="rgba(255, 0, 0, 0.8)"
     )
 
     return card
@@ -446,8 +460,9 @@ def update_total_deployment_plot(df_deploy):
     # Create a figure and a card
     fig = country_orgs_bar_plot(df, condensed=condensed)
     card = summary_graph_card(
-        "Total deployed personnel",
-        "per country by different organisations",
+        card_texts.tdop_title,
+        card_texts.tdop_under_title,
+        card_texts.tdop_info_circle,
         fig,
         title_colour="rgba(255, 0, 0, 0.8)",
     )
@@ -471,7 +486,7 @@ def update_orgs_bar_plot(df_deploy):
 
     # Percentage of organisation deployment to total deployment
     deployment_percentage = [
-        percentage_calculate(number, total_deployed, 100) for number in deployed_numbers
+        int(percentage_calculate(number, total_deployed, 100)) for number in deployed_numbers
     ]
     # Orgs names and colour
     deployed_names_orgs = list(top_orgs.index)
@@ -498,12 +513,24 @@ def update_orgs_bar_plot(df_deploy):
     )
     card = summary_graph_card(
         total_deployed,
-        "total troop deployment",
+        card_texts.tdp_under_title,
+        card_texts.tdp_info_circle,
         fig,
         title_colour="rgba(255, 0, 0, 0.8)",
     )
     return card
 
+def update_mdi_card(mdi_index):
+    card = summary_graph_card(
+        mdi_index,
+        card_texts.mdi_under_title,
+        card_texts.mdi_info_circle,
+        graph = None,
+        title_colour="rgba(255, 0, 0, 0.8)",
+        extra_text=card_texts.mdi_extra_text
+    )
+
+    return card
 
 def update_dashboard(selected_countries, year):
     dfp = df_deployments
@@ -528,6 +555,7 @@ def update_dashboard(selected_countries, year):
     deploy_meter_card = update_deployed_meter_plot(dfp_year)
     orgs_countries_card = update_total_deployment_plot(dfp_year)
     orgs_bar_card = update_orgs_bar_plot(dfp_year)
+    mdi_card = update_mdi_card(100)
 
     if selected_countries.value_counts()[True] == 1:
         return (
@@ -538,6 +566,7 @@ def update_dashboard(selected_countries, year):
             deploy_meter_card,
             orgs_countries_card,
             orgs_bar_card,
+            mdi_card
         )
 
     elif selected_countries.value_counts()[True] == 2:
@@ -549,6 +578,7 @@ def update_dashboard(selected_countries, year):
             deploy_meter_card,
             orgs_countries_card,
             orgs_bar_card,
+            mdi_card
         )
 
     else:
@@ -560,6 +590,7 @@ def update_dashboard(selected_countries, year):
             deploy_meter_card,
             orgs_countries_card,
             orgs_bar_card,
+            mdi_card
         )
 
 
@@ -571,6 +602,7 @@ def update_dashboard(selected_countries, year):
     Output(component_id="card-theatre", component_property="children"),
     Output(component_id="card-countries-orgs", component_property="children"),
     Output(component_id="card-bar-orgs", component_property="children"),
+    Output(component_id="card-mdi", component_property="children"),
     Input(component_id="selected-countries", component_property="data"),
     Input(component_id="selected-year", component_property="data"),
 )
