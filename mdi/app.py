@@ -17,7 +17,21 @@ from dotenv import load_dotenv
 load_dotenv()
 ROOT = os.getenv("PROJECT_ROOT")
 
-pio.templates.default = "plotly_white"
+
+#Default plot theme
+import plotly.graph_objects as go
+
+
+pio.templates["mdi_plots"] = go.layout.Template(
+    layout_annotations=[
+        dict(
+            font=dict(family="Open Sans"),
+        )
+    ]
+)
+pio.templates.default = "plotly_white+mdi_plots"
+
+
 from dash_bootstrap_templates import load_figure_template
 
 load_figure_template("litera")
@@ -65,7 +79,6 @@ button_github = dbc.Button(
     style={"text-transform": "none"},
 )
 
-# layout
 app.layout = html.Div(
     [
         html.Header(
@@ -97,6 +110,7 @@ app.layout = html.Div(
                                 ),
                             ],
                             # align="center",
+                            style={"background-color": "#fafafa"},
                         ),
                         dbc.Row(
                             [
@@ -124,12 +138,20 @@ app.layout = html.Div(
                     fluid=True,
                 ),
                 dark=False,
-                color="white",
                 sticky="top",
-            )
+                style={"background-color": "#fafafa"}
+            ),
+            style={"background-color": "#fafafa"},
         ),
         dbc.Container(
             children=[
+                dbc.Row(
+                    [
+                    dbc.Col(dbc.Card(id="card-mdi", style=constants.card_style)),
+                    dbc.Col(dbc.Card(id="card-theatre", style=constants.card_style)),
+                    dbc.Col(dbc.Card(id="card-bar-orgs", style=constants.card_style))
+                ]
+                ),
                 dbc.Row(
                     [
                         dbc.Col(
@@ -146,12 +168,19 @@ app.layout = html.Div(
                                         )
                                     ],
                                     style=constants.card_style,
+                                )
+                            ]
+                        ),
+                        dbc.Col(
+                            [
+                                dbc.Card(
+                                    dbc.CardBody("LEGEND HERE")
                                 ),
                                 dbc.Card(
                                     [
                                         dbc.CardBody(
                                             [
-                                                html.P(
+                                                html.H6(
                                                     "Choose a year",
                                                     className="card-text",
                                                 ),
@@ -166,54 +195,44 @@ app.layout = html.Div(
                                                         for year in df["Year"].unique()
                                                     },
                                                 ),
-                                            ]
+                                            ],
                                         )
                                     ],
                                     style=constants.card_style,
                                 ),
                             ],
-                            md=7,
                         ),
-                        dbc.Col(
-                            [
-                                dbc.Card(
-                                    id="card-sunburst", style=constants.card_style
-                                ),
-                                dbc.Card(id="card-line", style=constants.card_style),
-                            ]
-                        ),
-                    ]
+                    ],
                 ),
-                dbc.Row(
-                    [
-                        dbc.Col(
+
+                dbc.Row([
+                    dbc.Col(
+                        [
+                            dbc.Card(id="card-line", style=constants.card_style),
+                        ]
+                    ),
+                    dbc.Col(
+                        [
                             dbc.Card(id="card-active", style=constants.card_style),
-                        ),
-                        dbc.Col(
                             dbc.Card(id="card-population", style=constants.card_style),
-                        ),
-                        dbc.Col(
-                            [dbc.Card(id="card-theatre", style=constants.card_style)]
-                        ),
-                    ]
-                ),
+                        ]
+                    )
+                ], className="g-0"),
                 dbc.Row(
                     [
                         dbc.Col(
-                            dbc.Card(id="card-bar-orgs", style=constants.card_style),
-                            md=4,
+                            dbc.Card(id="card-sunburst", style=constants.card_style),
                         ),
                         dbc.Col(
-                            dbc.Card(
-                                id="card-countries-orgs", style=constants.card_style
-                            ),
-                            md=8,
+                            dbc.Card(id="card-countries-orgs", style=constants.card_style)
                         ),
                     ]
                 ),
+
                 dcc.Store(id="selected-countries"),
                 dcc.Store(id="selected-year"),
             ],
+            style={"background-color": "#fafafa"},
             # style={"fontFamily": constants.theme["fontFamily"]},
             fluid=True,
         ),

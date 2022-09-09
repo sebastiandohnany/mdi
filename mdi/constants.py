@@ -90,7 +90,7 @@ country_regions = {
 }
 
 card_style = {
-    'margin': '0.2rem 0.2rem 0.8rem 0.2rem',
-    'background': '#fafafa'
+    'margin': '0.5rem 0.5rem 0.5rem 0.5rem',
+    'background': 'white'
 }
 
