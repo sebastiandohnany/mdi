@@ -147,7 +147,8 @@ app.layout = html.Div(
             children=[
                 dbc.Row(
                     [
-                    dbc.Col(dbc.Card(id="card-mdi", style=constants.card_style)),
+                    dbc.Col(dbc.Card(id="card-mdi", style={'margin': '0.5rem 0.5rem 0.5rem 0.5rem',
+                                                           'background': '#FEBDB9'})),
                     dbc.Col(dbc.Card(id="card-theatre", style=constants.card_style)),
                     dbc.Col(dbc.Card(id="card-bar-orgs", style=constants.card_style))
                 ]
