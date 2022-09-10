@@ -61,7 +61,7 @@ def update_map(selected_year):
             + "Mission Name: %{customdata[7]} <br>"
             + "Mission Type: %{customdata[8]} <br>"
             + "<extra></extra>",
-            showlegend=False,
+            showlegend=True,
         )
         return data
 
@@ -224,6 +224,7 @@ def update_line_plot(dfp):
         get_data(dfp[dfp["Country"] == country], country)
         for country in dfp["Country"].unique()
     ]
+
     figure = go.Figure(data=data)
     figure.update_layout(
         margin=dict(l=0, r=0, t=0, b=0),
@@ -233,6 +234,25 @@ def update_line_plot(dfp):
         xaxis_title="Year",
         yaxis_title="Total Deployment",
     )
+
+    # TODO: figure out a way to prevent overlappping labels
+
+    if len(dfp["Country"].unique()) > 10:
+        country_sum = (
+            dfp.groupby(["Country"])["Deployed"]
+            .sum()
+            .sort_values(ascending=False)
+        )
+        country_list = list(country_sum.head(10).index)
+    else:
+        country_list = dfp["Country"].unique()
+
+
+    figure.for_each_trace(lambda f: figure.add_annotation(
+        x=f.x[-1] + 0.1, y=f.y[-1], text=f.name,
+        font_color=f.line.color,
+        xanchor="left", showarrow=False
+    ) if f.name in country_list else None)
 
     card = summary_graph_card(
         card_texts.dot_title,
@@ -428,13 +448,14 @@ def update_total_deployment_plot(df_deploy):
     df = df_deploy.copy()
     condensed = False
 
+    country_sum = (
+        df_deploy.groupby(["Country"])["Deployed"]
+        .sum()
+        .sort_values(ascending=False)
+    )
+
     # Select top 5 deployment countries
     if len(df_deploy["Country"].unique()) > 5:
-        country_sum = (
-            df_deploy.groupby(["Country"])["Deployed"]
-            .sum()
-            .sort_values(ascending=False)
-        )
         country_list = list(country_sum.head(5).index)
         df = df.query("Country in @country_list")
         condensed = True
