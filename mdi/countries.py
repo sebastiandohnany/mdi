@@ -182,7 +182,7 @@ def update_line_plot(dfp):
     return card
 
 
-def update_pie_plot(dfp):
+def update_sunburst_plot(dfp):
     dfm = dfp.groupby(["Organisation", "MissionName"])["Deployed"].sum()
     dfm = dfm.to_frame().reset_index()
 
@@ -208,6 +208,7 @@ def update_pie_plot(dfp):
                 for org in orgs
             ]
         ),
+        insidetextorientation="radial",
     )
     figure = go.Figure(data=data)
     figure.update_layout(
@@ -508,7 +509,7 @@ def update_dashboard(selected_countries, year):
     if selected_countries.value_counts()[True] == 1:
         return (
             update_line_plot(dfp),
-            update_pie_plot(dfp_year),
+            update_sunburst_plot(dfp_year),
             population_card,
             active_card,
             deploy_meter_card,
@@ -520,7 +521,7 @@ def update_dashboard(selected_countries, year):
     elif selected_countries.value_counts()[True] == 2:
         return (
             update_line_plot(dfp),
-            update_pie_plot(dfp[dfp["Year"] == int(year)]),
+            update_sunburst_plot(dfp[dfp["Year"] == int(year)]),
             population_card,
             active_card,
             deploy_meter_card,
@@ -532,7 +533,7 @@ def update_dashboard(selected_countries, year):
     else:
         return (
             update_line_plot(dfp),
-            update_pie_plot(dfp[dfp["Year"] == int(year)]),
+            update_sunburst_plot(dfp[dfp["Year"] == int(year)]),
             population_card,
             active_card,
             deploy_meter_card,
