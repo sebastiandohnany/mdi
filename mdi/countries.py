@@ -143,7 +143,7 @@ def update_map(selected_year):
         x=-0.5,
         groupclick="toggleitem",
         itemsizing="constant",
-        traceorder="grouped"
+        traceorder="grouped",
     )
 
     hoverlabel = dict(font_size=16)
@@ -165,7 +165,6 @@ def update_map(selected_year):
         hoverlabel=hoverlabel,
         # updatemenus=[buttons],
         # sliders=[sliders],
-
         uirevision="perservere",
         paper_bgcolor="rgb(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
@@ -239,27 +238,32 @@ def update_line_plot(dfp):
 
     if len(dfp["Country"].unique()) > 10:
         country_sum = (
-            dfp.groupby(["Country"])["Deployed"]
-            .sum()
-            .sort_values(ascending=False)
+            dfp.groupby(["Country"])["Deployed"].sum().sort_values(ascending=False)
         )
         country_list = list(country_sum.head(10).index)
     else:
         country_list = dfp["Country"].unique()
 
-
-    figure.for_each_trace(lambda f: figure.add_annotation(
-        x=f.x[-1] + 0.1, y=f.y[-1], text=f.name,
-        font_color=f.line.color,
-        xanchor="left", showarrow=False
-    ) if f.name in country_list else None)
+    figure.for_each_trace(
+        lambda f: figure.add_annotation(
+            x=f.x[-1] + 0.1,
+            y=f.y[-1],
+            text=f.name,
+            font_color=f.line.color,
+            xanchor="left",
+            showarrow=False,
+        )
+        if f.name in country_list
+        else None
+    )
 
     card = summary_graph_card(
         card_texts.dot_title,
         card_texts.dot_under_title,
         card_texts.dot_info_circle,
         figure,
-        title_colour="black")
+        title_colour="black",
+    )
 
     return card
 
@@ -338,14 +342,14 @@ def update_population_plot(df_deploy, df_population, year):
     df = df.sort_values(by=["Deployment Per Capita"], ascending=False)
     deployment_mean = round(df["Deployment Per Capita"].mean(), 1)
 
-    #If more than 5 countries, select top 5
+    # If more than 5 countries, select top 5
     if df.shape[0] > 5:
         df = df.head(5)
         condensed = True
     else:
         condensed = False
 
-    #Create a plot and a card
+    # Create a plot and a card
     fig = horizontal_bar_plot(
         df["Deployment Per Capita"].iloc[::-1].values,
         df["Country Name"].iloc[::-1].values,
@@ -438,7 +442,8 @@ def update_deployed_meter_plot(df_deploy):
         df.idxmax(),
         card_texts.tdm_under_title,
         card_texts.tdm_info_circle,
-        fig, title_colour="rgba(255, 0, 0, 0.8)"
+        fig,
+        title_colour="rgba(255, 0, 0, 0.8)",
     )
 
     return card
@@ -449,9 +454,7 @@ def update_total_deployment_plot(df_deploy):
     condensed = False
 
     country_sum = (
-        df_deploy.groupby(["Country"])["Deployed"]
-        .sum()
-        .sort_values(ascending=False)
+        df_deploy.groupby(["Country"])["Deployed"].sum().sort_values(ascending=False)
     )
 
     # Select top 5 deployment countries
@@ -471,16 +474,19 @@ def update_total_deployment_plot(df_deploy):
 
     # Rename all other orgs to "Other" and sum
     df.loc[~df["Organisation"].isin(top_orgs), "Organisation"] = "Other"
-    df = (
-        df.groupby(["Country", "Organisation"])["Deployed"]
-        .sum()
-        .reset_index()
-    )
+    df = df.groupby(["Country", "Organisation"])["Deployed"].sum().reset_index()
+
     def _calc_total_deploy_precentage(row):
-        percentage = percentage_calculate(row["Deployed"], country_sum[country_sum.index==row["Country"]].values[0], scaling=100)
+        percentage = percentage_calculate(
+            row["Deployed"],
+            country_sum[country_sum.index == row["Country"]].values[0],
+            scaling=100,
+        )
         return percentage
 
-    df["Percentage of Total Deployment"] = df.apply(_calc_total_deploy_precentage, axis=1)
+    df["Percentage of Total Deployment"] = df.apply(
+        _calc_total_deploy_precentage, axis=1
+    )
 
     # Create a figure and a card
     fig = country_orgs_bar_plot(df, condensed=condensed)
@@ -511,7 +517,8 @@ def update_orgs_bar_plot(df_deploy):
 
     # Percentage of organisation deployment to total deployment
     deployment_percentage = [
-        int(percentage_calculate(number, total_deployed, 100)) for number in deployed_numbers
+        int(percentage_calculate(number, total_deployed, 100))
+        for number in deployed_numbers
     ]
     # Orgs names and colour
     deployed_names_orgs = list(top_orgs.index)
@@ -545,22 +552,24 @@ def update_orgs_bar_plot(df_deploy):
     )
     return card
 
+
 def update_mdi_card(mdi_index):
     card = summary_graph_card(
         mdi_index,
         card_texts.mdi_under_title,
         card_texts.mdi_info_circle,
-        graph = None,
+        graph=None,
         title_colour="rgba(255, 0, 0, 0.8)",
-        extra_text=card_texts.mdi_extra_text
+        extra_text=card_texts.mdi_extra_text,
     )
 
     return card
 
+
 def update_dashboard(selected_countries, year):
     dfp = df_deployments
-    df_active = pd.read_excel(ROOT + "temp/MDVA_active-duty.xlsx")
-    df_population = pd.read_csv(ROOT + "temp/MDVA_population.csv", delimiter=",")
+    df_active = pd.read_excel(ROOT + "data/MDVA_active-duty.xlsx")
+    df_population = pd.read_csv(ROOT + "data/MDVA_population.csv", delimiter=",")
 
     if True not in selected_countries.values:
         raise exceptions.PreventUpdate
@@ -591,7 +600,7 @@ def update_dashboard(selected_countries, year):
             deploy_meter_card,
             orgs_countries_card,
             orgs_bar_card,
-            mdi_card
+            mdi_card,
         )
 
     elif selected_countries.value_counts()[True] == 2:
@@ -603,7 +612,7 @@ def update_dashboard(selected_countries, year):
             deploy_meter_card,
             orgs_countries_card,
             orgs_bar_card,
-            mdi_card
+            mdi_card,
         )
 
     else:
@@ -615,7 +624,7 @@ def update_dashboard(selected_countries, year):
             deploy_meter_card,
             orgs_countries_card,
             orgs_bar_card,
-            mdi_card
+            mdi_card,
         )
 
 
