@@ -65,76 +65,6 @@ def update_map(selected_year):
         )
         return data
 
-    # # customise
-    # sliders = dict(
-    #     active=0,
-    #     yanchor="top",
-    #     xanchor="left",
-    #     currentvalue={
-    #         "font": {"size": 20},
-    #         "prefix": "Year:",
-    #         "visible": True,
-    #         "xanchor": "right",
-    #     },
-    #     transition={"duration": 300, "easing": "cubic-in-out"},
-    #     pad={"b": 10, "t": 50},
-    #     len=0.9,
-    #     x=0.1,
-    #     y=0,
-    #     steps=[
-    #         {
-    #             "args": [
-    #                 [str(year)],
-    #                 {
-    #                     "frame": {"duration": 300},
-    #                     "mode": "immediate",
-    #                     "transition": {"duration": 0},
-    #                 },
-    #             ],
-    #             "label": str(year),
-    #             "method": "animate",
-    #         }
-    #         for year in np.sort(df["Year"].unique())
-    #     ],
-    # )
-
-    # buttons = dict(
-    #     buttons=[
-    #         {
-    #             "args": [
-    #                 None,
-    #                 {
-    #                     "frame": {"duration": 500},
-    #                     "fromcurrent": True,
-    #                     "transition": {"duration": 300, "easing": "quadratic-in-out"},
-    #                 },
-    #             ],
-    #             "label": "Play",
-    #             "method": "animate",
-    #         },
-    #         {
-    #             "args": [
-    #                 [None],
-    #                 {
-    #                     "frame": {"duration": 0},
-    #                     "mode": "immediate",
-    #                     "transition": {"duration": 0},
-    #                 },
-    #             ],
-    #             "label": "Pause",
-    #             "method": "animate",
-    #         },
-    #     ],
-    #     direction="left",
-    #     pad={"r": 10, "t": 87},
-    #     showactive=False,
-    #     type="buttons",
-    #     x=0.1,
-    #     xanchor="right",
-    #     y=0,
-    #     yanchor="top",
-    # )
-
     legend = dict(
         orientation="h",
         # yanchor="right",
@@ -144,6 +74,7 @@ def update_map(selected_year):
         groupclick="toggleitem",
         itemsizing="constant",
         traceorder="grouped",
+        bgcolor="rgba(0,0,0,0)",
     )
 
     hoverlabel = dict(font_size=16)
@@ -163,8 +94,6 @@ def update_map(selected_year):
         mapbox=mapbox,
         legend=legend,
         hoverlabel=hoverlabel,
-        # updatemenus=[buttons],
-        # sliders=[sliders],
         uirevision="perservere",
         paper_bgcolor="rgb(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
@@ -183,27 +112,12 @@ def update_map(selected_year):
         )
         for country in dfp["Country"].unique()
     ]
-    # frames = [
-    #     go.Frame(
-    #         data=[
-    #             get_data(
-    #                 dfp.loc[(dfp["Country"] == country) & (dfp["Year"] == year)],
-    #                 country,
-    #             )
-    #             for country in dfp["Country"].unique()
-    #         ],
-    #         name=str(year),
-    #     )
-    #     for year in np.sort(dfp["Year"].unique())
-    # ]
 
     figure = go.Figure(
         data=data,
-        # frames=frames,
         layout=layout,
     )
 
-    figure.update_layout(legend=dict(bgcolor="rgba(0,0,0,0)"))
     return figure
 
 
@@ -641,12 +555,10 @@ def update_dashboard(selected_countries, year):
     Input(component_id="selected-year", component_property="data"),
 )
 def reload_dashboard(selected_countries, selected_year):
-    selected_year = selected_year_default
-    actual_year = selected_year["year"].iloc[0]
-
+    selected_year = pd.read_json(selected_year)["year"].iloc[0]
     selected_countries = pd.read_json(selected_countries, typ="series")
 
-    return update_dashboard(selected_countries, actual_year)
+    return update_dashboard(selected_countries, selected_year)
 
 
 @app.callback(
