@@ -46,7 +46,7 @@ df["Color"] = df["Country"].replace(to_replace=constants.country_colors)
 
 # deployments and presence
 df_deployments = df[df["MissionType"] == "Operation"]
-df_presence = df[df["MissionType"] == "MillitaryPresence"]
+df_presence = df[df["MissionType"] == "MilitaryPresence"]
 
 
 # methodology file, modal, button

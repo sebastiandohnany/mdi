@@ -66,6 +66,29 @@ def update_map(selected_year):
         )
         return data
 
+    def get_presence_data(dfn, name):
+        data = go.Scattermapbox(
+            name=name,
+            lat=dfn.Lat,
+            lon=dfn.Lon,
+            mode="markers",
+            marker=go.scattermapbox.Marker(
+                allowoverlap=True,
+                symbol="triangle",
+                color=dfn.Color,
+            ),
+            customdata=dfn,
+            hovertemplate="<b>Country: %{customdata[5]}</b><br>"
+            + "Theatre: %{customdata[2]} <br>"
+            + "Deployed: %{customdata[9]} <br>"
+            + "Organisation: %{customdata[6]} <br>"
+            + "Mission Name: %{customdata[7]} <br>"
+            + "Mission Type: %Presence <br>"
+            + "<extra></extra>",
+            showlegend=False,
+        )
+        return data
+
     legend = dict(
         orientation="h",
         # yanchor="right",
@@ -105,6 +128,10 @@ def update_map(selected_year):
         by="Country"
     )
 
+    dfp_presence = df_presence[df_presence["Year"] == selected_year].sort_values(
+        by="Country"
+    )
+
     # generate
     data = [
         get_data(
@@ -112,6 +139,12 @@ def update_map(selected_year):
             country,
         )
         for country in dfp["Country"].unique()
+    ] + [
+        get_presence_data(
+            dfp_presence.loc[(dfp_presence["Country"] == country)],
+            country,
+        )
+        for country in dfp_presence["Country"].unique()
     ]
 
     figure = go.Figure(
@@ -213,6 +246,9 @@ def update_sunburst_plot(dfp):
             ]
         ),
         insidetextorientation="radial",
+        hovertemplate="Deployed: %{value:,}<br>"
+        + "Share: %{percentParent:.2p}<br>"
+        + "<extra></extra>",
     )
     figure = go.Figure(data=data)
     figure.update_layout(
