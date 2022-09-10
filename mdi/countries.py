@@ -34,13 +34,10 @@ rank_countries_by_deployed = (
 )
 
 
-def update_map(selected_year):
+def update_map(selected_year, selected_countries):
     def get_data(dfn, name):
         data = go.Scattermapbox(
             name=name,
-            legendrank=rank_countries_by_deployed.index.get_loc(name),
-            legendgroup=constants.country_regions.get(name, "N/A"),
-            legendgrouptitle_text=constants.country_regions.get(name, "N/A"),
             lat=dfn.Lat,
             lon=dfn.Lon,
             mode="markers",
@@ -62,7 +59,7 @@ def update_map(selected_year):
             + "Mission Name: %{customdata[7]} <br>"
             + "Mission Type: %{customdata[8]} <br>"
             + "<extra></extra>",
-            showlegend=True,
+            showlegend=False,
         )
         return data
 
@@ -89,17 +86,6 @@ def update_map(selected_year):
         )
         return data
 
-    legend = dict(
-        orientation="h",
-        # yanchor="right",
-        y=1,
-        # xanchor="left",
-        x=-0.5,
-        groupclick="toggleitem",
-        itemsizing="constant",
-        traceorder="grouped",
-        bgcolor="rgba(0,0,0,0)",
-    )
 
     hoverlabel = dict(font_size=16)
 
@@ -116,7 +102,6 @@ def update_map(selected_year):
         height=600,
         margin=go.layout.Margin(l=0, r=20, t=0, b=0),
         mapbox=mapbox,
-        legend=legend,
         hoverlabel=hoverlabel,
         uirevision="perservere",
         paper_bgcolor="rgb(0,0,0,0)",
@@ -124,11 +109,13 @@ def update_map(selected_year):
     )
 
     # filter and sort
-    dfp = df_deployments[df_deployments["Year"] == selected_year].sort_values(
+    dfp = df_deployments.query("Country in @selected_countries")
+    dfp = dfp[dfp["Year"] == selected_year].sort_values(
         by="Country"
     )
 
-    dfp_presence = df_presence[df_presence["Year"] == selected_year].sort_values(
+    dfp_presence = df_presence.query("Country in @selected_countries")
+    dfp_presence = dfp_presence[dfp_presence["Year"] == selected_year].sort_values(
         by="Country"
     )
 
@@ -566,13 +553,12 @@ def update_dashboard(selected_countries, year):
     df_active = pd.read_excel(ROOT + "data/MDVA_active-duty.xlsx")
     df_population = pd.read_csv(ROOT + "data/MDVA_population.csv", delimiter=",")
 
-    if True not in selected_countries.values:
+    if not selected_countries:
         raise exceptions.PreventUpdate
 
-    countries = selected_countries[selected_countries == True].index
-    dfp = dfp.query("Country in @countries")
-    df_active = df_active.query("Country in @countries")
-    df_population = df_population.query("Country in @countries")
+    dfp = dfp.query("Country in @selected_countries")
+    df_active = df_active.query("Country in @selected_countries")
+    df_population = df_population.query("Country in @selected_countries")
     # TODO: maybe unnecessary to choose which one
 
     dfp_year = dfp[dfp["Year"] == int(year)]
@@ -586,7 +572,7 @@ def update_dashboard(selected_countries, year):
     orgs_bar_card = update_orgs_bar_plot(dfp_year)
     mdi_card = update_mdi_card(100)
 
-    if selected_countries.value_counts()[True] == 1:
+    if len(selected_countries) == 1:
         return (
             update_line_plot(dfp),
             update_sunburst_plot(dfp_year),
@@ -598,7 +584,7 @@ def update_dashboard(selected_countries, year):
             mdi_card,
         )
 
-    elif selected_countries.value_counts()[True] == 2:
+    elif len(selected_countries) == 2:
         return (
             update_line_plot(dfp),
             update_sunburst_plot(dfp[dfp["Year"] == int(year)]),
@@ -637,50 +623,29 @@ def update_dashboard(selected_countries, year):
 )
 def reload_dashboard(selected_countries, selected_year):
     selected_year = pd.read_json(selected_year)["year"].iloc[0]
-    selected_countries = pd.read_json(selected_countries, typ="series")
 
     return update_dashboard(selected_countries, selected_year)
 
 
 @app.callback(
-    Output(component_id="selected-countries", component_property="data"),
-    Input(component_id="graph-map", component_property="restyleData"),
-    Input(component_id="selected-countries", component_property="data"),
-)
-def update_selected_countries(selection_changes, selected_countries):
-    if selected_countries is None:
-        selected_countries = selected_countries_default
-    else:
-        selected_countries = pd.read_json(selected_countries, typ="series")
-
-    if selection_changes is not None:
-        selected_countries.iloc[selection_changes[1]] = list(
-            map(
-                lambda x: True if x == True else False,
-                selection_changes[0].get("visible"),
-            )
-        )
-
-    return selected_countries.to_json()
-
-
-@app.callback(
     Output(component_id="selected-year", component_property="data"),
     Output(component_id="graph-map", component_property="figure"),
+    Output(component_id="selected-countries", component_property="data"),
     Input(component_id="year-slider", component_property="value"),
     State(component_id="graph-map", component_property="relayoutData"),
+    Input(component_id="country-filter", component_property="value"),
 )
-def update_selected_year(actual_year, data):
+def update_selected_year(actual_year, data, country_selection):
     zoom = 1.5
     center = dict(lat=24, lon=0)
     if data:
         zoom = data.get("mapbox.zoom", 1.5)
         center = data.get("mapbox.center", dict(lat=24, lon=0))
 
-    figure = update_map(actual_year)
+    figure = update_map(actual_year, country_selection)
     figure.update_layout(mapbox_zoom=zoom, mapbox_center=center)
 
     selected_year = selected_year_default
     selected_year["year"].iloc[0] = actual_year
 
-    return selected_year.to_json(), figure
+    return selected_year.to_json(), figure, country_selection

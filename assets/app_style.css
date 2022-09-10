@@ -1,0 +1,5 @@
+.Select--multi > .Select-control .Select-value, .Select-placeholder {
+    border: 1px solid grey;
+    border-radius: 4px;
+    background-color: white;
+}

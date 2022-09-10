@@ -48,6 +48,22 @@ df["Color"] = df["Country"].replace(to_replace=constants.country_colors)
 df_deployments = df[df["MissionType"] == "Operation"]
 df_presence = df[df["MissionType"] == "MilitaryPresence"]
 
+dropdown_options = []
+for country in list(constants.country_regions.keys()):
+    if country == 'default':
+        pass
+    else:
+        option_dictionary = {"label": html.Div([html.I(className="fas fa-solid fa-circle fa-2xs",
+                                                       style={"color":constants.country_colors[country],
+                                                              "margin-right":"5px"}),
+                                               html.Div([constants.country_codes[country] + f" ({country})"],
+                                                        style={"color": constants.country_colors[country] })]
+                                               , style={'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
+                             "value": country,
+                             "search":constants.country_codes[country]}
+        dropdown_options.append(option_dictionary)
+
+
 
 # methodology file, modal, button
 with open(ROOT + "static/methodology.md", "r") as f:
@@ -169,11 +185,10 @@ app.layout = html.Div(
                                     ],
                                     style=constants.card_style,
                                 )
-                            ]
+                            ], className="col-7"
                         ),
                         dbc.Col(
                             [
-                                dbc.Card(dbc.CardBody("LEGEND HERE")),
                                 dbc.Card(
                                     [
                                         dbc.CardBody(
@@ -198,6 +213,19 @@ app.layout = html.Div(
                                     ],
                                     style=constants.card_style,
                                 ),
+                                dbc.Card(
+                                    [
+                                        dbc.CardBody([
+                                            html.H6("Choose countries", className="card-text"),
+                                            dcc.Dropdown(
+                                                id="country-filter",
+                                                options=dropdown_options,
+                                                value=list(constants.country_regions.keys()),
+                                                multi=True,
+                                                className="dcc_control",
+                                            ),
+                                        ], style=constants.card_style)
+                                ]),
                             ],
                         ),
                     ],
@@ -207,14 +235,12 @@ app.layout = html.Div(
                         dbc.Col(
                             [
                                 dbc.Card(id="card-line", style=constants.card_style),
-                            ]
+                            ], className="col-8"
                         ),
                         dbc.Col(
                             [
                                 dbc.Card(id="card-active", style=constants.card_style),
-                                dbc.Card(
-                                    id="card-population", style=constants.card_style
-                                ),
+                                dbc.Card(id="card-population", style=constants.card_style),
                             ]
                         ),
                     ],
