@@ -2,8 +2,12 @@
 
 /venv
 /backup
+/temp
+
 */__pycache__
 /__pycache__
+
+run.py
 
 .env
 

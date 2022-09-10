@@ -18,7 +18,7 @@ load_dotenv()
 ROOT = os.getenv("PROJECT_ROOT")
 
 
-#Default plot theme
+# Default plot theme
 import plotly.graph_objects as go
 
 
@@ -48,13 +48,13 @@ df_deployments = df[df["MissionType"] == "Operation"]
 df_presence = df[df["MissionType"] == "MillitaryPresence"]
 
 
-# navbar
+# methodology file
 with open(ROOT + "static/methodology.md", "r") as f:
-    howto_md = f.read()
+    methodology_md = f.read()
 
 modal_overlay = dbc.Modal(
     [
-        dbc.ModalBody(html.Div([dcc.Markdown(howto_md)], id="howto-md")),
+        dbc.ModalBody(html.Div([dcc.Markdown(methodology_md)], id="howto-md")),
         dbc.ModalFooter(dbc.Button("Close", id="howto-close", className="howto-bn")),
     ],
     id="modal",
@@ -65,18 +65,9 @@ button_howto = dbc.Button(
     "Methodology",
     id="howto-open",
     outline=True,
-    color="info",
+    color="primary",
     # Turn off lowercase transformation for class .button in stylesheet
     style={"textTransform": "none"},
-)
-
-button_github = dbc.Button(
-    "Source",
-    outline=True,
-    color="primary",
-    href="https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-image-segmentation",
-    id="gh-link",
-    style={"text-transform": "none"},
 )
 
 app.layout = html.Div(
@@ -139,7 +130,7 @@ app.layout = html.Div(
                 ),
                 dark=False,
                 sticky="top",
-                style={"background-color": "#fafafa"}
+                style={"background-color": "#fafafa"},
             ),
             style={"background-color": "#fafafa"},
         ),
@@ -147,11 +138,22 @@ app.layout = html.Div(
             children=[
                 dbc.Row(
                     [
-                    dbc.Col(dbc.Card(id="card-mdi", style={'margin': '0.5rem 0.5rem 0.5rem 0.5rem',
-                                                           'background': '#FEBDB9'})),
-                    dbc.Col(dbc.Card(id="card-theatre", style=constants.card_style)),
-                    dbc.Col(dbc.Card(id="card-bar-orgs", style=constants.card_style))
-                ]
+                        dbc.Col(
+                            dbc.Card(
+                                id="card-mdi",
+                                style={
+                                    "margin": "0.5rem 0.5rem 0.5rem 0.5rem",
+                                    "background": "#FEBDB9",
+                                },
+                            )
+                        ),
+                        dbc.Col(
+                            dbc.Card(id="card-theatre", style=constants.card_style)
+                        ),
+                        dbc.Col(
+                            dbc.Card(id="card-bar-orgs", style=constants.card_style)
+                        ),
+                    ]
                 ),
                 dbc.Row(
                     [
@@ -174,9 +176,7 @@ app.layout = html.Div(
                         ),
                         dbc.Col(
                             [
-                                dbc.Card(
-                                    dbc.CardBody("LEGEND HERE")
-                                ),
+                                dbc.Card(dbc.CardBody("LEGEND HERE")),
                                 dbc.Card(
                                     [
                                         dbc.CardBody(
@@ -205,31 +205,36 @@ app.layout = html.Div(
                         ),
                     ],
                 ),
-
-                dbc.Row([
-                    dbc.Col(
-                        [
-                            dbc.Card(id="card-line", style=constants.card_style),
-                        ]
-                    ),
-                    dbc.Col(
-                        [
-                            dbc.Card(id="card-active", style=constants.card_style),
-                            dbc.Card(id="card-population", style=constants.card_style),
-                        ]
-                    )
-                ], className="g-0"),
+                dbc.Row(
+                    [
+                        dbc.Col(
+                            [
+                                dbc.Card(id="card-line", style=constants.card_style),
+                            ]
+                        ),
+                        dbc.Col(
+                            [
+                                dbc.Card(id="card-active", style=constants.card_style),
+                                dbc.Card(
+                                    id="card-population", style=constants.card_style
+                                ),
+                            ]
+                        ),
+                    ],
+                    className="g-0",
+                ),
                 dbc.Row(
                     [
                         dbc.Col(
                             dbc.Card(id="card-sunburst", style=constants.card_style),
                         ),
                         dbc.Col(
-                            dbc.Card(id="card-countries-orgs", style=constants.card_style)
+                            dbc.Card(
+                                id="card-countries-orgs", style=constants.card_style
+                            )
                         ),
                     ]
                 ),
-
                 dcc.Store(id="selected-countries"),
                 dcc.Store(id="selected-year"),
             ],
@@ -255,13 +260,13 @@ def toggle_modal(n1, n2, is_open):
     return is_open
 
 
-# we use a callback to toggle the collapse on small screens
-@app.callback(
-    Output("navbar-collapse", "is_open"),
-    [Input("navbar-toggler", "n_clicks")],
-    [State("navbar-collapse", "is_open")],
-)
-def toggle_navbar_collapse(n, is_open):
-    if n:
-        return not is_open
-    return is_open
+# # we use a callback to toggle navbar collapse on small screens
+# @app.callback(
+#     Output("navbar-collapse", "is_open"),
+#     [Input("navbar-toggler", "n_clicks")],
+#     [State("navbar-collapse", "is_open")],
+# )
+# def toggle_navbar_collapse(n, is_open):
+#     if n:
+#         return not is_open
+#     return is_open
