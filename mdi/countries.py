@@ -14,6 +14,7 @@ from .plotting_functions import (
     summary_graph_card,
     meter_plot,
     country_orgs_bar_plot,
+    comparison_summary_graph_card,
 )
 
 # data
@@ -235,17 +236,18 @@ def update_line_plot(dfp):
         yaxis_title="Total Deployment",
     )
 
-    # TODO: figure out a way to prevent overlappping labels
+    # TODO: figure out a way to prevent overlappping labels BUT MAYBE NOT A GOOD IDEA
 
-    if len(dfp["Country"].unique()) > 10:
-        country_sum = (
-            dfp.groupby(["Country"])["Deployed"]
-            .sum()
-            .sort_values(ascending=False)
-        )
-        country_list = list(country_sum.head(10).index)
-    else:
-        country_list = dfp["Country"].unique()
+    #if len(dfp["Country"].unique()) > 100:
+    #    country_sum = (
+    #        dfp.groupby(["Country"])["Deployed"]
+    #        .sum()
+    #        .sort_values(ascending=False)
+    #    )
+    #    country_list = list(country_sum.head(10).index)
+    #else:
+    #    country_list = dfp["Country"].unique()
+    country_list = dfp["Country"].unique()
 
 
     figure.for_each_trace(lambda f: figure.add_annotation(
@@ -259,7 +261,7 @@ def update_line_plot(dfp):
         card_texts.dot_under_title,
         card_texts.dot_info_circle,
         figure,
-        title_colour="black")
+        title_colour="rgb(167, 23, 26)")
 
     return card
 
@@ -303,7 +305,7 @@ def update_pie_plot(dfp):
         card_texts.sbp_under_title,
         card_texts.sbp_info_circle,
         figure,
-        title_colour="black",
+        title_colour="rgb(167, 23, 26)",
     )
 
     return card
@@ -444,6 +446,27 @@ def update_deployed_meter_plot(df_deploy):
     return card
 
 
+def update_two_deployment_meter_plots(df_deploy):
+    top_theatres = []
+
+    for country in df_deploy["Country"].unique():
+        total_deployed = df_deploy[df_deploy["Country"]==country]["Deployed"].sum()
+        country_theatres = df_deploy[df_deploy["Country"]==country].groupby(["Theatre"])["Deployed"].sum()
+        top_theatre = country_theatres[country_theatres == country_theatres.max()]
+        top_theatre_percentage = percentage_calculate(country_theatres.max(), total_deployed, scaling=100)
+        fig = meter_plot(top_theatre_percentage,
+                         country_theatres.max(),
+                         {"min": 0, "max": 100},
+                         bar_colour=constants.country_colors[country])
+        top_theatres.append({"Country": country,
+                             "Title": top_theatre.index,
+                             "Title colour": constants.country_colors[country],
+                             "Text": card_texts.tdm_under_title + f" of {country}",
+                             "Graph":fig})
+    card = comparison_summary_graph_card(top_theatres[0], top_theatres[1], card_info=card_texts.tdm_info_circle)
+    return card
+
+
 def update_total_deployment_plot(df_deploy):
     df = df_deploy.copy()
     condensed = False
@@ -470,7 +493,8 @@ def update_total_deployment_plot(df_deploy):
     )
 
     # Rename all other orgs to "Other" and sum
-    df.loc[~df["Organisation"].isin(top_orgs), "Organisation"] = "Other"
+    if len(df_deploy["Organisation"].unique()) > 5:
+        df.loc[~df["Organisation"].isin(top_orgs), "Organisation"] = "Other"
     df = (
         df.groupby(["Country", "Organisation"])["Deployed"]
         .sum()
@@ -509,13 +533,18 @@ def update_orgs_bar_plot(df_deploy):
     deployed_numbers = list(top_orgs["Deployed"])
     deployed_numbers.append(other_orgs)
 
+    deployment_percentage = []
     # Percentage of organisation deployment to total deployment
-    deployment_percentage = [
-        int(percentage_calculate(number, total_deployed, 100)) for number in deployed_numbers
-    ]
+    for number in deployed_numbers:
+        percentage = percentage_calculate(number, total_deployed, 100)
+        if percentage < 1:
+            deployment_percentage.append(percentage)
+        else:
+            deployment_percentage.append(int(percentage))
     # Orgs names and colour
     deployed_names_orgs = list(top_orgs.index)
-    deployed_names_orgs.append("Other")
+    if len(df_deploy["Organisation"].unique()) > 5:
+        deployed_names_orgs.append("Other")
 
     colours = [
         constants.organisation_colors.get(
@@ -537,7 +566,7 @@ def update_orgs_bar_plot(df_deploy):
         colour=colours[::-1],
     )
     card = summary_graph_card(
-        total_deployed,
+        str(total_deployed) + " troops",
         card_texts.tdp_under_title,
         card_texts.tdp_info_circle,
         fig,
@@ -600,7 +629,7 @@ def update_dashboard(selected_countries, year):
             update_pie_plot(dfp[dfp["Year"] == int(year)]),
             population_card,
             active_card,
-            deploy_meter_card,
+            update_two_deployment_meter_plots(dfp_year),
             orgs_countries_card,
             orgs_bar_card,
             mdi_card

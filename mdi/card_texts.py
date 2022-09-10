@@ -27,7 +27,7 @@ tdop_under_title = "per country by different organisations"
 tdop_info_circle = ""
 
 # Total deployment bar plot
-tdp_under_title = "total troop deployment"
+tdp_under_title = "total deployment"
 tdp_info_circle = ""
 
 # MDI card

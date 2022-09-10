@@ -38,7 +38,7 @@ def horizontal_bar_plot(values, countries, bar_labels, max_value, percentage=Fal
     )
 
     fig.add_trace(go.Bar(y=countries, x=[max_value - value for value in values], orientation="h",
-                         marker=dict(color="rgb(58, 59, 60)"), width=np.full(len(values), 0.2)))
+                         marker=dict(color="#D4D4D4"), width=np.full(len(values), 0.2)))
     fig.update_traces(hoverinfo="skip")
     fig.update(layout_showlegend=False)
     fig.update_layout(paper_bgcolor="rgb(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", barmode="stack",
@@ -74,16 +74,16 @@ def horizontal_bar_plot(values, countries, bar_labels, max_value, percentage=Fal
     return fig
 
 
-def meter_plot(indicator_value, absolute_value, range):
+def meter_plot(indicator_value, absolute_value, range, bar_colour="rgba(255, 0, 0, 0.8)"):
     fig = go.Figure(
         data=[go.Indicator(value=indicator_value,
                            mode="gauge+number",
                            gauge={"axis": {"visible": False, "range": [0, 100]},
-                                  "bar": {"color": "rgba(255, 0, 0, 0.8)"},
+                                  "bar": {"color": bar_colour},
                                   "bordercolor": "#fafafa",
                                   "steps": [
-                                      {"range": [range["min"], indicator_value], "color": "rgba(255, 0, 0, 0.8)"},
-                                      {"range": [indicator_value, range["max"]], "color": "rgb(58, 59, 60)"}]
+                                      {"range": [range["min"], indicator_value], "color": bar_colour},
+                                      {"range": [indicator_value, range["max"]], "color": "#D4D4D4"}]
                                   },
                            domain={"row": 0, "column": 100},
                            number={"suffix": "%", "font": {"size": 30}})]
@@ -136,8 +136,8 @@ def summary_graph_card(title, text, card_info, graph, title_colour, extra_text=N
                     style={"color": title_colour, 'display': 'inline-block', 'margin-right': '5px'}),
             ),
             dbc.Col([
-                html.I(className="fas fa-regular fa-circle-info", id="target", style={'text-align': 'right'}),
-                dbc.Tooltip(card_info, target="target"),
+                html.I(className="fas fa-regular fa-circle-info", id=f"target_{title}", style={'text-align': 'right'}),
+                dbc.Tooltip(card_info, target=f"target_{title}"),
             ], style={'text-align': 'right'})
         ]
         ),
@@ -147,6 +147,48 @@ def summary_graph_card(title, text, card_info, graph, title_colour, extra_text=N
         ),
         dcc.Graph(figure=graph) if graph else "",
         html.P(extra_text) if extra_text else ""
+    ])
+
+    return card
+
+
+def comparison_summary_graph_card(side_1, side_2, card_info):
+    card = dbc.CardBody([
+        dbc.Row([
+            dbc.Col([
+                html.H4(
+                    side_1["Title"],
+                    style={"color": side_1["Title colour"], 'display': 'inline-block', 'margin-right': '5px'}),
+            ], className="col-6"),
+            dbc.Col([
+                html.H4(
+                    side_2["Title"],
+                    style={"color": side_2["Title colour"], 'display': 'inline-block',
+                           'margin-right': '5px'})
+            ], className="col-5"),
+            dbc.Col([
+                html.I(className="fas fa-regular fa-circle-info", id="target", style={'text-align': 'right'}),
+                dbc.Tooltip(card_info, target="target")
+            ], className="col-1", style={"text-align":"right"}),
+        ]),
+
+        dbc.Row([
+            dbc.Col([
+                html.H6(
+                    side_1["Text"],
+                    className="card-text",
+                ),
+                dcc.Graph(figure=side_1["Graph"]) if side_1["Graph"] else ""
+            ], className="col-6"),
+            dbc.Col([
+                html.H6(
+                    side_2["Text"],
+                    className="card-text",
+                ),
+                dcc.Graph(figure=side_2["Graph"]) if side_2["Graph"] else ""
+
+            ], className="col-6"),
+        ])
     ])
 
     return card
