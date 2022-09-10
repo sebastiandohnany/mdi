@@ -10,7 +10,8 @@ server = app.server
 from . import constants
 
 import dash_bootstrap_components as dbc
-import plotly.io as pio
+
+# import plotly.io as pio
 
 from dotenv import load_dotenv
 
@@ -19,17 +20,17 @@ ROOT = os.getenv("PROJECT_ROOT")
 
 
 # Default plot theme
-import plotly.graph_objects as go
+# import plotly.graph_objects as go
 
 
-pio.templates["mdi_plots"] = go.layout.Template(
-    layout_annotations=[
-        dict(
-            font=dict(family="Open Sans"),
-        )
-    ]
-)
-pio.templates.default = "plotly_white+mdi_plots"
+# pio.templates["mdi_plots"] = go.layout.Template(
+#     layout_annotations=[
+#         dict(
+#             font=dict(family="Open Sans"),
+#         )
+#     ]
+# )
+# pio.templates.default = "plotly_white+mdi_plots"
 
 
 from dash_bootstrap_templates import load_figure_template
