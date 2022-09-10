@@ -48,22 +48,24 @@ df_deployments = df[df["MissionType"] == "Operation"]
 df_presence = df[df["MissionType"] == "MillitaryPresence"]
 
 
-# methodology file
+# methodology file, modal, button
 with open(ROOT + "static/methodology.md", "r") as f:
     methodology_md = f.read()
 
 modal_overlay = dbc.Modal(
     [
-        dbc.ModalBody(html.Div([dcc.Markdown(methodology_md)], id="howto-md")),
-        dbc.ModalFooter(dbc.Button("Close", id="howto-close", className="howto-bn")),
+        dbc.ModalBody(html.Div([dcc.Markdown(methodology_md)], id="methodology-md")),
+        dbc.ModalFooter(
+            dbc.Button("Close", id="methodology-close", className="methodology-bn")
+        ),
     ],
     id="modal",
     size="lg",
 )
 
-button_howto = dbc.Button(
+button_methodology = dbc.Button(
     "Methodology",
-    id="howto-open",
+    id="methodology-open",
     outline=True,
     color="primary",
     # Turn off lowercase transformation for class .button in stylesheet
@@ -100,22 +102,16 @@ app.layout = html.Div(
                                     align="center",
                                 ),
                             ],
-                            # align="center",
                             style={"background-color": "#fafafa"},
                         ),
                         dbc.Row(
                             [
                                 dbc.Col(
                                     [
-                                        dbc.NavbarToggler(id="navbar-toggler"),
-                                        dbc.Collapse(
-                                            dbc.Nav(
-                                                [
-                                                    dbc.NavItem(button_howto),
-                                                ],
-                                                navbar=True,
-                                            ),
-                                            id="navbar-collapse",
+                                        dbc.Nav(
+                                            [
+                                                dbc.NavItem(button_methodology),
+                                            ],
                                             navbar=True,
                                         ),
                                         modal_overlay,
@@ -248,25 +244,13 @@ app.layout = html.Div(
 
 from . import countries
 
-# Callback for modal popup
+# methodology modal popup
 @app.callback(
     Output("modal", "is_open"),
-    [Input("howto-open", "n_clicks"), Input("howto-close", "n_clicks")],
+    [Input("methodology-open", "n_clicks"), Input("methodology-close", "n_clicks")],
     [State("modal", "is_open")],
 )
 def toggle_modal(n1, n2, is_open):
     if n1 or n2:
         return not is_open
     return is_open
-
-
-# # we use a callback to toggle navbar collapse on small screens
-# @app.callback(
-#     Output("navbar-collapse", "is_open"),
-#     [Input("navbar-toggler", "n_clicks")],
-#     [State("navbar-collapse", "is_open")],
-# )
-# def toggle_navbar_collapse(n, is_open):
-#     if n:
-#         return not is_open
-#     return is_open
