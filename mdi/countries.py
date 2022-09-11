@@ -486,9 +486,15 @@ def update_orgs_bar_plot(df_deploy):
         .sort_values(by="Deployed", ascending=False)
         .head(5)
     )
-    other_orgs = total_deployed - top_orgs["Deployed"].sum()
+
+    # Orgs names, deployments and colours
     deployed_numbers = list(top_orgs["Deployed"])
-    deployed_numbers.append(other_orgs)
+    deployed_names_orgs = list(top_orgs.index)
+
+    if len(df_deploy["Organisation"].unique()) > 5:
+        deployed_names_orgs.append("Other")
+        other_orgs = total_deployed - top_orgs["Deployed"].sum()
+        deployed_numbers.append(other_orgs)
 
     deployment_percentage = []
     # Percentage of organisation deployment to total deployment
@@ -498,10 +504,6 @@ def update_orgs_bar_plot(df_deploy):
             deployment_percentage.append(percentage)
         else:
             deployment_percentage.append(int(percentage))
-    # Orgs names and colour
-    deployed_names_orgs = list(top_orgs.index)
-    if len(df_deploy["Organisation"].unique()) > 5:
-        deployed_names_orgs.append("Other")
 
     colours = [
         constants.organisation_colors.get(
