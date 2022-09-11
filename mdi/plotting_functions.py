@@ -50,14 +50,6 @@ def horizontal_bar_plot(values, countries, bar_labels, max_value, percentage=Fal
                     )
     fig.update_xaxes(showticklabels=False, automargin=True, showgrid=False, visible=False)
     fig.update_yaxes(automargin=True, showgrid=False)
-    if condensed:
-        fig.update_layout(
-            title_text="Top 5",
-            font=dict(
-                size=12,
-            ),
-            margin=dict(l=0, r=0, t=30, b=0)
-        )
     annotations = []
 
     for value, country in zip(bar_labels, countries):
@@ -101,11 +93,20 @@ def meter_plot(indicator_value, absolute_value, range, bar_colour="rgba(255, 0, 
 
 
 def country_orgs_bar_plot(df, condensed=False):
-    fig = px.bar(df, x="Country", y="Deployed",
-                 color="Organisation",
-                 color_discrete_map={**constants.organisation_colors, **constants.country_colors},
-                 custom_data= ["Organisation", "Percentage of Total Deployment"]
-                 )
+
+    if len(df["Country"].unique()) == 1:
+        fig = px.bar(df, x="Deployed", y="Organisation",
+                     color="Organisation",
+                     color_discrete_map={**constants.organisation_colors, **constants.country_colors},
+                     custom_data=["Organisation", "Percentage of Total Deployment"],
+                     orientation='h'
+                     )
+    else:
+        fig = px.bar(df, x="Country", y="Deployed",
+                     color="Organisation",
+                     color_discrete_map={**constants.organisation_colors, **constants.country_colors},
+                     custom_data= ["Organisation", "Percentage of Total Deployment"]
+                     )
 
     fig.update_traces(hovertemplate="<b>Country: %{x}</b><br>"
                                     + "Organisation: %{customdata[0]} <br>"
@@ -127,7 +128,7 @@ def country_orgs_bar_plot(df, condensed=False):
     return fig
 
 
-def summary_graph_card(title, text, card_info, graph, title_colour, extra_text=None):
+def summary_graph_card(title, text, card_info, graph, title_colour=constants.colors["title"], extra_text=None):
     card = dbc.CardBody([
         dbc.Row([
             dbc.Col(

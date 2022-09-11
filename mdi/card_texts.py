@@ -23,7 +23,7 @@ tdm_info_circle = ""
 
 # Total deployment personnel orgs breakdown per country bar plot
 tdop_title = "Total deployed personnel"
-tdop_under_title = "per country by different organisations"
+tdop_under_title = "by different organisations"
 tdop_info_circle = ""
 
 # Total deployment bar plot

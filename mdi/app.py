@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import os
 
-from dash import html, dcc, Input, Output, State
+from dash import html, dcc, Input, Output, State, ctx
 
 from .server import app
 
@@ -185,7 +185,7 @@ app.layout = html.Div(
                                     ],
                                     style=constants.card_style,
                                 )
-                            ], className="col-7"
+                            ], className="col-lg-7, col-md-7 col-12 col-sm-12"
                         ),
                         dbc.Col(
                             [
@@ -217,10 +217,33 @@ app.layout = html.Div(
                                     [
                                         dbc.CardBody([
                                             html.H6("Choose countries", className="card-text"),
+                                            html.Div([
+                                                html.Div([
+                                                    dbc.Button("Select All", size="sm", outline=True, color="primary",
+                                                                    id="country-all-button"
+                                                               )], style={"margin":"5px"}
+                                                ),
+
+                                                html.Div([
+                                                    dbc.Button('Deselect All', size="sm", outline=True, color="primary",
+                                                                    id="country-none-button"
+                                                               )], style={"margin":"5px"}
+                                                ),
+                                                html.Div([
+                                                    dbc.Button("Select All NATO", size="sm", outline=True, color="primary",
+                                                                    id="country-nato-button"
+                                                               )], style={"margin":"5px"}
+                                                ),
+                                                html.Div([
+                                                    dbc.Button("Select All UN", size="sm", outline=True, color="primary",
+                                                                    id='country-un-button'
+                                                               )], style={"margin":"5px"}
+                                                )
+                                            ], style={'display': 'flex', 'flex-direction': 'row'}),
                                             dcc.Dropdown(
                                                 id="country-filter",
                                                 options=dropdown_options,
-                                                value=list(constants.country_regions.keys()),
+                                                value=["USA"],
                                                 multi=True,
                                                 className="dcc_control",
                                             ),
@@ -235,7 +258,7 @@ app.layout = html.Div(
                         dbc.Col(
                             [
                                 dbc.Card(id="card-line", style=constants.card_style),
-                            ], className="col-8"
+                            ], className="col-lg-8, col-md-8 col-12 col-sm-12"
                         ),
                         dbc.Col(
                             [
@@ -281,3 +304,33 @@ def toggle_modal(n1, n2, is_open):
     if n1 or n2:
         return not is_open
     return is_open
+
+
+@app.callback(
+    Output(component_id="country-filter", component_property="value"),
+    Input(component_id="country-all-button", component_property="n_clicks"),
+    Input(component_id="country-none-button", component_property="n_clicks"),
+    Input(component_id="country-nato-button", component_property="n_clicks"),
+    Input(component_id="country-un-button", component_property="n_clicks"),
+    State(component_id="country-filter", component_property="value")
+)
+def country_button_select(all_clicks, none_clicks, nato_clicks, un_clicks, value):
+
+    if not ctx.triggered:
+        button_id = "No clicks yet"
+    else:
+        button_id = ctx.triggered[0]["prop_id"].split('.')[0]
+
+    if button_id == "country-all-button":
+        return list(constants.country_regions.keys())
+
+    elif button_id == "country-nato-button":
+        nato_countries = list(df_deployments[df_deployments["Organisation"] == "NATO"]["Country"].unique())
+        return nato_countries
+
+    elif button_id == "country-un-button":
+        un_countries = list(df_deployments[df_deployments["Organisation"] == "UN"]["Country"].unique())
+        return un_countries
+
+    else:
+        return ["USA"]

@@ -199,8 +199,7 @@ def update_line_plot(dfp):
         card_texts.dot_title,
         card_texts.dot_under_title,
         card_texts.dot_info_circle,
-        figure,
-        title_colour="rgb(167, 23, 26)",
+        figure
     )
 
     return card
@@ -248,8 +247,7 @@ def update_sunburst_plot(dfp):
         card_texts.sbp_title,
         card_texts.sbp_under_title,
         card_texts.sbp_info_circle,
-        figure,
-        title_colour="rgb(167, 23, 26)",
+        figure
     )
 
     return card
@@ -262,9 +260,7 @@ def update_population_plot(df_deploy, df_population, year):
     for country in df_population["Country"].unique():
         total_deployed = df_deploy[df_deploy["Country"] == country]["Deployed"].sum()
         population = int(df_population[df_population["Country"] == country][year])
-        country_name = df_population[df_population["Country"] == country][
-            "Country Name"
-        ].values[0]
+        country_name = constants.country_codes[country]
 
         df = pd.concat(
             [
@@ -304,7 +300,6 @@ def update_population_plot(df_deploy, df_population, year):
         card_texts.dpc_under_title,
         card_texts.dpc_info_circle,
         fig,
-        title_colour="rgba(255, 0, 0, 0.8)",
     )
     return card
 
@@ -317,9 +312,7 @@ def update_active_plot(df_deploy, df_active):
         active_personnel = int(
             df_active[df_active["Country"] == country]["Personnel_Count"]
         )
-        country_name = df_active[df_active["Country"] == country][
-            "Country Name"
-        ].values[0]
+        country_name = constants.country_codes[country]
 
         df = pd.concat(
             [
@@ -365,8 +358,7 @@ def update_active_plot(df_deploy, df_active):
         str(active_mean) + "%",
         card_texts.dap_under_title,
         card_texts.dap_info_circle,
-        fig,
-        title_colour="rgba(255, 0, 0, 0.8)",
+        fig
     )
     return card
 
@@ -384,8 +376,7 @@ def update_deployed_meter_plot(df_deploy):
         df.idxmax(),
         card_texts.tdm_under_title,
         card_texts.tdm_info_circle,
-        fig,
-        title_colour="rgba(255, 0, 0, 0.8)",
+        fig
     )
 
     return card
@@ -468,12 +459,18 @@ def update_total_deployment_plot(df_deploy):
 
     # Create a figure and a card
     fig = country_orgs_bar_plot(df, condensed=condensed)
+
+    if len(df["Country"].unique()) == 1:
+        card_under_title = f"by {df['Country'].unique()[0]}" + f" {card_texts.tdop_under_title}"
+
+    else:
+        card_under_title = f"per country" + f" {card_texts.tdop_under_title}"
+
     card = summary_graph_card(
         card_texts.tdop_title,
-        card_texts.tdop_under_title,
+        card_under_title,
         card_texts.tdop_info_circle,
-        fig,
-        title_colour="rgba(255, 0, 0, 0.8)",
+        fig
     )
     return card
 
@@ -529,8 +526,7 @@ def update_orgs_bar_plot(df_deploy):
         str(total_deployed) + " troops",
         card_texts.tdp_under_title,
         card_texts.tdp_info_circle,
-        fig,
-        title_colour="rgba(255, 0, 0, 0.8)",
+        fig
     )
     return card
 
@@ -541,7 +537,6 @@ def update_mdi_card(mdi_index):
         card_texts.mdi_under_title,
         card_texts.mdi_info_circle,
         graph=None,
-        title_colour="rgba(255, 0, 0, 0.8)",
         extra_text=card_texts.mdi_extra_text,
     )
 
