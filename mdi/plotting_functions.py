@@ -122,13 +122,21 @@ def country_orgs_bar_plot(df, condensed=False):
         )
     fig.update_layout(paper_bgcolor="rgb(0,0,0,0)",
                       plot_bgcolor="rgba(0,0,0,0)",
-                      legend=dict(bgcolor="rgba(0,0,0,0)")
+                      legend=dict(bgcolor="rgba(0,0,0,0)"),
+                      height=250
                       )
 
     return fig
 
 
 def summary_graph_card(title, text, card_info, graph, title_colour=constants.colors["title"], extra_text=None):
+    info_circle = ""
+    if card_info is not None:
+        info_circle = dbc.Col([
+            html.I(className="fas fa-regular fa-circle-info", id=f"target_{title}", style={'text-align': 'right'}),
+            dbc.Tooltip(card_info, target=f"target_{title}"),
+        ], style={'text-align': 'right'})
+
     card = dbc.CardBody([
         dbc.Row([
             dbc.Col(
@@ -136,10 +144,7 @@ def summary_graph_card(title, text, card_info, graph, title_colour=constants.col
                     title,
                     style={"color": title_colour, 'display': 'inline-block', 'margin-right': '5px'}),
             ),
-            dbc.Col([
-                html.I(className="fas fa-regular fa-circle-info", id=f"target_{title}", style={'text-align': 'right'}),
-                dbc.Tooltip(card_info, target=f"target_{title}"),
-            ], style={'text-align': 'right'})
+            info_circle,
         ]
         ),
         html.H6(
