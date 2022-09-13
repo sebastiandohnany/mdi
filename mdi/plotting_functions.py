@@ -23,7 +23,7 @@ def percentage_calculate(n, d, scaling=1):
 def format_number(number):
     if number>999:
         number = number/1000
-        return str(round(number, 1)) + " K"
+        return "{:,}K".format(round(number, 1))
     else:
         return str(round(number, 1))
 
@@ -82,7 +82,7 @@ def meter_plot(indicator_value, absolute_value, range, bar_colour="rgba(255, 0, 
     )
 
     fig.add_annotation(x=0.5, y=0.4,
-                       text=f"{format_number(absolute_value)} troops",
+                       text=f"{format_number(absolute_value)} TROOPS",
                        font=dict(size=15),
                        showarrow=False
     )
