@@ -2,7 +2,7 @@ theme = {
     "fontFamily": "Raleway",
 }
 
-colors = {"background": "#111111", "text": "#7FDBFF", "title":"rgba(255, 0, 0, 0.8)"}
+colors = {"background": "#111111", "text": "#7FDBFF", "title":"rgb(186, 12, 47)"}
 
 organisation_colors = {
     "USA": "rgb(186, 12, 47)",
