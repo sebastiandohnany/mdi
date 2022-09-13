@@ -241,6 +241,7 @@ def update_sunburst_plot(dfp):
         margin=dict(l=0, r=0, t=0, b=0),
         paper_bgcolor="rgb(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
+        height=465
     )
 
     card = summary_graph_card(
@@ -537,7 +538,7 @@ def update_mdi_card(mdi_index):
     card = summary_graph_card(
         mdi_index,
         card_texts.mdi_under_title,
-        card_texts.mdi_info_circle,
+        card_info=None,
         graph=None,
         extra_text=card_texts.mdi_extra_text,
     )

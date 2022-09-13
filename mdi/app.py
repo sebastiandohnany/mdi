@@ -7,7 +7,7 @@ from dash import html, dcc, Input, Output, State, ctx
 from .server import app
 
 server = app.server
-from . import constants
+from . import constants, card_texts
 
 import dash_bootstrap_components as dbc
 
@@ -161,10 +161,9 @@ app.layout = html.Div(
                             )
                         ),
                         dbc.Col(
-                            dbc.Card(id="card-theatre", style=constants.card_style)
-                        ),
-                        dbc.Col(
-                            dbc.Card(id="card-bar-orgs", style=constants.card_style)
+                            [
+                                dbc.Card(id="card-line", style=constants.card_style),
+                            ], className="col-lg-8, col-md-8 col-12 col-sm-12"
                         ),
                     ]
                 ),
@@ -176,25 +175,8 @@ app.layout = html.Div(
                                     [
                                         dbc.CardBody(
                                             [
-                                                dcc.Graph(
-                                                    id="graph-map",
-                                                    config={"displaylogo": False},
-                                                ),
-                                            ],
-                                        )
-                                    ],
-                                    style=constants.card_style,
-                                )
-                            ], className="col-lg-7, col-md-7 col-12 col-sm-12"
-                        ),
-                        dbc.Col(
-                            [
-                                dbc.Card(
-                                    [
-                                        dbc.CardBody(
-                                            [
                                                 html.H6(
-                                                    "Choose a year",
+                                                    "Drag the slider to select a year",
                                                     className="card-text",
                                                 ),
                                                 dcc.Slider(
@@ -211,12 +193,13 @@ app.layout = html.Div(
                                             ],
                                         )
                                     ],
-                                    style=constants.card_style,
+                                    style = {'margin': '0.5rem 0 1rem 0',
+                                             'background': 'white'}
                                 ),
                                 dbc.Card(
                                     [
                                         dbc.CardBody([
-                                            html.H6("Choose countries", className="card-text"),
+                                            html.H6("Start typing to select a country", className="card-text"),
                                             html.Div([
                                                 html.Div([
                                                     dbc.Button("Select All", size="sm", outline=True, color="primary",
@@ -240,44 +223,68 @@ app.layout = html.Div(
                                                                )], style={"margin":"5px"}
                                                 )
                                             ], style={'display': 'flex', 'flex-direction': 'row'}),
-                                            dcc.Dropdown(
-                                                id="country-filter",
+                                            dcc.Dropdown(id="country-filter",
                                                 options=dropdown_options,
                                                 value=["USA"],
                                                 multi=True,
                                                 className="dcc_control",
                                             ),
-                                        ], style=constants.card_style)
+                                        ])
                                 ]),
                             ],
                         ),
-                    ],
-                ),
-                dbc.Row(
-                    [
                         dbc.Col(
                             [
-                                dbc.Card(id="card-line", style=constants.card_style),
+                                dbc.Card(
+                                    [
+                                        dbc.Row(
+                                            [
+                                                html.I(className="fas fa-regular fa-circle-info", id=f"target_map", style={'text-align': 'right'}),
+                                                dbc.Tooltip(card_texts.map_info_circle, target=f"target_map"),
+                                            ], style={'text-align': 'right'}
+                                        ),
+                                        dbc.Row(
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Graph(
+                                                        id="graph-map",
+                                                        config={"displaylogo": False},
+                                                    ),
+                                                ],
+                                            )
+
+                                            )
+
+                                        ],
+                                        style=constants.card_style,
+                                    )
                             ], className="col-lg-8, col-md-8 col-12 col-sm-12"
-                        ),
-                        dbc.Col(
-                            [
-                                dbc.Card(id="card-active", style=constants.card_style),
-                                dbc.Card(id="card-population", style=constants.card_style),
-                            ]
-                        ),
+                        )
                     ],
-                    className="g-0",
                 ),
                 dbc.Row(
                     [
+                        dbc.Col([
+                            dbc.Card(id="card-population", style=constants.card_style)
+                        ], className="col-lg-4 col-md-4 col-12 col-sm-12"),
+                        dbc.Col([
+                            dbc.Card(id="card-active", style=constants.card_style),
+                        ], className="col-lg-4 col-md-4 col-12 col-sm-12"),
+                        dbc.Col([
+                            dbc.Card(id="card-theatre", style=constants.card_style)
+                        ], className="col-lg-4 col-md-4 col-12 col-sm-12"),
+                    ],
+                ),
+                dbc.Row(
+                    [
+                        dbc.Col([
+                            dbc.Card(id="card-bar-orgs", style=constants.card_style),
+                            dbc.Card(id="card-countries-orgs", style=constants.card_style)
+
+                        ]),
                         dbc.Col(
                             dbc.Card(id="card-sunburst", style=constants.card_style),
-                        ),
-                        dbc.Col(
-                            dbc.Card(
-                                id="card-countries-orgs", style=constants.card_style
-                            )
+
                         ),
                     ]
                 ),
