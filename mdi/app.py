@@ -296,31 +296,32 @@ app.layout = html.Div(
                             [
                                 dbc.Card(
                                     [
-                                        dbc.Row(
-                                            [
-                                                html.I(
-                                                    className="fas fa-regular fa-circle-info",
-                                                    id=f"target_map",
-                                                    style={"text-align": "right"},
-                                                ),
-                                                dbc.Tooltip(
-                                                    card_texts.map_info_circle,
-                                                    target=f"target_map",
-                                                ),
-                                            ],
-                                            style={"text-align": "right"},
+                                        html.I(
+                                            className="fas fa-regular fa-circle-info",
+                                            id=f"target_map",
+                                            style={
+                                                "text-align": "right",
+                                                "zIndex": "100",
+                                                "position": "absolute",
+                                                "top": "18px",
+                                                "right": "16px",
+                                                "margin": 0,
+                                                "padding": 0,
+                                            },
                                         ),
-                                        dbc.Row(
-                                            dbc.CardBody(
-                                                [
-                                                    dcc.Graph(
-                                                        id="graph-map",
-                                                        config=dict(
-                                                            displaylogo=False,
-                                                            displayModeBar=False,
-                                                        ),
-                                                    ),
-                                                ],
+                                        dbc.Tooltip(
+                                            card_texts.map_info_circle,
+                                            target=f"target_map",
+                                            style={
+                                                "position": "absolute",
+                                                "zIndex": "100",
+                                            },
+                                        ),
+                                        dcc.Graph(
+                                            id="graph-map",
+                                            config=dict(
+                                                displaylogo=False,
+                                                displayModeBar=False,
                                             ),
                                         ),
                                     ],
