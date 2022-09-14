@@ -162,8 +162,7 @@ def update_line_plot(dfp):
         height=340,
         paper_bgcolor="rgb(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        xaxis_title="Year",
-        yaxis_title="Total Deployment",
+        yaxis_title="Deployed",
     )
 
     # TODO: figure out a way to prevent overlappping labels BUT MAYBE NOT A GOOD IDEA
@@ -519,7 +518,7 @@ def update_orgs_bar_plot(df_deploy):
         colour=colours[::-1],
     )
     card = summary_graph_card(
-        str(total_deployed) + " troops",
+        "{:,}".format(total_deployed) + " troops",
         card_texts.tdp_under_title,
         card_texts.tdp_info_circle,
         fig,

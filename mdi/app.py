@@ -117,19 +117,32 @@ app.layout = html.Div(
                                     html.Img(
                                         id="logo",
                                         src=app.get_asset_url("NSA-RSA-logo-small.png"),
-                                        height="70px",
+                                        height="90px",
                                     ),
                                     md="auto",
                                     align="left",
                                 ),
                                 dbc.Col(
                                     [
-                                        html.Div(
-                                            [
-                                                html.H3("Millitary Deployments Index"),
-                                            ],
-                                            id="app-title",
-                                        )
+                                        dbc.Row(
+                                            html.Div(
+                                                [
+                                                    html.H2(
+                                                        "Military Deployment Index"
+                                                    ),
+                                                ],
+                                                id="app-title",
+                                            )
+                                        ),
+                                        dbc.Row(
+                                            html.Div(
+                                                [
+                                                    html.H6(
+                                                        "Measure of military power, commitment and burden-sharing"
+                                                    ),
+                                                ],
+                                            )
+                                        ),
                                     ],
                                     md=True,
                                     align="center",
@@ -156,6 +169,7 @@ app.layout = html.Div(
                         ),
                     ],
                     fluid=True,
+                    style={"margin-top": 20, "margin-bottom": 20},
                 ),
                 dark=False,
                 sticky="top",
