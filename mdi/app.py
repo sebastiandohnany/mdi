@@ -50,19 +50,34 @@ df_presence = df[df["MissionType"] == "MilitaryPresence"]
 
 dropdown_options = []
 for country in list(constants.country_regions.keys()):
-    if country == 'default':
+    if country == "default":
         pass
     else:
-        option_dictionary = {"label": html.Div([html.I(className="fas fa-solid fa-circle fa-2xs",
-                                                       style={"color":constants.country_colors[country],
-                                                              "margin-right":"5px"}),
-                                               html.Div([constants.country_codes[country] + f" ({country})"],
-                                                        style={"color": constants.country_colors[country] })]
-                                               , style={'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
-                             "value": country,
-                             "search":constants.country_codes[country]}
+        option_dictionary = {
+            "label": html.Div(
+                [
+                    html.I(
+                        className="fas fa-solid fa-circle fa-2xs",
+                        style={
+                            "color": constants.country_colors[country],
+                            "margin-right": "5px",
+                        },
+                    ),
+                    html.Div(
+                        [constants.country_codes[country] + f" ({country})"],
+                        style={"color": constants.country_colors[country]},
+                    ),
+                ],
+                style={
+                    "display": "flex",
+                    "align-items": "center",
+                    "justify-content": "center",
+                },
+            ),
+            "value": country,
+            "search": constants.country_codes[country],
+        }
         dropdown_options.append(option_dictionary)
-
 
 
 # methodology file, modal, button
@@ -88,6 +103,7 @@ button_methodology = dbc.Button(
     # Turn off lowercase transformation for class .button in stylesheet
     style={"textTransform": "none"},
 )
+
 
 app.layout = html.Div(
     [
@@ -163,7 +179,8 @@ app.layout = html.Div(
                         dbc.Col(
                             [
                                 dbc.Card(id="card-line", style=constants.card_style),
-                            ], className="col-lg-8, col-md-8 col-12 col-sm-12"
+                            ],
+                            className="col-lg-8, col-md-8 col-12 col-sm-12",
                         ),
                     ]
                 ),
@@ -193,44 +210,86 @@ app.layout = html.Div(
                                             ],
                                         )
                                     ],
-                                    style = {'margin': '0.5rem 0 1rem 0',
-                                             'background': 'white'}
+                                    style={
+                                        "margin": "0.5rem 0 1rem 0",
+                                        "background": "white",
+                                    },
                                 ),
                                 dbc.Card(
                                     [
-                                        dbc.CardBody([
-                                            html.H6("Start typing to select a country", className="card-text"),
-                                            html.Div([
-                                                html.Div([
-                                                    dbc.Button("Select All", size="sm", outline=True, color="primary",
-                                                                    id="country-all-button"
-                                                               )], style={"margin":"5px"}
+                                        dbc.CardBody(
+                                            [
+                                                html.H6(
+                                                    "Start typing to select a country",
+                                                    className="card-text",
                                                 ),
-
-                                                html.Div([
-                                                    dbc.Button('Deselect All', size="sm", outline=True, color="primary",
-                                                                    id="country-none-button"
-                                                               )], style={"margin":"5px"}
+                                                html.Div(
+                                                    [
+                                                        html.Div(
+                                                            [
+                                                                dbc.Button(
+                                                                    "Select All",
+                                                                    size="sm",
+                                                                    outline=True,
+                                                                    color="primary",
+                                                                    id="country-all-button",
+                                                                )
+                                                            ],
+                                                            style={"margin": "5px"},
+                                                        ),
+                                                        html.Div(
+                                                            [
+                                                                dbc.Button(
+                                                                    "Deselect All",
+                                                                    size="sm",
+                                                                    outline=True,
+                                                                    color="primary",
+                                                                    id="country-none-button",
+                                                                )
+                                                            ],
+                                                            style={"margin": "5px"},
+                                                        ),
+                                                        html.Div(
+                                                            [
+                                                                dbc.Button(
+                                                                    "Select All NATO",
+                                                                    size="sm",
+                                                                    outline=True,
+                                                                    color="primary",
+                                                                    id="country-nato-button",
+                                                                )
+                                                            ],
+                                                            style={"margin": "5px"},
+                                                        ),
+                                                        html.Div(
+                                                            [
+                                                                dbc.Button(
+                                                                    "Select All UN",
+                                                                    size="sm",
+                                                                    outline=True,
+                                                                    color="primary",
+                                                                    id="country-un-button",
+                                                                )
+                                                            ],
+                                                            style={"margin": "5px"},
+                                                        ),
+                                                    ],
+                                                    style={
+                                                        "display": "flex",
+                                                        "flex-direction": "row",
+                                                    },
                                                 ),
-                                                html.Div([
-                                                    dbc.Button("Select All NATO", size="sm", outline=True, color="primary",
-                                                                    id="country-nato-button"
-                                                               )], style={"margin":"5px"}
+                                                dcc.Dropdown(
+                                                    id="country-filter",
+                                                    options=dropdown_options,
+                                                    value=["USA"],
+                                                    multi=True,
+                                                    className="dcc_control",
                                                 ),
-                                                html.Div([
-                                                    dbc.Button("Select All UN", size="sm", outline=True, color="primary",
-                                                                    id='country-un-button'
-                                                               )], style={"margin":"5px"}
-                                                )
-                                            ], style={'display': 'flex', 'flex-direction': 'row'}),
-                                            dcc.Dropdown(id="country-filter",
-                                                options=dropdown_options,
-                                                value=["USA"],
-                                                multi=True,
-                                                className="dcc_control",
-                                            ),
-                                        ])
-                                ]),
+                                            ]
+                                        )
+                                    ]
+                                ),
                             ],
                         ),
                         dbc.Col(
@@ -239,52 +298,75 @@ app.layout = html.Div(
                                     [
                                         dbc.Row(
                                             [
-                                                html.I(className="fas fa-regular fa-circle-info", id=f"target_map", style={'text-align': 'right'}),
-                                                dbc.Tooltip(card_texts.map_info_circle, target=f"target_map"),
-                                            ], style={'text-align': 'right'}
+                                                html.I(
+                                                    className="fas fa-regular fa-circle-info",
+                                                    id=f"target_map",
+                                                    style={"text-align": "right"},
+                                                ),
+                                                dbc.Tooltip(
+                                                    card_texts.map_info_circle,
+                                                    target=f"target_map",
+                                                ),
+                                            ],
+                                            style={"text-align": "right"},
                                         ),
                                         dbc.Row(
                                             dbc.CardBody(
                                                 [
                                                     dcc.Graph(
                                                         id="graph-map",
-                                                        config={"displaylogo": False},
+                                                        config=dict(
+                                                            displaylogo=False,
+                                                            displayModeBar=False,
+                                                        ),
                                                     ),
                                                 ],
-                                            )
-
-                                            )
-
-                                        ],
-                                        style=constants.card_style,
-                                    )
-                            ], className="col-lg-8, col-md-8 col-12 col-sm-12"
-                        )
+                                            ),
+                                        ),
+                                    ],
+                                    style=constants.card_style,
+                                )
+                            ],
+                            className="col-lg-8, col-md-8 col-12 col-sm-12",
+                        ),
                     ],
                 ),
                 dbc.Row(
                     [
-                        dbc.Col([
-                            dbc.Card(id="card-population", style=constants.card_style)
-                        ], className="col-lg-4 col-md-4 col-12 col-sm-12"),
-                        dbc.Col([
-                            dbc.Card(id="card-active", style=constants.card_style),
-                        ], className="col-lg-4 col-md-4 col-12 col-sm-12"),
-                        dbc.Col([
-                            dbc.Card(id="card-theatre", style=constants.card_style)
-                        ], className="col-lg-4 col-md-4 col-12 col-sm-12"),
+                        dbc.Col(
+                            [
+                                dbc.Card(
+                                    id="card-population", style=constants.card_style
+                                )
+                            ],
+                            className="col-lg-4 col-md-4 col-12 col-sm-12",
+                        ),
+                        dbc.Col(
+                            [
+                                dbc.Card(id="card-active", style=constants.card_style),
+                            ],
+                            className="col-lg-4 col-md-4 col-12 col-sm-12",
+                        ),
+                        dbc.Col(
+                            [dbc.Card(id="card-theatre", style=constants.card_style)],
+                            className="col-lg-4 col-md-4 col-12 col-sm-12",
+                        ),
                     ],
                 ),
                 dbc.Row(
                     [
-                        dbc.Col([
-                            dbc.Card(id="card-bar-orgs", style=constants.card_style),
-                            dbc.Card(id="card-countries-orgs", style=constants.card_style)
-
-                        ]),
+                        dbc.Col(
+                            [
+                                dbc.Card(
+                                    id="card-bar-orgs", style=constants.card_style
+                                ),
+                                dbc.Card(
+                                    id="card-countries-orgs", style=constants.card_style
+                                ),
+                            ]
+                        ),
                         dbc.Col(
                             dbc.Card(id="card-sunburst", style=constants.card_style),
-
                         ),
                     ]
                 ),
@@ -319,24 +401,28 @@ def toggle_modal(n1, n2, is_open):
     Input(component_id="country-none-button", component_property="n_clicks"),
     Input(component_id="country-nato-button", component_property="n_clicks"),
     Input(component_id="country-un-button", component_property="n_clicks"),
-    State(component_id="country-filter", component_property="value")
+    State(component_id="country-filter", component_property="value"),
 )
 def country_button_select(all_clicks, none_clicks, nato_clicks, un_clicks, value):
 
     if not ctx.triggered:
         button_id = "No clicks yet"
     else:
-        button_id = ctx.triggered[0]["prop_id"].split('.')[0]
+        button_id = ctx.triggered[0]["prop_id"].split(".")[0]
 
     if button_id == "country-all-button":
         return list(constants.country_regions.keys())
 
     elif button_id == "country-nato-button":
-        nato_countries = list(df_deployments[df_deployments["Organisation"] == "NATO"]["Country"].unique())
+        nato_countries = list(
+            df_deployments[df_deployments["Organisation"] == "NATO"]["Country"].unique()
+        )
         return nato_countries
 
     elif button_id == "country-un-button":
-        un_countries = list(df_deployments[df_deployments["Organisation"] == "UN"]["Country"].unique())
+        un_countries = list(
+            df_deployments[df_deployments["Organisation"] == "UN"]["Country"].unique()
+        )
         return un_countries
 
     else:

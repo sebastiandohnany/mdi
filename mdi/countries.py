@@ -86,7 +86,6 @@ def update_map(selected_year, selected_countries):
         )
         return data
 
-
     hoverlabel = dict(font_size=16)
 
     mapbox = dict(
@@ -100,7 +99,7 @@ def update_map(selected_year, selected_countries):
         title="",
         hovermode="closest",
         height=600,
-        margin=go.layout.Margin(l=0, r=20, t=0, b=0),
+        margin=go.layout.Margin(l=0, r=0, t=0, b=0),
         mapbox=mapbox,
         hoverlabel=hoverlabel,
         uirevision="perservere",
@@ -110,9 +109,7 @@ def update_map(selected_year, selected_countries):
 
     # filter and sort
     dfp = df_deployments.query("Country in @selected_countries")
-    dfp = dfp[dfp["Year"] == selected_year].sort_values(
-        by="Country"
-    )
+    dfp = dfp[dfp["Year"] == selected_year].sort_values(by="Country")
 
     dfp_presence = df_presence.query("Country in @selected_countries")
     dfp_presence = dfp_presence[dfp_presence["Year"] == selected_year].sort_values(
@@ -199,7 +196,7 @@ def update_line_plot(dfp):
         card_texts.dot_title,
         card_texts.dot_under_title,
         card_texts.dot_info_circle,
-        figure
+        figure,
     )
 
     return card
@@ -241,14 +238,14 @@ def update_sunburst_plot(dfp):
         margin=dict(l=0, r=0, t=0, b=0),
         paper_bgcolor="rgb(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        height=465
+        height=465,
     )
 
     card = summary_graph_card(
         card_texts.sbp_title,
         card_texts.sbp_under_title,
         card_texts.sbp_info_circle,
-        figure
+        figure,
     )
 
     return card
@@ -359,7 +356,7 @@ def update_active_plot(df_deploy, df_active):
         str(active_mean) + "%",
         card_texts.dap_under_title,
         card_texts.dap_info_circle,
-        fig
+        fig,
     )
     return card
 
@@ -374,10 +371,7 @@ def update_deployed_meter_plot(df_deploy):
     # Create a figure and a card
     fig = meter_plot(highest_percentage, df.max(), {"min": 0, "max": 100})
     card = summary_graph_card(
-        df.idxmax(),
-        card_texts.tdm_under_title,
-        card_texts.tdm_info_circle,
-        fig
+        df.idxmax(), card_texts.tdm_under_title, card_texts.tdm_info_circle, fig
     )
 
     return card
@@ -462,16 +456,15 @@ def update_total_deployment_plot(df_deploy):
     fig = country_orgs_bar_plot(df, condensed=condensed)
 
     if len(df["Country"].unique()) == 1:
-        card_under_title = f"by {df['Country'].unique()[0]}" + f" {card_texts.tdop_under_title}"
+        card_under_title = (
+            f"by {df['Country'].unique()[0]}" + f" {card_texts.tdop_under_title}"
+        )
 
     else:
         card_under_title = f"per country" + f" {card_texts.tdop_under_title}"
 
     card = summary_graph_card(
-        card_texts.tdop_title,
-        card_under_title,
-        card_texts.tdop_info_circle,
-        fig
+        card_texts.tdop_title, card_under_title, card_texts.tdop_info_circle, fig
     )
     return card
 
@@ -529,7 +522,7 @@ def update_orgs_bar_plot(df_deploy):
         str(total_deployed) + " troops",
         card_texts.tdp_under_title,
         card_texts.tdp_info_circle,
-        fig
+        fig,
     )
     return card
 
