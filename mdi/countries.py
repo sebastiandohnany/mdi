@@ -34,7 +34,7 @@ rank_countries_by_deployed = (
 )
 
 
-def update_map(selected_year, selected_countries):
+def update_map(selected_year, selected_countries, military_presence):
     def get_data(dfn, name):
         data = go.Scattermapbox(
             name=name,
@@ -123,13 +123,16 @@ def update_map(selected_year, selected_countries):
             country,
         )
         for country in dfp["Country"].unique()
-    ] + [
-        get_presence_data(
-            dfp_presence.loc[(dfp_presence["Country"] == country)],
-            country,
-        )
-        for country in dfp_presence["Country"].unique()
     ]
+
+    if military_presence:
+        data = data + [
+            get_presence_data(
+                dfp_presence.loc[(dfp_presence["Country"] == country)],
+                country,
+            )
+            for country in dfp_presence["Country"].unique()
+        ]
 
     figure = go.Figure(
         data=data,
@@ -164,12 +167,15 @@ def update_line_plot(dfp):
         plot_bgcolor="rgba(0,0,0,0)",
         yaxis_title="Deployed",
     )
-    figure.update_yaxes(title_standoff=constants.theme["title_standoff"],
-                        tickfont_size=constants.theme["tickfont_size"],
-                        titlefont_size=constants.theme["titlefont_size"])
-    figure.update_xaxes(title_standoff=constants.theme["title_standoff"],
-                        tickfont_size=constants.theme["tickfont_size"])
-
+    figure.update_yaxes(
+        title_standoff=constants.theme["title_standoff"],
+        tickfont_size=constants.theme["tickfont_size"],
+        titlefont_size=constants.theme["titlefont_size"],
+    )
+    figure.update_xaxes(
+        title_standoff=constants.theme["title_standoff"],
+        tickfont_size=constants.theme["tickfont_size"],
+    )
 
     # TODO: figure out a way to prevent overlappping labels BUT MAYBE NOT A GOOD IDEA
 
@@ -462,9 +468,7 @@ def update_total_deployment_plot(df_deploy):
     fig = country_orgs_bar_plot(df, condensed=condensed)
 
     if len(df["Country"].unique()) == 1:
-        card_under_title = (
-            f"by {df['Country'].unique()[0]}"
-        )
+        card_under_title = f"by {df['Country'].unique()[0]}"
 
     else:
         card_under_title = card_texts.tdop_under_title
@@ -628,21 +632,57 @@ def reload_dashboard(selected_countries, selected_year):
     Output(component_id="selected-year", component_property="data"),
     Output(component_id="graph-map", component_property="figure"),
     Output(component_id="selected-countries", component_property="data"),
+    Output(component_id="military-presence-switch", component_property="inputStyle"),
     Input(component_id="year-slider", component_property="value"),
-    State(component_id="graph-map", component_property="relayoutData"),
     Input(component_id="country-filter", component_property="value"),
+    Input(component_id="military-presence-switch", component_property="value"),
+    State(component_id="graph-map", component_property="relayoutData"),
 )
-def update_selected_year(actual_year, data, country_selection):
+def update_filters(actual_year, country_selection, military_presence, data):
     zoom = 1.5
     center = dict(lat=24, lon=0)
     if data:
         zoom = data.get("mapbox.zoom", 1.5)
         center = data.get("mapbox.center", dict(lat=24, lon=0))
 
-    figure = update_map(actual_year, country_selection)
+    military_presence_switch_color = {
+        "background-color": "red",
+    }
+    # print("here")
+    # if military_presence:
+    #     print("in")
+    #     military_presence_switch_color = {
+    #         "background-color": "red",
+    #     }
+
+    figure = update_map(actual_year, country_selection, military_presence)
     figure.update_layout(mapbox_zoom=zoom, mapbox_center=center)
 
     selected_year = selected_year_default
     selected_year["year"].iloc[0] = actual_year
 
-    return selected_year.to_json(), figure, country_selection
+    return (
+        selected_year.to_json(),
+        figure,
+        country_selection,
+        military_presence_switch_color,
+    )
+
+
+# @app.callback(
+#     Output(component_id="graph-map", component_property="figure"),
+#     Input(component_id="military-presence-switch", component_property="value"),
+# )
+# def update_military_presence():
+#     print('here')
+#     return update_map(2013, [])
+
+
+# @app.callback(
+#     Output('restricted_search', 'inputClassName'),
+#     Input('restricted_search', 'value')
+# )
+# def update_switch(activated):
+#     if activated:
+#         return 'bg-success',
+#     return None

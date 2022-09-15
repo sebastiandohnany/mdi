@@ -331,6 +331,20 @@ app.layout = html.Div(
                                                 "zIndex": "100",
                                             },
                                         ),
+                                        dbc.Switch(
+                                            id="military-presence-switch",
+                                            label="Military presence",
+                                            value=False,
+                                            style={
+                                                "zIndex": "100",
+                                                "position": "absolute",
+                                                "top": "18px",
+                                                "left": "52px",
+                                                "margin": 0,
+                                                "padding": 0,
+                                                "color": "#795548",
+                                            },
+                                        ),
                                         dcc.Graph(
                                             id="graph-map",
                                             config=dict(
