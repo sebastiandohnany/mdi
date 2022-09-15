@@ -18,6 +18,8 @@ from .plotting_functions import (
     comparison_summary_graph_card,
 )
 
+from . import index
+
 # data
 from .app import df, df_deployments, df_presence, mapbox_access_token, ROOT
 
@@ -634,7 +636,6 @@ def reload_dashboard(selected_countries, selected_year):
     Output(component_id="selected-year", component_property="data"),
     Output(component_id="graph-map", component_property="figure"),
     Output(component_id="selected-countries", component_property="data"),
-    Output(component_id="military-presence-switch", component_property="inputStyle"),
     Input(component_id="year-slider", component_property="value"),
     Input(component_id="country-filter", component_property="value"),
     Input(component_id="military-presence-switch", component_property="value"),
@@ -647,16 +648,6 @@ def update_filters(actual_year, country_selection, military_presence, data):
         zoom = data.get("mapbox.zoom", 1.5)
         center = data.get("mapbox.center", dict(lat=24, lon=0))
 
-    military_presence_switch_color = {
-        "background-color": "red",
-    }
-    # print("here")
-    # if military_presence:
-    #     print("in")
-    #     military_presence_switch_color = {
-    #         "background-color": "red",
-    #     }
-
     figure = update_map(actual_year, country_selection, military_presence)
     figure.update_layout(mapbox_zoom=zoom, mapbox_center=center)
 
@@ -667,24 +658,4 @@ def update_filters(actual_year, country_selection, military_presence, data):
         selected_year.to_json(),
         figure,
         country_selection,
-        military_presence_switch_color,
     )
-
-
-# @app.callback(
-#     Output(component_id="graph-map", component_property="figure"),
-#     Input(component_id="military-presence-switch", component_property="value"),
-# )
-# def update_military_presence():
-#     print('here')
-#     return update_map(2013, [])
-
-
-# @app.callback(
-#     Output('restricted_search', 'inputClassName'),
-#     Input('restricted_search', 'value')
-# )
-# def update_switch(activated):
-#     if activated:
-#         return 'bg-success',
-#     return None
