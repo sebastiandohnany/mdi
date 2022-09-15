@@ -37,8 +37,13 @@ def horizontal_bar_plot(
     max_value,
     percentage=False,
     condensed=False,
-    colour="rgba(255, 0, 0, 0.8)",
+    colour=constants.colors["title"],
 ):
+    bar_width_ration = 0.5
+
+    if len(countries) == 1:
+        bar_width_ration = 0.2
+
     fig = go.Figure(
         data=[
             go.Bar(
@@ -46,7 +51,7 @@ def horizontal_bar_plot(
                 x=values,
                 orientation="h",
                 marker=dict(color=colour),
-                width=np.full(len(values), 0.2),
+                width=np.full(len(values), bar_width_ration),
             )
         ],
         layout={
@@ -60,7 +65,7 @@ def horizontal_bar_plot(
             x=[max_value - value for value in values],
             orientation="h",
             marker=dict(color="#D4D4D4"),
-            width=np.full(len(values), 0.2),
+            width=np.full(len(values), bar_width_ration),
         )
     )
     fig.update_traces(hoverinfo="skip")
@@ -70,7 +75,7 @@ def horizontal_bar_plot(
         plot_bgcolor="rgba(0,0,0,0)",
         barmode="stack",
         yaxis={"categoryorder": "array", "categoryarray": countries},
-        font=dict(size=15),
+        font=dict(size=constants.theme["titlefont_size"]),
         height=120,
         margin=dict(l=0, r=0, t=0, b=0),
     )
@@ -100,7 +105,7 @@ def horizontal_bar_plot(
 
 
 def meter_plot(
-    indicator_value, absolute_value, range, bar_colour="rgba(255, 0, 0, 0.8)"
+    indicator_value, absolute_value, range, bar_colour=constants.colors["title"]
 ):
     fig = go.Figure(
         data=[
@@ -139,39 +144,49 @@ def meter_plot(
 
 
 def country_orgs_bar_plot(df, condensed=False):
-
+    df.rename(columns={'Organisation': 'Command'}, inplace=True)
     if len(df["Country"].unique()) == 1:
         fig = px.bar(
             df,
             x="Deployed",
-            y="Organisation",
-            color="Organisation",
+            y="Command",
+            color="Command",
             color_discrete_map={
                 **constants.organisation_colors,
                 **constants.country_colors,
             },
-            custom_data=["Organisation", "Percentage of Total Deployment"],
+            custom_data=["Command", "Percentage of Total Deployment"],
             orientation="h",
         )
+        fig.update_layout(yaxis_title=None)
+        fig.update_traces(
+            hovertemplate="<b>Command: %{customdata[0]}</b><br>"
+                          + "Deployed: %{x} <br>"
+                          + "Percentage Deployed: %{customdata[1]} % <br>"
+        )
+
     else:
         fig = px.bar(
             df,
             x="Country",
             y="Deployed",
-            color="Organisation",
+            color="Command",
             color_discrete_map={
                 **constants.organisation_colors,
                 **constants.country_colors,
             },
-            custom_data=["Organisation", "Percentage of Total Deployment"],
+            custom_data=["Command", "Percentage of Total Deployment"],
+        )
+        fig.update_layout(xaxis_title=None)
+        fig.update_traces(
+            hovertemplate="<b>Country: %{x}</b><br>"
+                          + "Command: %{customdata[0]} <br>"
+                          + "Deployed: %{y} <br>"
+                          + "Percentage Deployed: %{customdata[1]} % <br>"
         )
 
-    fig.update_traces(
-        hovertemplate="<b>Country: %{x}</b><br>"
-        + "Organisation: %{customdata[0]} <br>"
-        + "Deployed: %{y} <br>"
-        + "Percentage Deployed: %{customdata[1]} % <br>"
-    )
+
+
     if condensed:
         fig.update_layout(
             title_text="Top 5",
@@ -180,6 +195,14 @@ def country_orgs_bar_plot(df, condensed=False):
             ),
             margin=dict(l=0, r=0, t=30, b=0),
         )
+    fig.update_xaxes(title_standoff=constants.theme["title_standoff"],
+                     tickfont_size=constants.theme["tickfont_size"],
+                     titlefont_size=constants.theme["titlefont_size"],
+                     ticksuffix="    ")
+    fig.update_yaxes(title_standoff=constants.theme["title_standoff"],
+                     tickfont_size=constants.theme["tickfont_size"],
+                     titlefont_size=constants.theme["titlefont_size"],
+                     ticksuffix="     ")
     fig.update_layout(
         paper_bgcolor="rgb(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
@@ -218,7 +241,7 @@ def summary_graph_card(
                 [
                     dbc.Col(
                         html.H4(
-                            title,
+                            str(title).upper(),
                             style={
                                 "color": title_colour,
                                 "display": "inline-block",

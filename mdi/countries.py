@@ -164,6 +164,12 @@ def update_line_plot(dfp):
         plot_bgcolor="rgba(0,0,0,0)",
         yaxis_title="Deployed",
     )
+    figure.update_yaxes(title_standoff=constants.theme["title_standoff"],
+                        tickfont_size=constants.theme["tickfont_size"],
+                        titlefont_size=constants.theme["titlefont_size"])
+    figure.update_xaxes(title_standoff=constants.theme["title_standoff"],
+                        tickfont_size=constants.theme["tickfont_size"])
+
 
     # TODO: figure out a way to prevent overlappping labels BUT MAYBE NOT A GOOD IDEA
 
@@ -186,6 +192,7 @@ def update_line_plot(dfp):
             font_color=f.line.color,
             xanchor="left",
             showarrow=False,
+            font_size=constants.theme["titlefont_size"],
         )
         if f.name in country_list
         else None
@@ -450,17 +457,17 @@ def update_total_deployment_plot(df_deploy):
     df["Percentage of Total Deployment"] = df.apply(
         _calc_total_deploy_precentage, axis=1
     )
-
+    df = df.sort_values(by="Deployed", ascending=False)
     # Create a figure and a card
     fig = country_orgs_bar_plot(df, condensed=condensed)
 
     if len(df["Country"].unique()) == 1:
         card_under_title = (
-            f"by {df['Country'].unique()[0]}" + f" {card_texts.tdop_under_title}"
+            f"by {df['Country'].unique()[0]}"
         )
 
     else:
-        card_under_title = f"per country" + f" {card_texts.tdop_under_title}"
+        card_under_title = card_texts.tdop_under_title
 
     card = summary_graph_card(
         card_texts.tdop_title, card_under_title, card_texts.tdop_info_circle, fig

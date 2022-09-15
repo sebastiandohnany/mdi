@@ -1,5 +1,8 @@
 theme = {
     "fontFamily": "Raleway",
+    "title_standoff": 15,
+    "tickfont_size": 15,
+    "titlefont_size" : 15,
 }
 
 colors = {"background": "#111111", "text": "#7FDBFF", "title":"rgb(186, 12, 47)"}
