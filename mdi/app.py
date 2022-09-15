@@ -275,11 +275,11 @@ app.layout = html.Div(
                                                         html.Div(
                                                             [
                                                                 dbc.Button(
-                                                                    "Select All UN",
+                                                                    "Select All EU",
                                                                     size="sm",
                                                                     outline=True,
                                                                     color="primary",
-                                                                    id="country-un-button",
+                                                                    id="country-eu-button",
                                                                 )
                                                             ],
                                                             style={"margin": "5px"},
@@ -428,7 +428,7 @@ def toggle_modal(n1, n2, is_open):
     Input(component_id="country-all-button", component_property="n_clicks"),
     Input(component_id="country-none-button", component_property="n_clicks"),
     Input(component_id="country-nato-button", component_property="n_clicks"),
-    Input(component_id="country-un-button", component_property="n_clicks"),
+    Input(component_id="country-eu-button", component_property="n_clicks"),
     State(component_id="country-filter", component_property="value"),
 )
 def country_button_select(all_clicks, none_clicks, nato_clicks, un_clicks, value):
@@ -442,16 +442,10 @@ def country_button_select(all_clicks, none_clicks, nato_clicks, un_clicks, value
         return list(constants.country_regions.keys())
 
     elif button_id == "country-nato-button":
-        nato_countries = list(
-            df_deployments[df_deployments["Organisation"] == "NATO"]["Country"].unique()
-        )
-        return nato_countries
+        return constants.nato_countries
 
-    elif button_id == "country-un-button":
-        un_countries = list(
-            df_deployments[df_deployments["Organisation"] == "UN"]["Country"].unique()
-        )
-        return un_countries
+    elif button_id == "country-eu-button":
+        return constants.eu_countries
 
     else:
         return ["USA"]
