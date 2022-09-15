@@ -224,10 +224,7 @@ app.layout = html.Div(
                                             ],
                                         )
                                     ],
-                                    style={
-                                        "margin": "0.5rem 0 1rem 0",
-                                        "background": "white",
-                                    },
+                                    style=constants.card_style,
                                 ),
                                 dbc.Card(
                                     [
@@ -302,9 +299,11 @@ app.layout = html.Div(
                                                 ),
                                             ]
                                         )
-                                    ]
+                                    ],
+                                    style=constants.card_style,
                                 ),
                             ],
+                            className="col-lg-4 col-md-4 col-12 col-sm-12",
                         ),
                         dbc.Col(
                             [

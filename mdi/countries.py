@@ -12,6 +12,7 @@ from .plotting_functions import (
     horizontal_bar_plot,
     percentage_calculate,
     summary_graph_card,
+    plot_graph_card,
     meter_plot,
     country_orgs_bar_plot,
     comparison_summary_graph_card,
@@ -204,7 +205,7 @@ def update_line_plot(dfp):
         else None
     )
 
-    card = summary_graph_card(
+    card = plot_graph_card(
         card_texts.dot_title,
         card_texts.dot_under_title,
         card_texts.dot_info_circle,
@@ -241,7 +242,8 @@ def update_sunburst_plot(dfp):
             ]
         ),
         insidetextorientation="radial",
-        hovertemplate="Deployed: %{value:,}<br>"
+        hovertemplate="%{label}<br>"
+        + "Deployed: %{value:,}<br>"
         + "Share: %{percentParent:.2p}<br>"
         + "<extra></extra>",
     )
@@ -253,7 +255,7 @@ def update_sunburst_plot(dfp):
         height=465,
     )
 
-    card = summary_graph_card(
+    card = plot_graph_card(
         card_texts.sbp_title,
         card_texts.sbp_under_title,
         card_texts.sbp_info_circle,
@@ -473,7 +475,7 @@ def update_total_deployment_plot(df_deploy):
     else:
         card_under_title = card_texts.tdop_under_title
 
-    card = summary_graph_card(
+    card = plot_graph_card(
         card_texts.tdop_title, card_under_title, card_texts.tdop_info_circle, fig
     )
     return card

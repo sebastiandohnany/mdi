@@ -144,7 +144,7 @@ def meter_plot(
 
 
 def country_orgs_bar_plot(df, condensed=False):
-    df.rename(columns={'Organisation': 'Command'}, inplace=True)
+    df.rename(columns={"Organisation": "Command"}, inplace=True)
     if len(df["Country"].unique()) == 1:
         fig = px.bar(
             df,
@@ -161,8 +161,8 @@ def country_orgs_bar_plot(df, condensed=False):
         fig.update_layout(yaxis_title=None)
         fig.update_traces(
             hovertemplate="<b>Command: %{customdata[0]}</b><br>"
-                          + "Deployed: %{x} <br>"
-                          + "Percentage Deployed: %{customdata[1]} % <br>"
+            + "Deployed: %{x} <br>"
+            + "Percentage Deployed: %{customdata[1]} % <br>"
         )
 
     else:
@@ -180,12 +180,10 @@ def country_orgs_bar_plot(df, condensed=False):
         fig.update_layout(xaxis_title=None)
         fig.update_traces(
             hovertemplate="<b>Country: %{x}</b><br>"
-                          + "Command: %{customdata[0]} <br>"
-                          + "Deployed: %{y} <br>"
-                          + "Percentage Deployed: %{customdata[1]} % <br>"
+            + "Command: %{customdata[0]} <br>"
+            + "Deployed: %{y} <br>"
+            + "Percentage Deployed: %{customdata[1]} % <br>"
         )
-
-
 
     if condensed:
         fig.update_layout(
@@ -195,14 +193,18 @@ def country_orgs_bar_plot(df, condensed=False):
             ),
             margin=dict(l=0, r=0, t=30, b=0),
         )
-    fig.update_xaxes(title_standoff=constants.theme["title_standoff"],
-                     tickfont_size=constants.theme["tickfont_size"],
-                     titlefont_size=constants.theme["titlefont_size"],
-                     ticksuffix="    ")
-    fig.update_yaxes(title_standoff=constants.theme["title_standoff"],
-                     tickfont_size=constants.theme["tickfont_size"],
-                     titlefont_size=constants.theme["titlefont_size"],
-                     ticksuffix="     ")
+    fig.update_xaxes(
+        title_standoff=constants.theme["title_standoff"],
+        tickfont_size=constants.theme["tickfont_size"],
+        titlefont_size=constants.theme["titlefont_size"],
+        ticksuffix="    ",
+    )
+    fig.update_yaxes(
+        title_standoff=constants.theme["title_standoff"],
+        tickfont_size=constants.theme["tickfont_size"],
+        titlefont_size=constants.theme["titlefont_size"],
+        ticksuffix="     ",
+    )
     fig.update_layout(
         paper_bgcolor="rgb(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
@@ -242,6 +244,57 @@ def summary_graph_card(
                     dbc.Col(
                         html.H4(
                             str(title).upper(),
+                            style={
+                                "color": title_colour,
+                                "display": "inline-block",
+                                "margin-right": "5px",
+                            },
+                        ),
+                    ),
+                    info_circle,
+                ]
+            ),
+            html.H6(
+                text,
+                className="card-text",
+            ),
+            dcc.Graph(figure=graph, config=graph_config) if graph else "",
+            html.P(extra_text) if extra_text else "",
+        ]
+    )
+
+    return card
+
+
+def plot_graph_card(
+    title,
+    text,
+    card_info,
+    graph,
+    title_colour=constants.colors["cardName"],
+    extra_text=None,
+):
+    info_circle = ""
+    if card_info is not None:
+        info_circle = dbc.Col(
+            [
+                html.I(
+                    className="fas fa-regular fa-circle-info",
+                    id=f"target_{title}",
+                    style={"text-align": "right"},
+                ),
+                dbc.Tooltip(card_info, target=f"target_{title}"),
+            ],
+            style={"text-align": "right"},
+        )
+
+    card = dbc.CardBody(
+        [
+            dbc.Row(
+                [
+                    dbc.Col(
+                        html.H5(
+                            str(title).capitalize(),
                             style={
                                 "color": title_colour,
                                 "display": "inline-block",

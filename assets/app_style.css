@@ -3,3 +3,44 @@
     border-radius: 4px;
     background-color: white;
 }
+
+#year-slider {
+    padding: 0px 10px 25px !important;
+}
+
+.btn-outline-primary {
+    color: #0075BB;
+    border-color: #0075BB;
+}
+
+.btn-outline-primary:hover {
+    background-color: #0075BB;
+    border-color: #0075BB;
+}
+
+.rc-slider-track {
+    background-color: #0075BB;
+  }
+  
+  .rc-slider-dot-active {  
+    border-color: #0075BB;
+    border: solid 2px #0075BB;
+  }
+  
+  .rc-slider-handle {
+    background-color: #0075BB;
+    border-color: #0075BB;
+  }
+  
+  .rc-slider-handle:hover {
+    border-color: #0075BB;
+  }
+  
+  .rc-slider-handle-active:active {
+    border-color: #0075BB;
+  }
+
+  .form-check-input:checked {
+    background-color: #795548;
+    border-color: #795548;
+  }
