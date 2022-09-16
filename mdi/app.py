@@ -405,63 +405,148 @@ app.layout = html.Div(
             # style={"fontFamily": constants.theme["fontFamily"]},
             fluid=True,
         ),
-        html.Footer([
-            dbc.Row(
-                [
-                    dbc.Col([
-                        dbc.Row(
-                            html.Pre(["Network for Strategic Analysis (NSA)  |  "
-                         "Robert Sutherland Hall, Suite 403, Queen\'s University, 138 Union St  |  "
-                         "Kingston (Ontario)  K7L 3N6 Canada " , html.Br()]),
+        html.Footer(
+            [
+                dbc.Row(
+                    [
+                        dbc.Col(
+                            [
+                                dbc.Row(
+                                    html.Pre(
+                                        [
+                                            "Network for Strategic Analysis (NSA)  |  "
+                                            "Robert Sutherland Hall, Suite 403, Queen's University, 138 Union St  |  "
+                                            "Kingston (Ontario)  K7L 3N6 Canada ",
+                                            html.Br(),
+                                        ]
+                                    ),
+                                ),
+                                dbc.Row(
+                                    [
+                                        html.Pre(
+                                            [
+                                                html.I(className="fas fa-phone fa-xs"),
+                                                " +1 613 533-2381  |  ",
+                                                html.A(
+                                                    [
+                                                        html.I(
+                                                            className="fas fa-envelope fa-xs"
+                                                        ),
+                                                        " info@ras-nsa.ca",
+                                                    ],
+                                                    href="mailto:info@ras-nsa.ca",
+                                                    target="_blank",
+                                                    style={
+                                                        "color": "inherit",
+                                                        "text-decoration": "none",
+                                                    },
+                                                ),
+                                            ]
+                                        )
+                                    ]
+                                ),
+                            ],
+                            className="col-10",
                         ),
-                        dbc.Row([
-                            html.Pre([html.I(className="fas fa-phone fa-xs"), " +1 613 533-2381  |  ",
-                                      html.A([html.I(className="fas fa-envelope fa-xs"), " info@ras-nsa.ca"],
-                                             href="mailto:info@ras-nsa.ca",
-                                             target="_blank",
-                                             style={"color": "inherit", "text-decoration":"none"}
-                                             )
-                                      ]
-                                     )
+                        dbc.Col(
+                            dbc.Row(
+                                [
+                                    html.Pre(
+                                        [
+                                            html.A(
+                                                html.I(
+                                                    className="fa-brands fa-facebook fa-xl"
+                                                ),
+                                                href="https://www.facebook.com/networkforstrategicanalysis/",
+                                                target="_blank",
+                                                style={"color": "inherit"},
+                                            ),
+                                            "  ",
+                                            html.A(
+                                                html.I(
+                                                    className="fa-brands fa-linkedin fa-xl"
+                                                ),
+                                                href="https://www.linkedin.com/company/ras-nsa/",
+                                                target="_blank",
+                                                style={"color": "inherit"},
+                                            ),
+                                            "  ",
+                                            html.A(
+                                                html.I(
+                                                    className="fa-brands fa-twitter fa-xl"
+                                                ),
+                                                href="https://twitter.com/RAS_NSA",
+                                                target="_blank",
+                                                style={"color": "inherit"},
+                                            ),
+                                            "  ",
+                                            html.A(
+                                                html.I(
+                                                    className="fa-brands fa-youtube fa-xl"
+                                                ),
+                                                href="https://www.youtube.com/playlist?list=PLz41uVKaYyLT0m0MVtPn8W0l3aVJhTPPd",
+                                                target="_blank",
+                                                style={"color": "inherit"},
+                                            ),
+                                        ]
+                                    )
+                                ]
+                            ),
+                            style={"text-align": "right"},
+                        ),
+                    ],
+                    style={
+                        "margin-bottom": "2vh",
+                    },
+                ),
+                dbc.Row(
+                    html.Pre(
+                        [
+                            "Source code available from ",
+                            html.A(
+                                "GitHub",
+                                href="https://github.com/sebastiandohnany/mdi",
+                                target="_blank",
+                                style={"color": "inherit"},
+                            ),
+                            ". | The development of this app was financed by XXX.  |  Source of data: The International Institute of Strategic Studies.",
                         ]
-                        ),
-                    ], className="col-10"),
-                    dbc.Col(
-                        dbc.Row([
-                            html.Pre([
-                                html.A(html.I(className="fa-brands fa-facebook fa-xl"),
-                                       href="https://www.facebook.com/networkforstrategicanalysis/",
-                                       target="_blank",
-                                       style={"color": "inherit"}), "  ",
-                                html.A(html.I(className="fa-brands fa-linkedin fa-xl"),
-                                       href="https://www.linkedin.com/company/ras-nsa/",
-                                       target="_blank",
-                                       style={"color": "inherit"}), "  ",
-                                html.A(html.I(className="fa-brands fa-twitter fa-xl"),
-                                       href="https://twitter.com/RAS_NSA",
-                                       target="_blank",
-                                       style={"color": "inherit"}), "  ",
-                                html.A(html.I(className="fa-brands fa-youtube fa-xl"),
-                                       href="https://www.youtube.com/playlist?list=PLz41uVKaYyLT0m0MVtPn8W0l3aVJhTPPd",
-                                       target="_blank",
-                                       style={"color": "inherit"})])
-                        ])
                     )
-                ], style={"margin-bottom":"2vh"}
-            ),
-            dbc.Row(
-                html.Pre(["The development of this app was financed by XXX.  |  Source of data: The International Institute of Strategic Studies."])
-            ),
-            dbc.Row([
-                html.Pre("How to cite: RAS-NSA 2022. The Military Deployment Index. Available from: www.mdi.ras-nsa.can")
-            ]),
-            dbc.Row([
-                html.Pre([u"\u00A9", " 2022 Barbora Tallová, Sebastián Dohnány, Natália Bajnoková"])
-            ]),
-
-        ], style={ "border-top":"1px gray solid",
-                    "margin":"2vw 0 0 0", "padding":"3vw 3vw 1vw 3vw", "color":"gray", "background-color": "#fafafa", "fontSize":15}),
-    ], style={ "background-color": "#fafafa"}
+                ),
+                dbc.Row(
+                    [
+                        html.Pre(
+                            "How to cite: RAS-NSA 2022. The Military Deployment Index. Available from: www.mdi.ras-nsa.can"
+                        )
+                    ]
+                ),
+                dbc.Row(
+                    [
+                        html.Pre(
+                            [
+                                "\u00A9",
+                                " 2022 Barbora Tallová, Sebastián Dohnány, Natália Bajnoková",
+                            ]
+                        )
+                    ]
+                ),
+            ],
+            style={
+                "margin": "2vw 0 0 0",
+                "padding-top": "3vw",
+                "padding-bottom": "1vw",
+                "padding-left": "var(--bs-gutter-x, 1.4rem)",
+                "padding-right": "var(--bs-gutter-x, 1.4rem)",
+                "color": "gray",
+                "background-color": "#fafafa",
+                "fontSize": 15,
+            },
+        ),
+    ],
+    style={
+        "background-color": "#fafafa",
+        "padding": "0vw 3vw 0vw",
+    },
 )
 
 from . import countries
