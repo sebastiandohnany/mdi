@@ -220,6 +220,7 @@ app.layout = html.Div(
                                                         str(year): str(year)
                                                         for year in df["Year"].unique()
                                                     },
+                                                    included=False,
                                                 ),
                                             ],
                                         )
