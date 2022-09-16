@@ -427,16 +427,16 @@ app.layout = html.Div(
                                 html.I(className="fa-brands fa-youtube fa-xl")])
                         ])
                     )
-                ]
+                ], style={"margin-bottom":"2vh"}
             ),
-            dbc.Row([
-                html.Pre([html.I(className="fa-solid fa-circle-c"), " 2022 Barbora Tallová, Sebastián Dohnány, Natália Bajnoková"])
-            ]),
             dbc.Row(
                 html.Pre(["The development of this app was financed by XXX.  |  Source of data: The International Institute of Strategic Studies."])
             ),
             dbc.Row([
                 html.Pre("How to cite: RAS-NSA 2022. The Military Deployment Index. Available from: www.mdi.ras-nsa.can")
+            ]),
+            dbc.Row([
+                html.Pre([u"\u00A9", " 2022 Barbora Tallová, Sebastián Dohnány, Natália Bajnoková"])
             ]),
 
         ], style={ "border-top":"1px gray solid",
