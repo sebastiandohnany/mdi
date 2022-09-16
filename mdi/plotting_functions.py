@@ -22,7 +22,6 @@ def percentage_calculate(n, d, scaling=1):
         return round(number, 1)
 
 
-
 def format_number(number):
     if number > 999:
         number = number / 1000
@@ -159,11 +158,15 @@ def country_orgs_bar_plot(df, condensed=False):
             custom_data=["Command", "Percentage of Total Deployment"],
             orientation="h",
         )
-        fig.update_layout(yaxis_title=None)
+        fig.update_layout(
+            yaxis_title=None,
+            xaxis_tickformat=",",
+        )
         fig.update_traces(
             hovertemplate="<b>Command: %{customdata[0]}</b><br>"
-            + "Deployed: %{x} <br>"
-            + "Percentage Deployed: %{customdata[1]} % <br>"
+            + "Deployed: %{x:,} <br>"
+            + "Share: %{customdata[1]:.2}% <br>"
+            + "<extra></extra>"
         )
 
     else:
@@ -178,12 +181,18 @@ def country_orgs_bar_plot(df, condensed=False):
             },
             custom_data=["Command", "Percentage of Total Deployment"],
         )
-        fig.update_layout(xaxis_title=None)
+        fig.update_layout(
+            margin=dict(l=100, r=0, t=0, b=0),
+            xaxis_title=None,
+            yaxis_tickformat=",",
+            yaxis_title_standoff=60,
+        )
         fig.update_traces(
             hovertemplate="<b>Country: %{x}</b><br>"
-            + "Command: %{customdata[0]} <br>"
-            + "Deployed: %{y} <br>"
-            + "Percentage Deployed: %{customdata[1]} % <br>"
+            + "<b>Command: %{customdata[0]}</b><br>"
+            + "Deployed: %{y:,} <br>"
+            + "Share: %{customdata[1]:.2}% <br>"
+            + "<extra></extra>"
         )
 
     if condensed:

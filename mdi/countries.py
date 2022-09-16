@@ -57,10 +57,9 @@ def update_map(selected_year, selected_countries, military_presence):
             customdata=dfn,
             hovertemplate="<b>Country: %{customdata[5]}</b><br>"
             + "Theatre: %{customdata[2]} <br>"
-            + "Deployed: %{customdata[9]} <br>"
-            + "Organisation: %{customdata[6]} <br>"
+            + "Deployed: %{customdata[9]:,} <br>"
+            + "Command: %{customdata[6]} <br>"
             + "Mission Name: %{customdata[7]} <br>"
-            + "Mission Type: %{customdata[8]} <br>"
             + "<extra></extra>",
             showlegend=False,
         )
@@ -154,6 +153,9 @@ def update_line_plot(dfp):
             name=name,
             showlegend=False,
             line=dict(color=dfn.Color.iloc[0]),
+            hovertemplate="Year: %{x}<br>"
+            + "Deployed: %{y:,} <br>"
+            + "<extra></extra>",
         )
         return data
 
@@ -164,11 +166,13 @@ def update_line_plot(dfp):
 
     figure = go.Figure(data=data)
     figure.update_layout(
-        margin=dict(l=0, r=0, t=0, b=0),
+        margin=dict(l=100, r=0, t=0, b=0),
         height=340,
         paper_bgcolor="rgb(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         yaxis_title="Deployed",
+        yaxis_title_standoff=60,
+        yaxis_tickformat=",",
     )
     figure.update_yaxes(
         title_standoff=constants.theme["title_standoff"],
@@ -244,7 +248,7 @@ def update_sunburst_plot(dfp):
             ]
         ),
         insidetextorientation="radial",
-        hovertemplate="%{label}<br>"
+        hovertemplate="<b> %{label} </b><br>"
         + "Deployed: %{value:,}<br>"
         + "Share: %{percentParent:.2p}<br>"
         + "<extra></extra>",
