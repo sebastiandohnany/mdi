@@ -405,8 +405,10 @@ app.layout = html.Div(
             # style={"fontFamily": constants.theme["fontFamily"]},
             fluid=True,
         ),
-        html.Footer(),
-    ]
+        html.Footer(
+            "Network for Strategic Analysis (NSA)  |     Robert Sutherland Hall, Suite 403, Queen\'s University, 138 Union St    |     Kingston (Ontario)   K7L 3N6 Canada +1 613 533-2381     |      info@ras-nsa.ca",
+            style={ "border-top":"1px gray solid", "margin":"2vw", "padding":"1vw", "color":"gray", "background-color": "#fafafa", "fontSize":15}),
+    ], style={ "background-color": "#fafafa"}
 )
 
 from . import countries
