@@ -15,11 +15,12 @@ graph_config = dict(displaylogo=False, displayModeBar=False)
 
 
 def percentage_calculate(n, d, scaling=1):
-    try:
+    if d == 0:
+        return 0
+    else:
         number = (n / d) * scaling
         return round(number, 1)
-    except ZeroDivisionError:
-        return 0
+
 
 
 def format_number(number):
