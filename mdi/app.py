@@ -405,9 +405,42 @@ app.layout = html.Div(
             # style={"fontFamily": constants.theme["fontFamily"]},
             fluid=True,
         ),
-        html.Footer(
-            "Network for Strategic Analysis (NSA)  |     Robert Sutherland Hall, Suite 403, Queen\'s University, 138 Union St    |     Kingston (Ontario)   K7L 3N6 Canada +1 613 533-2381     |      info@ras-nsa.ca",
-            style={ "border-top":"1px gray solid", "margin":"2vw", "padding":"1vw", "color":"gray", "background-color": "#fafafa", "fontSize":15}),
+        html.Footer([
+            dbc.Row(
+                [
+                    dbc.Col([
+                        dbc.Row(
+                            html.Pre(["Network for Strategic Analysis (NSA)  |  "
+                         "Robert Sutherland Hall, Suite 403, Queen\'s University, 138 Union St  |  "
+                         "Kingston (Ontario)  K7L 3N6 Canada " , html.Br()]),
+                        ),
+                        dbc.Row([
+                            html.Pre([html.I(className="fas fa-phone fa-xs"), " +1 613 533-2381  |  ",
+                                      html.I(className="fas fa-envelope fa-xs"), " info@ras-nsa.ca"])]),
+                    ], className="col-10"),
+                    dbc.Col(
+                        dbc.Row([
+                            html.Pre([
+                                html.I(className="fa-brands fa-facebook fa-xl"), "  ",
+                                html.I(className="fa-brands fa-linkedin fa-xl"), "  ",
+                                html.I(className="fa-brands fa-twitter fa-xl"), "  ",
+                                html.I(className="fa-brands fa-youtube fa-xl")])
+                        ])
+                    )
+                ]
+            ),
+            dbc.Row([
+                html.Pre([html.I(className="fa-solid fa-circle-c"), " 2022 Barbora Tallová, Sebastián Dohnány, Natália Bajnoková"])
+            ]),
+            dbc.Row(
+                html.Pre(["The development of this app was financed by XXX.  |  Source of data: The International Institute of Strategic Studies."])
+            ),
+            dbc.Row([
+                html.Pre("How to cite: RAS-NSA 2022. The Military Deployment Index. Available from: www.mdi.ras-nsa.can")
+            ]),
+
+        ], style={ "border-top":"1px gray solid",
+                    "margin":"2vw 0 0 0", "padding":"3vw 3vw 1vw 3vw", "color":"gray", "background-color": "#fafafa", "fontSize":15}),
     ], style={ "background-color": "#fafafa"}
 )
 
