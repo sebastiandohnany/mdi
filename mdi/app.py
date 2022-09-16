@@ -416,15 +416,35 @@ app.layout = html.Div(
                         ),
                         dbc.Row([
                             html.Pre([html.I(className="fas fa-phone fa-xs"), " +1 613 533-2381  |  ",
-                                      html.I(className="fas fa-envelope fa-xs"), " info@ras-nsa.ca"])]),
+                                      html.A([html.I(className="fas fa-envelope fa-xs"), " info@ras-nsa.ca"],
+                                             href="mailto:info@ras-nsa.ca",
+                                             target="_blank",
+                                             style={"color": "inherit", "text-decoration":"none"}
+                                             )
+                                      ]
+                                     )
+                        ]
+                        ),
                     ], className="col-10"),
                     dbc.Col(
                         dbc.Row([
                             html.Pre([
-                                html.I(className="fa-brands fa-facebook fa-xl"), "  ",
-                                html.I(className="fa-brands fa-linkedin fa-xl"), "  ",
-                                html.I(className="fa-brands fa-twitter fa-xl"), "  ",
-                                html.I(className="fa-brands fa-youtube fa-xl")])
+                                html.A(html.I(className="fa-brands fa-facebook fa-xl"),
+                                       href="https://www.facebook.com/networkforstrategicanalysis/",
+                                       target="_blank",
+                                       style={"color": "inherit"}), "  ",
+                                html.A(html.I(className="fa-brands fa-linkedin fa-xl"),
+                                       href="https://www.linkedin.com/company/ras-nsa/",
+                                       target="_blank",
+                                       style={"color": "inherit"}), "  ",
+                                html.A(html.I(className="fa-brands fa-twitter fa-xl"),
+                                       href="https://twitter.com/RAS_NSA",
+                                       target="_blank",
+                                       style={"color": "inherit"}), "  ",
+                                html.A(html.I(className="fa-brands fa-youtube fa-xl"),
+                                       href="https://www.youtube.com/playlist?list=PLz41uVKaYyLT0m0MVtPn8W0l3aVJhTPPd",
+                                       target="_blank",
+                                       style={"color": "inherit"})])
                         ])
                     )
                 ], style={"margin-bottom":"2vh"}
