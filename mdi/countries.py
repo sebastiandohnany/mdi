@@ -23,6 +23,8 @@ from . import index
 # data
 from .app import df, df_deployments, df_presence, mapbox_access_token, ROOT
 
+index.calculate_mdi(df_deployments)
+
 # default store
 selected_countries_default = pd.Series(
     data=dict.fromkeys(
