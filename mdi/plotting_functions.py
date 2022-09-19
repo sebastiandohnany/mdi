@@ -89,17 +89,29 @@ def horizontal_bar_plot(
         value_str = str(value)
         if percentage:
             value_str = value_str + "%"
-
-        annotations.append(
-            dict(
-                xref="x1",
-                yref="y1",
-                y=country,
-                x=max_value + 0.08 * max_value,
-                text=value_str,
-                showarrow=False,
+            annotations.append(
+                dict(
+                    xref="x1",
+                    yref="y1",
+                    y=country,
+                    x=max_value + 0.08 * max_value,
+                    text=value_str,
+                    showarrow=False,
+                    xshift=15,
+                )
             )
-        )
+        else:
+            annotations.append(
+                dict(
+                    xref="x1",
+                    yref="y1",
+                    y=country,
+                    x=max_value + 0.08 * max_value,
+                    text=value_str,
+                    showarrow=False,
+                    xshift=10,
+                )
+            )
     fig.update_layout(annotations=annotations)
     return fig
 
@@ -252,8 +264,59 @@ def summary_graph_card(
             dbc.Row(
                 [
                     dbc.Col(
-                        html.H4(
+                        html.H1(
                             str(title).upper(),
+                            style={
+                                "color": title_colour,
+                                "display": "inline-block",
+                                "margin-right": "5px",
+                            },
+                        ),
+                    ),
+                    info_circle,
+                ]
+            ),
+            html.H6(
+                text,
+                className="card-text",
+            ),
+            dcc.Graph(figure=graph, config=graph_config) if graph else "",
+            html.P(extra_text) if extra_text else "",
+        ]
+    )
+
+    return card
+
+
+def summary_graph_card_small(
+    title,
+    text,
+    card_info,
+    graph,
+    title_colour=constants.colors["title"],
+    extra_text=None,
+):
+    info_circle = ""
+    if card_info is not None:
+        info_circle = dbc.Col(
+            [
+                html.I(
+                    className="fas fa-regular fa-circle-info",
+                    id=f"target_{title}",
+                    style={"text-align": "right"},
+                ),
+                dbc.Tooltip(card_info, target=f"target_{title}"),
+            ],
+            style={"text-align": "right"},
+        )
+
+    card = dbc.CardBody(
+        [
+            dbc.Row(
+                [
+                    dbc.Col(
+                        html.H4(
+                            str(title),
                             style={
                                 "color": title_colour,
                                 "display": "inline-block",
@@ -377,7 +440,7 @@ def comparison_summary_graph_card(side_1, side_2, card_info):
                     dbc.Col(
                         [
                             html.H6(
-                                side_1["Text"],
+                                side_1["Text"].upper(),
                                 className="card-text",
                             ),
                             dcc.Graph(figure=side_1["Graph"], config=graph_config)
@@ -389,7 +452,7 @@ def comparison_summary_graph_card(side_1, side_2, card_info):
                     dbc.Col(
                         [
                             html.H6(
-                                side_2["Text"],
+                                side_2["Text"].upper(),
                                 className="card-text",
                             ),
                             dcc.Graph(figure=side_2["Graph"], config=graph_config)

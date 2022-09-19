@@ -16,6 +16,7 @@ from .plotting_functions import (
     meter_plot,
     country_orgs_bar_plot,
     comparison_summary_graph_card,
+    summary_graph_card_small,
 )
 
 from . import index
@@ -23,7 +24,7 @@ from . import index
 # data
 from .app import df, df_deployments, df_presence, mapbox_access_token, ROOT
 
-index.calculate_mdi(df_deployments)
+# index.calculate_mdi(df_deployments)
 
 # default store
 selected_countries_default = pd.Series(
@@ -155,9 +156,7 @@ def update_line_plot(dfp):
             name=name,
             showlegend=False,
             line=dict(color=dfn.Color.iloc[0]),
-            hovertemplate="Year: %{x}<br>"
-            + "Deployed: %{y:,} <br>"
-            + "<extra></extra>",
+            hovertemplate="%{y:,}" + "<extra></extra>",
         )
         return data
 
@@ -260,7 +259,7 @@ def update_sunburst_plot(dfp):
         margin=dict(l=0, r=0, t=0, b=0),
         paper_bgcolor="rgb(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        height=465,
+        height=488,
     )
 
     card = plot_graph_card(
@@ -315,6 +314,13 @@ def update_population_plot(df_deploy, df_population, year):
         20,
         condensed=condensed,
     )
+
+    # If only 1 country, smaller height
+    if df.shape[0] == 1:
+        fig.update_layout(height=100)
+    else:
+        fig.update_layout(height=120)
+
     card = summary_graph_card(
         deployment_mean,
         card_texts.dpc_under_title,
@@ -374,6 +380,12 @@ def update_active_plot(df_deploy, df_active):
         condensed=condensed,
     )
 
+    # If only 1 country, smaller height
+    if df.shape[0] == 1:
+        fig.update_layout(height=100)
+    else:
+        fig.update_layout(height=120)
+
     card = summary_graph_card(
         str(active_mean) + "%",
         card_texts.dap_under_title,
@@ -392,7 +404,7 @@ def update_deployed_meter_plot(df_deploy):
 
     # Create a figure and a card
     fig = meter_plot(highest_percentage, df.max(), {"min": 0, "max": 100})
-    card = summary_graph_card(
+    card = summary_graph_card_small(
         df.idxmax(), card_texts.tdm_under_title, card_texts.tdm_info_circle, fig
     )
 
@@ -478,13 +490,16 @@ def update_total_deployment_plot(df_deploy):
     fig = country_orgs_bar_plot(df, condensed=condensed)
 
     if len(df["Country"].unique()) == 1:
-        card_under_title = f"by {df['Country'].unique()[0]}"
+        card_under_title = f"for {df['Country'].unique()[0]}"
 
     else:
         card_under_title = card_texts.tdop_under_title
 
     card = plot_graph_card(
-        card_texts.tdop_title, card_under_title, card_texts.tdop_info_circle, fig
+        card_texts.tdop_title,
+        card_under_title,
+        card_texts.tdop_info_circle,
+        fig,
     )
     return card
 
@@ -539,7 +554,7 @@ def update_orgs_bar_plot(df_deploy):
         colour=colours[::-1],
     )
     card = summary_graph_card(
-        "{:,}".format(total_deployed) + " troops",
+        "{:,}".format(total_deployed),
         card_texts.tdp_under_title,
         card_texts.tdp_info_circle,
         fig,

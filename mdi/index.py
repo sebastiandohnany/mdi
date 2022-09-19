@@ -75,6 +75,23 @@ def calculate_mdi(df_deployments):
     df_statistics["Multiply"] = multiply
     print(df_statistics)
 
+    # normalise both to 0-10, the weighter avg 0.6 percapita and 0.4 total
+    total_norm = []
+    total_min = min(total_deployments)
+    total_max = max(total_deployments) - total_min
+    divisor_total = total_max / 10
+    for i in range(len(total_deployments)):
+        total_norm.append((total_deployments[i] - total_min) / divisor_total)
+    df_statistics["Total Norm"] = total_norm
+
+    # total_norm = []
+    # total_min = min(total_deployments)
+    # total_max = max(total_deployments) - total_min
+    # divisor_total = total_max / 10
+    # for i in range(len(total_deployments)):
+    #     total_norm[i] = (total_deployments[i] - total_min) / divisor_total
+    # df_statistics["Total Norm"] = total_norm
+
     fig = make_subplots(specs=[[{"secondary_y": True}]])
 
     fig.add_trace(

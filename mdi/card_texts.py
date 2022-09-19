@@ -28,12 +28,12 @@ tdm_info_circle = "This is the most popular deployment area for all selected cou
 
 # Total deployment personnel orgs breakdown per country bar plot
 tdop_title = "TROOPS IN ALL COMMAND STRUCTURES"
-tdop_under_title = "BY COUNTRY"
+tdop_under_title = "by country"
 tdop_info_circle = "This figure shows the distribution of troop deployments in different command structures for selected countries. If many countries are selected, the top five are displayed. Click on the legend to select or remove command entities. Drag the slider above for evolution over time."
 
 # Total deployment bar plot
 tdp_title = "TROOPS IN ALL COMMAND STRUCTURES"
-tdp_under_title = "AGGREGATE"
+tdp_under_title = "Total troops in all command structures"
 tdp_info_circle = "This figure shows the distribution of troop deployments in different command structures. Data are aggregated if more than two countries are selected. Drag the slider above for evolution over time."
 
 # MDI card

@@ -38,7 +38,7 @@ from dash_bootstrap_templates import load_figure_template
 load_figure_template("litera")
 
 # data
-df = pd.read_excel(ROOT + "data/MDVA_Deployments_LatLon.xlsx")
+df = pd.read_excel(ROOT + "data/MDVA_Deployments_LatLon-2.xlsx")
 mapbox_access_token = open(ROOT + ".mapbox_token").read()
 
 # country colors
@@ -187,6 +187,7 @@ app.layout = html.Div(
                                 style={
                                     "margin": "0.5rem 0.5rem 0.5rem 0.5rem",
                                     "background": "#FEBDB9",
+                                    "height": "96%",
                                 },
                             )
                         ),
