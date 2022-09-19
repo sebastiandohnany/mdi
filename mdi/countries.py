@@ -62,7 +62,7 @@ def update_map(selected_year, selected_countries, military_presence):
             + "Theatre: %{customdata[2]} <br>"
             + "Deployed: %{customdata[9]:,} <br>"
             + "Command: %{customdata[6]} <br>"
-            + "Mission Name: %{customdata[7]} <br>"
+            + "Operation: %{customdata[7]} <br>"
             + "<extra></extra>",
             showlegend=False,
         )
@@ -83,9 +83,8 @@ def update_map(selected_year, selected_countries, military_presence):
             hovertemplate="<b>Country: %{customdata[5]}</b><br>"
             + "Theatre: %{customdata[2]} <br>"
             + "Deployed: %{customdata[9]} <br>"
-            + "Organisation: %{customdata[6]} <br>"
-            + "Mission Name: %{customdata[7]} <br>"
-            + "Mission Type: %Presence <br>"
+            + "Command: %{customdata[6]} <br>"
+            + "Operation: %{customdata[7]} <br>"
             + "<extra></extra>",
             showlegend=False,
         )
