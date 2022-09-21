@@ -289,7 +289,7 @@ def summary_graph_card(
             dbc.Row(
                 [
                     dbc.Col(
-                        html.H1(
+                        html.H4(
                             str(title).upper(),
                             style={
                                 "color": title_colour,
