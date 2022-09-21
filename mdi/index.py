@@ -68,9 +68,11 @@ def calculate_mdi(df_deployments, year):
     percapita_z = sts.zscore(deployments_per_capita)
     df_statistics["PerCapita-Z"] = percapita_z
 
-    combined_z_total_percapita = combined_z_scores(
-        np.array(percapita_z), np.array(total_z), 1, 1
-    )
+    # combined_z_total_percapita = combined_z_scores(
+    #     np.array(percapita_z), np.array(total_z), 1, 1
+    # )
+
+    combined_z_total_percapita = np.array(percapita_z) + np.array(total_z)
     df_statistics["Combined-Z_Total_PerCapita"] = combined_z_total_percapita
 
     # mdi = sts.norm.cdf(combined_z_total_percapita) * 2.5

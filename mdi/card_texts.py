@@ -11,7 +11,7 @@ dot_info_circle = "This figure shows the evolution of troop deployments over tim
 
 # Sunburst plot
 sbp_title = "Troop deployments by command structure and operation"
-sbp_under_title = ""
+sbp_under_title = "FOR ALL SELECTED COUNTRIES"
 sbp_info_circle = "This is a two-level chart of troop deployments distribution. The inner circle shows the share of troop deployments under different command entities like security organizations and operation leaders. The outer circle shows the share of troop deployments in different operations. The color of each operation corresponds to its respective command. Click on any item in the inner circle to see troop deployments distribution in different operations for a specific command. Data are aggregated if more than one country is selected. Drag the slider above for evolution over time."
 # Deployment per capita bar plot
 dpc_under_title = "Troops per 100,000 population"
@@ -25,11 +25,12 @@ tdm_info_circle = "This is the most popular deployment area for all selected cou
 
 # Total deployment personnel orgs breakdown per country bar plot
 tdop_title = "Troops in all command structures"
-tdop_under_title = "by country"
+tdop_under_title = "BY COUNTRY"
 tdop_info_circle = "This figure shows the distribution of troop deployments in different command structures for selected countries. If many countries are selected, the top five are displayed. Click on the plus icon for a full list. Click on the legend to select or remove command entities. Drag the slider above for evolution over time."
+
 # Total deployment bar plot
 tdp_title = "TROOPS IN ALL COMMAND STRUCTURES"
-tdp_under_title = "Total troops in all command structures"
+tdp_under_title = "TOTAL TROOPS IN ALL COMMAND STRUCTURES"
 tdp_info_circle = "This figure shows the distribution of troop deployments in different command structures. Data are aggregated if more than two countries are selected. Drag the slider above for evolution over time."
 
 # MDI card

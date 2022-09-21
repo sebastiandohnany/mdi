@@ -81,7 +81,7 @@ for country in list(constants.country_regions.keys()):
 
 
 # methodology file, modal, button
-with open(ROOT + "static/methodology.md", "r") as f:
+with open(ROOT + "assets/methodology.md", "r") as f:
     methodology_md = f.read()
 
 modal_overlay = dbc.Modal(
@@ -111,44 +111,55 @@ app.layout = html.Div(
             dbc.Navbar(
                 dbc.Container(
                     [
-                        dbc.Row(
+                        html.A(
                             [
-                                dbc.Col(
-                                    html.Img(
-                                        id="logo",
-                                        src=app.get_asset_url("NSA-RSA-logo-small.png"),
-                                        height="90px",
-                                    ),
-                                    md="auto",
-                                    align="left",
-                                ),
-                                dbc.Col(
+                                dbc.Row(
                                     [
-                                        dbc.Row(
-                                            html.Div(
-                                                [
-                                                    html.H2(
-                                                        "Military Deployment Index"
-                                                    ),
-                                                ],
-                                                id="app-title",
-                                            )
+                                        dbc.Col(
+                                            html.Img(
+                                                id="logo",
+                                                src=app.get_asset_url(
+                                                    "NSA-RSA-logo-small.png"
+                                                ),
+                                                height="90px",
+                                            ),
+                                            md="auto",
+                                            align="left",
                                         ),
-                                        dbc.Row(
-                                            html.Div(
-                                                [
-                                                    html.H6(
-                                                        "Measure and visualisation of troop deployments"
-                                                    ),
-                                                ],
-                                            )
+                                        dbc.Col(
+                                            [
+                                                dbc.Row(
+                                                    html.Div(
+                                                        [
+                                                            html.H2(
+                                                                "Military Deployment Index"
+                                                            ),
+                                                        ],
+                                                        id="app-title",
+                                                    )
+                                                ),
+                                                dbc.Row(
+                                                    html.Div(
+                                                        [
+                                                            html.H6(
+                                                                "Measure and visualisation of troop deployments"
+                                                            ),
+                                                        ],
+                                                    )
+                                                ),
+                                            ],
+                                            md=True,
+                                            align="center",
                                         ),
                                     ],
-                                    md=True,
-                                    align="center",
-                                ),
+                                    style={"background-color": "#fafafa"},
+                                )
                             ],
-                            style={"background-color": "#fafafa"},
+                            href="https://ras-nsa.ca/",
+                            style={
+                                "color": "inherit",
+                                "text-decoration": "none",
+                            },
                         ),
                         dbc.Row(
                             [

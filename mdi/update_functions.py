@@ -248,7 +248,7 @@ def update_sunburst_plot(dfp):
         insidetextorientation="radial",
         hovertemplate="<b> %{label} </b><br>"
         + "Deployed: %{value:,}<br>"
-        + "Share: %{percentParent:.2p}<br>"
+        + "Share: %{percentParent:.3p}<br>"
         + "<extra></extra>",
     )
     figure = go.Figure(data=data)
@@ -259,9 +259,14 @@ def update_sunburst_plot(dfp):
         height=488,
     )
 
+    if len(dfp["Country"].unique()) == 1:
+        card_under_title = f"FOR {dfp['Country'].unique()[0]}"
+    else:
+        card_under_title = card_texts.sbp_under_title
+
     card = plot_graph_card(
         card_texts.sbp_title,
-        card_texts.sbp_under_title,
+        card_under_title,
         card_texts.sbp_info_circle,
         figure,
     )
@@ -554,7 +559,7 @@ def update_total_deployment_plot(df_deploy):
     fig.update_layout(height=250)
 
     if len(df["Country"].unique()) == 1:
-        card_under_title = f"for {df['Country'].unique()[0]}"
+        card_under_title = f"FOR {df['Country'].unique()[0]}"
 
     else:
         card_under_title = card_texts.tdop_under_title

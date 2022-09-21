@@ -179,7 +179,7 @@ def country_orgs_bar_plot(df, country_order=None, condensed=False):
         fig.update_traces(
             hovertemplate="<b>Command: %{customdata[0]}</b><br>"
             + "Deployed: %{x:,} <br>"
-            + "Share: %{customdata[1]:.2}% <br>"
+            + "Share: %{customdata[1]:.3}% <br>"
             + "<extra></extra>"
         )
 
@@ -206,13 +206,12 @@ def country_orgs_bar_plot(df, country_order=None, condensed=False):
             hovertemplate="<b>Country: %{x}</b><br>"
             + "<b>Command: %{customdata[0]}</b><br>"
             + "Deployed: %{y:,} <br>"
-            + "Share: %{customdata[1]:.2}% <br>"
+            + "Share: %{customdata[1]:.3}% <br>"
             + "<extra></extra>"
         )
 
     if condensed:
         fig.update_layout(
-            title_text="Top 5",
             font=dict(
                 size=12,
             ),
