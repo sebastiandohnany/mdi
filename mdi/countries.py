@@ -306,6 +306,7 @@ def update_population_plot(df_deploy, df_population, year):
         df_top_5 = df.head(5)
         condensed = True
     else:
+        df_top_5 = df
         condensed = False
 
     # Create a plot and a card
@@ -382,6 +383,7 @@ def update_active_plot(df_deploy, df_active):
         df_top_5 = df.head(5)
         condensed = True
     else:
+        df_top_5 = df
         condensed = False
 
     # Create a plot and a card
