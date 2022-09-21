@@ -264,7 +264,7 @@ def summary_graph_card(
             [
                 expand_button,
                 html.I(
-                    className="fa-regular fa-circle-info",
+                    className="fas fa-regular fa-circle-info",
                     id=f"target_{title}",
                     style={"text-align": "right"},
                 ),
@@ -376,7 +376,7 @@ def plot_graph_card(
             [
                 expand_button,
                 html.I(
-                    className="fa-regular fa-circle-info",
+                    className="fas fa-regular fa-circle-info",
                     id=f"target_{title}",
                     style={"text-align": "right"},
                 ),
