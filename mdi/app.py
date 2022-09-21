@@ -81,7 +81,7 @@ for country in list(constants.country_regions.keys()):
 
 
 # methodology file, modal, button
-with open(ROOT + "static/methodology.md", "r") as f:
+with open(ROOT + "assets/methodology.md", "r") as f:
     methodology_md = f.read()
 
 modal_overlay = dbc.Modal(
