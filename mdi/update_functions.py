@@ -645,7 +645,7 @@ def update_mdi_plot(dfp):
 
     mdi = None
     for year in dfp["Year"].unique():
-        dfs = index.calculate_mdi(dfp, year)
+        dfs = index.calculate_mdi(df_deployments, year)
         dfs["Year"] = year
         if mdi is None:
             mdi = dfs
@@ -654,7 +654,7 @@ def update_mdi_plot(dfp):
 
     data = [
         get_data(mdi[mdi["Country"] == country], country)
-        for country in mdi["Country"].unique()
+        for country in dfp["Country"].unique()
     ]
 
     figure = go.Figure(data=data)

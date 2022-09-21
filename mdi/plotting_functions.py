@@ -392,7 +392,7 @@ def plot_graph_card(
                 [
                     dbc.Col(
                         html.H5(
-                            str(title).capitalize(),
+                            str(title),
                             style={
                                 "color": title_colour,
                                 "display": "inline-block",
