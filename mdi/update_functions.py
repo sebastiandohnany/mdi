@@ -23,7 +23,7 @@ from .plotting_functions import (
 from . import index
 
 # data
-from .app import df, df_deployments, df_presence, mapbox_access_token, ROOT
+from .app import df_deployments, df_presence, mapbox_access_token, ROOT
 
 # index.calculate_mdi(df_deployments)
 
@@ -34,11 +34,6 @@ selected_countries_default = pd.Series(
     )
 )
 selected_year_default = pd.DataFrame(data={"year": [2021]})
-
-# rank
-rank_countries_by_deployed = (
-    df_deployments.groupby(["Country"])["Deployed"].sum().sort_values(ascending=False)
-)
 
 
 def update_map(selected_year, selected_countries, military_presence):
@@ -85,7 +80,6 @@ def update_map(selected_year, selected_countries, military_presence):
             + "Theatre: %{customdata[2]} <br>"
             + "Deployed: %{customdata[9]} <br>"
             + "Command: %{customdata[6]} <br>"
-            + "Operation: %{customdata[7]} <br>"
             + "<extra></extra>",
             showlegend=False,
         )
@@ -156,8 +150,9 @@ def update_line_plot(dfp):
             name=name,
             showlegend=False,
             line=dict(color=dfn.Color.iloc[0]),
-            hovertemplate=f"<b>Country: {name}</b><br>" +
-                          "Deployed: %{y:,}"
+            hovertemplate=f"<b>Country: {name}</b><br>"
+            + "Deployed: %{y:,}"
+            + "<extra></extra>",
         )
         return data
 
@@ -184,11 +179,10 @@ def update_line_plot(dfp):
     figure.update_xaxes(
         title_standoff=constants.theme["title_standoff"],
         tickfont_size=constants.theme["tickfont_size"],
-        dtick= 1
+        dtick=1,
     )
 
     # TODO: figure out a way to prevent overlappping labels BUT MAYBE NOT A GOOD IDEA
-
     # if len(dfp["Country"].unique()) > 100:
     #    country_sum = (
     #        dfp.groupby(["Country"])["Deployed"]
@@ -198,6 +192,7 @@ def update_line_plot(dfp):
     #    country_list = list(country_sum.head(10).index)
     # else:
     #    country_list = dfp["Country"].unique()
+
     country_list = dfp["Country"].unique()
 
     figure.for_each_trace(
@@ -331,7 +326,7 @@ def update_population_plot(df_deploy, df_population, year):
             df["Deployment Per Capita"].iloc[::-1].values,
             df["Country Name"].iloc[::-1].values,
             df["Deployment Per Capita"].iloc[::-1].values,
-            20
+            20,
         )
 
         full_graph = None
@@ -457,7 +452,10 @@ def update_deployed_meter_plot(df_deploy):
     # Create a figure and a card
     fig = meter_plot(highest_percentage, df.max(), {"min": 0, "max": 100})
     card = summary_graph_card_small(
-        df.idxmax(), card_texts.tdm_under_title, card_texts.tdm_info_circle, fig,
+        df.idxmax(),
+        card_texts.tdm_under_title,
+        card_texts.tdm_info_circle,
+        fig,
     )
 
     return card
@@ -506,7 +504,6 @@ def update_total_deployment_plot(df_deploy):
         df_deploy.groupby(["Country"])["Deployed"].sum().sort_values(ascending=False)
     )
 
-
     # query top 5 organisations to include in the graph
     top_orgs = list(
         df.groupby(["Organisation"])
@@ -545,17 +542,16 @@ def update_total_deployment_plot(df_deploy):
 
         full_graph = country_orgs_bar_plot(df)
 
-        modal_id="total-deployment"
+        modal_id = "total-deployment"
 
     else:
         # Create only page figure, ignore modal
         fig = country_orgs_bar_plot(df)
-        modal_id = None,
+        modal_id = (None,)
         full_graph = None
 
     # Update figure height and create a card
     fig.update_layout(height=250)
-
 
     if len(df["Country"].unique()) == 1:
         card_under_title = f"for {df['Country'].unique()[0]}"
@@ -641,8 +637,8 @@ def update_mdi_card(dfp):
 
 def update_dashboard(selected_countries, year):
     dfp = df_deployments
-    df_active = pd.read_excel(ROOT + "data/MDVA_active-duty.xlsx")
-    df_population = pd.read_csv(ROOT + "data/MDVA_population.csv", delimiter=",")
+    df_active = pd.read_excel(ROOT + "data/MDVA_ActiveDuty.xlsx")
+    df_population = pd.read_csv(ROOT + "data/MDVA_Population.csv", delimiter=",")
 
     if not selected_countries:
         raise exceptions.PreventUpdate
@@ -747,11 +743,13 @@ def update_filters(actual_year, country_selection, military_presence, data):
     )
 
 
-#Population expand graph
+# Population expand graph
 @app.callback(
     Output("full-population-graph", "is_open"),
-    [Input("expand_population", "n_clicks"),
-     Input("expand-population-close", "n_clicks")],
+    [
+        Input("expand_population", "n_clicks"),
+        Input("expand-population-close", "n_clicks"),
+    ],
     [State("full-population-graph", "is_open")],
 )
 def population_toggle_modal(n1, n2, is_open):
@@ -759,11 +757,11 @@ def population_toggle_modal(n1, n2, is_open):
         return not is_open
     return is_open
 
-#Active expand graph
+
+# Active expand graph
 @app.callback(
     Output("full-active-graph", "is_open"),
-    [Input("expand_active", "n_clicks"),
-     Input("expand-active-close", "n_clicks")],
+    [Input("expand_active", "n_clicks"), Input("expand-active-close", "n_clicks")],
     [State("full-active-graph", "is_open")],
 )
 def active_toggle_modal(n1, n2, is_open):
@@ -772,11 +770,13 @@ def active_toggle_modal(n1, n2, is_open):
     return is_open
 
 
-#Total deployment expand graph
+# Total deployment expand graph
 @app.callback(
     Output("full-total-deployment-graph", "is_open"),
-    [Input("expand_total-deployment", "n_clicks"),
-     Input("expand-total-deployment-close", "n_clicks")],
+    [
+        Input("expand_total-deployment", "n_clicks"),
+        Input("expand-total-deployment-close", "n_clicks"),
+    ],
     [State("full-total-deployment-graph", "is_open")],
 )
 def total_deployment_toggle_modal(n1, n2, is_open):

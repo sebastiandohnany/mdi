@@ -35,7 +35,7 @@ def calculate_mdi(df_deployments, year):
     df_statistics = pd.DataFrame({"Country": all_countries})
 
     # population
-    df_population = pd.read_csv(ROOT + "data/MDVA_population.csv", delimiter=",")
+    df_population = pd.read_csv(ROOT + "data/MDVA_Population.csv", delimiter=",")
     df_population = df_population.query("Country in @all_countries")
 
     # total deployed

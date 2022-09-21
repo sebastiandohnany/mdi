@@ -3,6 +3,7 @@
 /venv
 /backup
 /temp
+/additional
 
 */__pycache__
 /__pycache__

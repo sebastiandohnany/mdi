@@ -38,7 +38,7 @@ from dash_bootstrap_templates import load_figure_template
 load_figure_template("litera")
 
 # data
-df = pd.read_excel(ROOT + "data/MDVA_Deployments_LatLon-2.xlsx")
+df = pd.read_excel(ROOT + "data/MDVA_Deployments_LatLon.xlsx")
 mapbox_access_token = open(ROOT + ".mapbox_token").read()
 
 # country colors
@@ -138,7 +138,7 @@ app.layout = html.Div(
                                             html.Div(
                                                 [
                                                     html.H6(
-                                                        "Measure of military power, commitment and burden-sharing"
+                                                        "Measure and visualisation of troop deployments"
                                                     ),
                                                 ],
                                             )
@@ -186,15 +186,13 @@ app.layout = html.Div(
                                 html.H6(
                                     card_texts.mdi_extra_text,
                                     className="card-text",
-                                    style={
-                                        "line-height": "2.3rem"
-                                    }
+                                    style={"line-height": "2.3rem"},
                                 ),
                                 style={
                                     "margin": "0.5rem 0.5rem 0.5rem 0.5rem",
                                     "background": "#FEBDB9",
                                     "height": "96%",
-                                    "padding":"1rem 1rem 1rem 1rem"
+                                    "padding": "1rem 1rem 1rem 1rem",
                                 },
                             )
                         ),
@@ -302,7 +300,9 @@ app.layout = html.Div(
                                                 dcc.Dropdown(
                                                     id="country-filter",
                                                     options=dropdown_options,
-                                                    value=list(constants.country_regions.keys()),
+                                                    value=list(
+                                                        constants.country_regions.keys()
+                                                    ),
                                                     multi=True,
                                                     className="dcc_control",
                                                 ),
@@ -368,9 +368,7 @@ app.layout = html.Div(
                         ),
                     ],
                 ),
-                dbc.Row(
-                    dbc.Card(id="card-line", style=constants.card_style)
-                ),
+                dbc.Row(dbc.Card(id="card-line", style=constants.card_style)),
                 dbc.Row(
                     [
                         dbc.Col(
@@ -561,7 +559,7 @@ app.layout = html.Div(
     },
 )
 
-from . import countries
+from . import update_functions
 
 # methodology modal popup
 @app.callback(

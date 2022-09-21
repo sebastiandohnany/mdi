@@ -156,7 +156,7 @@ def meter_plot(
 
 
 def country_orgs_bar_plot(df, condensed=False):
-    #To supress Settings with copy warning
+    # To supress Settings with copy warning
     pd.options.mode.chained_assignment = None
     df.rename(columns={"Organisation": "Command"}, inplace=True)
     if len(df["Country"].unique()) == 1:
@@ -249,15 +249,14 @@ def summary_graph_card(
     title_colour=constants.colors["title"],
 ):
     expand_button = ""
-    modal_overlay= ""
+    modal_overlay = ""
     if full_graph is not None:
         modal_overlay = modal_overlay_template(modal_id, full_graph)
         expand_button = html.I(
             className="fas fa-plus-square",
             id=f"expand_{modal_id}",
-            style={"text-align": "right", "margin-right":"10px"},
+            style={"text-align": "right", "margin-right": "10px"},
         )
-
 
     info_circle = ""
     if card_info is not None:
@@ -357,8 +356,8 @@ def plot_graph_card(
     text,
     card_info,
     graph,
-    modal_id = None,
-    full_graph = None,
+    modal_id=None,
+    full_graph=None,
     title_colour=constants.colors["cardName"],
 ):
     expand_button = ""
@@ -493,17 +492,17 @@ def comparison_summary_graph_card(side_1, side_2, card_info):
 
     return card
 
+
 def modal_overlay_template(id, graph):
     modal = dbc.Modal(
         [
-            dbc.ModalBody(dcc.Graph(figure=graph), id=f"expand-{id}-md"),
-            dbc.ModalFooter(
-                dbc.Button("Close", id=f"expand-{id}-close")
+            dbc.ModalBody(
+                dcc.Graph(figure=graph, config=graph_config), id=f"expand-{id}-md"
             ),
+            dbc.ModalFooter(dbc.Button("Close", id=f"expand-{id}-close")),
         ],
         id=f"full-{id}-graph",
         size="xl",
-
     )
 
     return modal
