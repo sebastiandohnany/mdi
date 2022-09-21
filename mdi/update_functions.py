@@ -256,7 +256,7 @@ def update_sunburst_plot(dfp):
         margin=dict(l=0, r=0, t=0, b=0),
         paper_bgcolor="rgb(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        height=488,
+        height=468,
     )
 
     if len(dfp["Country"].unique()) == 1:
