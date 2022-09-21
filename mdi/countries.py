@@ -17,6 +17,7 @@ from .plotting_functions import (
     country_orgs_bar_plot,
     comparison_summary_graph_card,
     summary_graph_card_small,
+    modal_overlay_template,
 )
 
 from . import index
@@ -156,7 +157,8 @@ def update_line_plot(dfp):
             name=name,
             showlegend=False,
             line=dict(color=dfn.Color.iloc[0]),
-            hovertemplate="%{y:,}" + "<extra></extra>",
+            hovertemplate=f"<b>Country: {name}</b><br>" +
+                          "Deployed: %{y:,}"
         )
         return data
 
@@ -183,6 +185,7 @@ def update_line_plot(dfp):
     figure.update_xaxes(
         title_standoff=constants.theme["title_standoff"],
         tickfont_size=constants.theme["tickfont_size"],
+        dtick= 1
     )
 
     # TODO: figure out a way to prevent overlappping labels BUT MAYBE NOT A GOOD IDEA
@@ -301,19 +304,29 @@ def update_population_plot(df_deploy, df_population, year):
 
     # If more than 5 countries, select top 5
     if df.shape[0] > 5:
-        df = df.head(5)
+        df_top_5 = df.head(5)
         condensed = True
     else:
         condensed = False
 
     # Create a plot and a card
     fig = horizontal_bar_plot(
-        df["Deployment Per Capita"].iloc[::-1].values,
-        df["Country Name"].iloc[::-1].values,
-        df["Deployment Per Capita"].iloc[::-1].values,
+        df_top_5["Deployment Per Capita"].iloc[::-1].values,
+        df_top_5["Country Name"].iloc[::-1].values,
+        df_top_5["Deployment Per Capita"].iloc[::-1].values,
         20,
         condensed=condensed,
     )
+
+    full_fig = fig
+
+    if condensed:
+        full_fig = horizontal_bar_plot(
+            df["Deployment Per Capita"].iloc[::-1].values,
+            df["Country Name"].iloc[::-1].values,
+            df["Deployment Per Capita"].iloc[::-1].values,
+            20,
+        )
 
     # If only 1 country, smaller height
     if df.shape[0] == 1:
@@ -326,6 +339,8 @@ def update_population_plot(df_deploy, df_population, year):
         card_texts.dpc_under_title,
         card_texts.dpc_info_circle,
         fig,
+        modal_id="population",
+        full_graph=full_fig,
     )
     return card
 
@@ -365,20 +380,31 @@ def update_active_plot(df_deploy, df_active):
 
     # If more than 5 countries, select top 5
     if df.shape[0] > 5:
-        df = df.head(5)
+        df_top_5 = df.head(5)
         condensed = True
     else:
         condensed = False
 
     # Create a plot and a card
     fig = horizontal_bar_plot(
-        df["Percent of Active Personnel"].iloc[::-1].values,
-        df["Country Name"].iloc[::-1].values,
-        df["Percent of Active Personnel"].iloc[::-1].values,
+        df_top_5["Percent of Active Personnel"].iloc[::-1].values,
+        df_top_5["Country Name"].iloc[::-1].values,
+        df_top_5["Percent of Active Personnel"].iloc[::-1].values,
         100,
         percentage=True,
         condensed=condensed,
     )
+
+    full_fig = fig
+
+    if condensed:
+        full_fig = horizontal_bar_plot(
+            df["Percent of Active Personnel"].iloc[::-1].values,
+            df["Country Name"].iloc[::-1].values,
+            df["Percent of Active Personnel"].iloc[::-1].values,
+            100,
+            percentage=True,
+        )
 
     # If only 1 country, smaller height
     if df.shape[0] == 1:
@@ -391,6 +417,8 @@ def update_active_plot(df_deploy, df_active):
         card_texts.dap_under_title,
         card_texts.dap_info_circle,
         fig,
+        modal_id="active",
+        full_graph=full_fig,
     )
     return card
 
@@ -405,7 +433,7 @@ def update_deployed_meter_plot(df_deploy):
     # Create a figure and a card
     fig = meter_plot(highest_percentage, df.max(), {"min": 0, "max": 100})
     card = summary_graph_card_small(
-        df.idxmax(), card_texts.tdm_under_title, card_texts.tdm_info_circle, fig
+        df.idxmax(), card_texts.tdm_under_title, card_texts.tdm_info_circle, fig,
     )
 
     return card
@@ -562,14 +590,8 @@ def update_orgs_bar_plot(df_deploy):
     return card
 
 
-def update_mdi_card(mdi_index):
-    card = summary_graph_card(
-        mdi_index,
-        card_texts.mdi_under_title,
-        card_info=None,
-        graph=None,
-        extra_text=card_texts.mdi_extra_text,
-    )
+def update_mdi_card(dfp):
+    card = update_line_plot(dfp)
 
     return card
 
@@ -596,7 +618,7 @@ def update_dashboard(selected_countries, year):
     deploy_meter_card = update_deployed_meter_plot(dfp_year)
     orgs_countries_card = update_total_deployment_plot(dfp_year)
     orgs_bar_card = update_orgs_bar_plot(dfp_year)
-    mdi_card = update_mdi_card(100)
+    mdi_card = update_mdi_card(dfp_year)
 
     if len(selected_countries) == 1:
         return (
@@ -680,3 +702,41 @@ def update_filters(actual_year, country_selection, military_presence, data):
         figure,
         country_selection,
     )
+
+
+#Population expand graph
+@app.callback(
+    Output("full-population-graph", "is_open"),
+    [Input("expand_population", "n_clicks"),
+     Input("expand-population-close", "n_clicks")],
+    [State("full-population-graph", "is_open")],
+)
+def population_toggle_modal(n1, n2, is_open):
+    if n1 or n2:
+        return not is_open
+    return is_open
+
+#Active expand graph
+@app.callback(
+    Output("full-active-graph", "is_open"),
+    [Input("expand_active", "n_clicks"),
+     Input("expand-active-close", "n_clicks")],
+    [State("full-active-graph", "is_open")],
+)
+def active_toggle_modal(n1, n2, is_open):
+    if n1 or n2:
+        return not is_open
+    return is_open
+
+
+#Total deployment expand graph
+#@app.callback(
+#    Output("full-total-deployment-graph", "is_open"),
+#    [Input("expand_total-deployment", "n_clicks"),
+#     Input("expand-total-deployment-close", "n_clicks")],
+#    [State("full-total-deployment-graph", "is_open")],
+#)
+#def total_deployment_toggle_modal(n1, n2, is_open):
+#    if n1 or n2:
+#        return not is_open
+#    return is_open

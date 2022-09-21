@@ -140,9 +140,9 @@ def meter_plot(
     )
 
     fig.add_annotation(
-        x=0.5,
-        y=0.4,
-        text=f"{format_number(absolute_value)} TROOPS",
+        x=0.49,
+        y=0.45,
+        text="{:,}".format(absolute_value),
         font=dict(size=15),
         showarrow=False,
     )
@@ -242,19 +242,44 @@ def summary_graph_card(
     text,
     card_info,
     graph,
+    modal_id=None,
+    full_graph=None,
     title_colour=constants.colors["title"],
-    extra_text=None,
 ):
+    expand_button = ""
+    modal_overlay= ""
+    if full_graph is not None:
+        modal_overlay = modal_overlay_template(modal_id, full_graph)
+        expand_button = html.I(
+            className="fas fa-plus-square",
+            id=f"expand_{modal_id}",
+            style={"text-align": "right", "margin-right":"10px"},
+        )
+
+        # Population expand graph
+        @app.callback(
+            Output(f"full-{modal_id}-graph", "is_open"),
+            [Input(f"expand_{modal_id}", "n_clicks"),
+             Input(f"expand-{modal_id}-close", "n_clicks")],
+            [State(f"full-{modal_id}-graph", "is_open")],
+        )
+        def toggle_modal(n1, n2, is_open):
+            if n1 or n2:
+                return not is_open
+            return is_open
+
     info_circle = ""
     if card_info is not None:
         info_circle = dbc.Col(
             [
+                expand_button,
                 html.I(
-                    className="fas fa-regular fa-circle-info",
+                    className="fa-regular fa-circle-info",
                     id=f"target_{title}",
                     style={"text-align": "right"},
                 ),
                 dbc.Tooltip(card_info, target=f"target_{title}"),
+                modal_overlay,
             ],
             style={"text-align": "right"},
         )
@@ -281,7 +306,6 @@ def summary_graph_card(
                 className="card-text",
             ),
             dcc.Graph(figure=graph, config=graph_config) if graph else "",
-            html.P(extra_text) if extra_text else "",
         ]
     )
 
@@ -294,7 +318,6 @@ def summary_graph_card_small(
     card_info,
     graph,
     title_colour=constants.colors["title"],
-    extra_text=None,
 ):
     info_circle = ""
     if card_info is not None:
@@ -332,7 +355,6 @@ def summary_graph_card_small(
                 className="card-text",
             ),
             dcc.Graph(figure=graph, config=graph_config) if graph else "",
-            html.P(extra_text) if extra_text else "",
         ]
     )
 
@@ -345,7 +367,6 @@ def plot_graph_card(
     card_info,
     graph,
     title_colour=constants.colors["cardName"],
-    extra_text=None,
 ):
     info_circle = ""
     if card_info is not None:
@@ -383,7 +404,6 @@ def plot_graph_card(
                 className="card-text",
             ),
             dcc.Graph(figure=graph, config=graph_config) if graph else "",
-            html.P(extra_text) if extra_text else "",
         ]
     )
 
@@ -467,3 +487,18 @@ def comparison_summary_graph_card(side_1, side_2, card_info):
     )
 
     return card
+
+def modal_overlay_template(id, graph):
+    modal = dbc.Modal(
+        [
+            dbc.ModalBody(dcc.Graph(figure=graph), id=f"expand-{id}-md"),
+            dbc.ModalFooter(
+                dbc.Button("Close", id=f"expand-{id}-close")
+            ),
+        ],
+        id=f"full-{id}-graph",
+        size="xl",
+
+    )
+
+    return modal
