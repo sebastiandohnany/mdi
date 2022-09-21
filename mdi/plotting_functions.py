@@ -155,7 +155,7 @@ def meter_plot(
     return fig
 
 
-def country_orgs_bar_plot(df, condensed=False):
+def country_orgs_bar_plot(df, country_order=None, condensed=False):
     # To supress Settings with copy warning
     pd.options.mode.chained_assignment = None
     df.rename(columns={"Organisation": "Command"}, inplace=True)
@@ -200,6 +200,7 @@ def country_orgs_bar_plot(df, condensed=False):
             xaxis_title=None,
             yaxis_tickformat=",",
             yaxis_title_standoff=60,
+            xaxis={'categoryorder': 'array', 'categoryarray': country_order}
         )
         fig.update_traces(
             hovertemplate="<b>Country: %{x}</b><br>"
@@ -389,16 +390,16 @@ def plot_graph_card(
         [
             dbc.Row(
                 [
-                    dbc.Col(
+                    dbc.Col([
                         html.H5(
                             str(title),
                             style={
                                 "color": title_colour,
                                 "display": "inline-block",
-                                "margin-right": "5px",
+                                "margin-right": "1px",
                             },
                         ),
-                    ),
+                    ], className="col-8"),
                     info_circle,
                 ]
             ),

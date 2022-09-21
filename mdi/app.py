@@ -379,7 +379,12 @@ app.layout = html.Div(
                         ),
                     ],
                 ),
-                dbc.Row(dbc.Card(id="card-line", style=constants.card_style)),
+                dbc.Row(
+                    [
+                        dbc.Card(id="card-line", style=[constants.card_style])
+                    ],
+                    style={"margin-right": "0.5rem", "margin-left": "0.5rem"}
+                ),
                 dbc.Row(
                     [
                         dbc.Col(

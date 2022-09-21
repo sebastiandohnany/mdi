@@ -163,7 +163,7 @@ def update_line_plot(dfp):
 
     figure = go.Figure(data=data)
     figure.update_layout(
-        margin=dict(l=100, r=0, t=0, b=0),
+        margin=dict(l=0, r=0, t=0, b=0),
         height=340,
         paper_bgcolor="rgb(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
@@ -345,9 +345,9 @@ def update_population_plot(df_deploy, df_population, year):
     else:
         fig.update_layout(height=120)
 
-    card = summary_graph_card(
-        deployment_mean,
+    card = plot_graph_card(
         card_texts.dpc_under_title,
+        "",
         card_texts.dpc_info_circle,
         fig,
         modal_id=modal_id,
@@ -436,9 +436,9 @@ def update_active_plot(df_deploy, df_active):
     else:
         fig.update_layout(height=120)
 
-    card = summary_graph_card(
-        str(active_mean) + "%",
+    card = plot_graph_card(
         card_texts.dap_under_title,
+        "",
         card_texts.dap_info_circle,
         fig,
         modal_id=modal_id,
@@ -534,7 +534,7 @@ def update_total_deployment_plot(df_deploy):
     df["Percentage of Total Deployment"] = df.apply(
         _calc_total_deploy_precentage, axis=1
     )
-    df = df.sort_values(by="Deployed", ascending=False)
+
 
     # Select top 5 deployment countries
     if len(df_deploy["Country"].unique()) > 5:
@@ -543,15 +543,15 @@ def update_total_deployment_plot(df_deploy):
         condensed = True
 
         # Create figures also in modal
-        fig = country_orgs_bar_plot(df_top_5, condensed=condensed)
+        fig = country_orgs_bar_plot(df_top_5, country_order=country_list, condensed=condensed)
 
-        full_graph = country_orgs_bar_plot(df)
+        full_graph = country_orgs_bar_plot(df, country_order=country_sum.index)
 
         modal_id = "total-deployment"
 
     else:
         # Create only page figure, ignore modal
-        fig = country_orgs_bar_plot(df)
+        fig = country_orgs_bar_plot(df, country_order=country_sum.index)
         modal_id = (None,)
         full_graph = None
 
