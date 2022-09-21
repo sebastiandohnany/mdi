@@ -1,3 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+*{
+  font-family: 'Roboto', sans-serif;
+}
+
 .Select--multi > .Select-control .Select-value, .Select-placeholder {
     border: 1px solid grey;
     border-radius: 4px;
