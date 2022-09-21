@@ -6,22 +6,30 @@ import plotly as plt
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import numpy as np
+import scipy.stats as sts
 
-from .app import df, df_deployments, df_presence, ROOT
-
-
-def percentage_calculate(n, d, scaling=1):
-    try:
-        number = (n / d) * scaling
-        return round(number, 1)
-    except ZeroDivisionError:
-        return 0
+from .app import ROOT
 
 
-def calculate_mdi(df_deployments):
-    year = "2014"
+def combined_z_scores(z1, z2, w1, w2):
+    return ((w1 / (w1 + w2)) * z1 + (w2 / (w1 + w2)) * z2) / np.sqrt(
+        np.power(w1 / (w1 + w2), 2) + np.power(w2 / (w1 + w2), 2)
+    )
 
-    df_deployments.sort_values(by="Country", inplace=True)
+
+def rescale(values, new_min=0, new_max=100):
+    output = []
+    old_min, old_max = min(values), max(values)
+
+    for v in values:
+        new_v = (new_max - new_min) / (old_max - old_min) * (v - old_min) + new_min
+        output.append(new_v)
+
+    return output
+
+
+def calculate_mdi(df_deployments, year):
+    df_deployments = df_deployments.sort_values(by="Country")
 
     all_countries = df_deployments["Country"].unique()
     df_statistics = pd.DataFrame({"Country": all_countries})
@@ -34,159 +42,38 @@ def calculate_mdi(df_deployments):
     df_deployments = df_deployments[df_deployments["Year"] == int(year)]
     total_deployments = df_deployments.groupby(["Country"])["Deployed"].sum().to_list()
     df_statistics["Total"] = total_deployments
-    print(df_statistics)
 
     # per capita deployment
     deployments_per_capita = []
+    population = []
     for country in all_countries:
         total_deployed = int(
             df_statistics[df_statistics["Country"] == country]["Total"]
         )
-        population = int(df_population[df_population["Country"] == country][year])
-        per_capita = percentage_calculate(total_deployed, population, 100000)
-        print(country)
-        print(total_deployed)
-        print(population)
-        print(per_capita)
-        print()
+
+        pop = int(df_population[df_population["Country"] == country][year])
+        population.append(pop)
+
+        per_capita = total_deployed / pop
         deployments_per_capita.append(per_capita)
 
     df_statistics["PerCapita"] = deployments_per_capita
-    print(df_statistics)
+    df_statistics["Population"] = population
 
-    # multiply total and per capita, normalise 0-10
-    multiply = []
-    for country in all_countries:
-        total_deployed = int(
-            df_statistics[df_statistics["Country"] == country]["Total"]
-        )
-        per_capita = float(
-            df_statistics[df_statistics["Country"] == country]["PerCapita"]
-        )
-        calc = total_deployed * per_capita
-        multiply.append(calc)
+    # z-scores
+    total_z = sts.zscore(total_deployments)
+    df_statistics["Total-Z"] = total_z
 
-    multiply_min = min(multiply)
-    multiply_max = max(multiply) - multiply_min
-    divisor = multiply_max / 10
-    for i in range(len(multiply)):
-        multiply[i] = (multiply[i] - multiply_min) / divisor
+    percapita_z = sts.zscore(deployments_per_capita)
+    df_statistics["PerCapita-Z"] = percapita_z
 
-    df_statistics["Multiply"] = multiply
-    print(df_statistics)
-
-    # normalise both to 0-10, the weighter avg 0.6 percapita and 0.4 total
-    total_norm = []
-    total_min = min(total_deployments)
-    total_max = max(total_deployments) - total_min
-    divisor_total = total_max / 10
-    for i in range(len(total_deployments)):
-        total_norm.append((total_deployments[i] - total_min) / divisor_total)
-    df_statistics["Total Norm"] = total_norm
-
-    # total_norm = []
-    # total_min = min(total_deployments)
-    # total_max = max(total_deployments) - total_min
-    # divisor_total = total_max / 10
-    # for i in range(len(total_deployments)):
-    #     total_norm[i] = (total_deployments[i] - total_min) / divisor_total
-    # df_statistics["Total Norm"] = total_norm
-
-    fig = make_subplots(specs=[[{"secondary_y": True}]])
-
-    fig.add_trace(
-        go.Bar(
-            x=df_statistics["Country"],
-            y=df_statistics["Total"],
-            name="total deplyoments",
-            offsetgroup=1,
-        ),
-        secondary_y=False,
+    combined_z_total_percapita = combined_z_scores(
+        np.array(percapita_z), np.array(total_z), 1, 1
     )
+    df_statistics["Combined-Z_Total_PerCapita"] = combined_z_total_percapita
 
-    fig.add_trace(
-        go.Bar(
-            x=df_statistics["Country"],
-            y=df_statistics["PerCapita"],
-            name="per capita",
-            offsetgroup=2,
-        ),
-        secondary_y=True,
-    )
+    # mdi = sts.norm.cdf(combined_z_total_percapita) * 2.5
+    mdi = np.round(rescale(combined_z_total_percapita, 0, 100), 0).astype(int)
+    df_statistics["MDI"] = mdi
 
-    fig.add_trace(
-        go.Bar(
-            x=df_statistics["Country"],
-            y=df_statistics["Multiply"],
-            name="multiply index",
-            offsetgroup=3,
-        ),
-        secondary_y=True,
-    )
-
-    corr = np.corrcoef(
-        np.array(df_statistics["Total"]), np.array(df_statistics["Multiply"])
-    )
-
-    fig.update_layout(
-        title="Year: " + year + " Corr of index and total: " + str(corr[0, 1])
-    )
-
-    # fig.show()
-
-
-# # Calculate deployment per 100,000 capita for each country
-# df_per_capita = pd.DataFrame(columns=["Country", "Deployment Per Capita"])
-# for country in df_population["Country"].unique():
-#     total_deployed = df_deploy[df_deploy["Country"] == country]["Deployed"].sum()
-#     population = int(df_population[df_population["Country"] == country][year])
-#     print(total_deployed)
-#     print(population)
-#     # country_name = constants.country_codes[country]
-
-#     df_per_capita = pd.concat(
-#         [
-#             df_per_capita,
-#             pd.DataFrame(
-#                 [
-#                     [
-#                         country,
-#                         percentage_calculate(total_deployed, population, 100000),
-#                     ]
-#                 ],
-#                 columns=["Country", "Deployment Per Capita"],
-#             ),
-#         ]
-#     )
-
-# df_per_capita = df_per_capita.sort_values(by=["Deployment Per Capita"], ascending=False)
-
-
-# print(df_total_deployed)
-# print(df_per_capita)
-
-
-# mdi = pd.DataFrame(columns=["Country", "MDI"])
-# for country in df_per_capita["Country"].unique():
-#     td = df_total_deployed[country]
-#     pc = df_per_capita[df_per_capita["Country"] == country][
-#         "Deployment Per Capita"
-#     ].iloc[0]
-
-#     print(td)
-#     print(pc)
-
-#     mdi_temp = td * pc
-#     print(mdi_temp)
-
-#     mdi = pd.concat(
-#         [
-#             mdi,
-#             pd.DataFrame(
-#                 [[country, mdi_temp]],
-#                 columns=["Country", "MDI"],
-#             ),
-#         ]
-#     )
-
-# print(mdi)
+    return df_statistics
