@@ -211,7 +211,6 @@ def country_orgs_bar_plot(df, condensed=False):
 
     if condensed:
         fig.update_layout(
-            title_text="Top 5",
             font=dict(
                 size=12,
             ),
