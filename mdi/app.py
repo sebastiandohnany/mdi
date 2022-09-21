@@ -183,17 +183,24 @@ app.layout = html.Div(
                     [
                         dbc.Col(
                             dbc.Card(
-                                id="card-mdi",
+                                html.H6(
+                                    card_texts.mdi_extra_text,
+                                    className="card-text",
+                                    style={
+                                        "line-height": "2.3rem"
+                                    }
+                                ),
                                 style={
                                     "margin": "0.5rem 0.5rem 0.5rem 0.5rem",
                                     "background": "#FEBDB9",
                                     "height": "96%",
+                                    "padding":"1rem 1rem 1rem 1rem"
                                 },
                             )
                         ),
                         dbc.Col(
                             [
-                                dbc.Card(id="card-line", style=constants.card_style),
+                                dbc.Card(id="card-mdi", style=constants.card_style),
                             ],
                             className="col-lg-8, col-md-8 col-12 col-sm-12",
                         ),
@@ -241,7 +248,7 @@ app.layout = html.Div(
                                                         html.Div(
                                                             [
                                                                 dbc.Button(
-                                                                    "Select All",
+                                                                    "Select all",
                                                                     size="sm",
                                                                     outline=True,
                                                                     color="primary",
@@ -253,7 +260,7 @@ app.layout = html.Div(
                                                         html.Div(
                                                             [
                                                                 dbc.Button(
-                                                                    "Deselect All",
+                                                                    "Deselect all",
                                                                     size="sm",
                                                                     outline=True,
                                                                     color="primary",
@@ -265,7 +272,7 @@ app.layout = html.Div(
                                                         html.Div(
                                                             [
                                                                 dbc.Button(
-                                                                    "Select All NATO",
+                                                                    "Select all NATO",
                                                                     size="sm",
                                                                     outline=True,
                                                                     color="primary",
@@ -277,7 +284,7 @@ app.layout = html.Div(
                                                         html.Div(
                                                             [
                                                                 dbc.Button(
-                                                                    "Select All EU",
+                                                                    "Select all EU",
                                                                     size="sm",
                                                                     outline=True,
                                                                     color="primary",
@@ -295,7 +302,7 @@ app.layout = html.Div(
                                                 dcc.Dropdown(
                                                     id="country-filter",
                                                     options=dropdown_options,
-                                                    value=["USA"],
+                                                    value=list(constants.country_regions.keys()),
                                                     multi=True,
                                                     className="dcc_control",
                                                 ),
@@ -360,6 +367,9 @@ app.layout = html.Div(
                             className="col-lg-8, col-md-8 col-12 col-sm-12",
                         ),
                     ],
+                ),
+                dbc.Row(
+                    dbc.Card(id="card-line", style=constants.card_style)
                 ),
                 dbc.Row(
                     [
@@ -511,7 +521,7 @@ app.layout = html.Div(
                                 target="_blank",
                                 style={"color": "inherit"},
                             ),
-                            ". | The development of this app was financed by XXX.  |  Source of data: The International Institute of Strategic Studies.",
+                            ". |  Source of data: The International Institute of Strategic Studies.",
                         ]
                     )
                 ),
@@ -580,8 +590,8 @@ def country_button_select(all_clicks, none_clicks, nato_clicks, un_clicks, value
     else:
         button_id = ctx.triggered[0]["prop_id"].split(".")[0]
 
-    if button_id == "country-all-button":
-        return list(constants.country_regions.keys())
+    if button_id == "country-none-button":
+        return ["USA"]
 
     elif button_id == "country-nato-button":
         return constants.nato_countries
@@ -590,4 +600,4 @@ def country_button_select(all_clicks, none_clicks, nato_clicks, un_clicks, value
         return constants.eu_countries
 
     else:
-        return ["USA"]
+        return list(constants.country_regions.keys())
