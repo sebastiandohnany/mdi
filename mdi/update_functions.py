@@ -248,7 +248,7 @@ def update_sunburst_plot(dfp):
         insidetextorientation="radial",
         hovertemplate="<b> %{label} </b><br>"
         + "Deployed: %{value:,}<br>"
-        + "Share: %{percentParent:.2p}<br>"
+        + "Share: %{percentParent:.3p}<br>"
         + "<extra></extra>",
     )
     figure = go.Figure(data=data)
