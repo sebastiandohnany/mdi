@@ -305,32 +305,43 @@ def update_population_plot(df_deploy, df_population, year):
     if df.shape[0] > 5:
         df_top_5 = df.head(5)
         condensed = True
-    else:
-        df_top_5 = df
-        condensed = False
 
-    # Create a plot and a card
-    fig = horizontal_bar_plot(
-        df_top_5["Deployment Per Capita"].iloc[::-1].values,
-        df_top_5["Country Name"].iloc[::-1].values,
-        df_top_5["Deployment Per Capita"].iloc[::-1].values,
-        20,
-        condensed=condensed,
-    )
+        # Create figures also in modal
+        fig = horizontal_bar_plot(
+            df_top_5["Deployment Per Capita"].iloc[::-1].values,
+            df_top_5["Country Name"].iloc[::-1].values,
+            df_top_5["Deployment Per Capita"].iloc[::-1].values,
+            20,
+            condensed=condensed,
+        )
 
-    full_fig = fig
-
-    if condensed:
-        full_fig = horizontal_bar_plot(
+        full_graph = horizontal_bar_plot(
             df["Deployment Per Capita"].iloc[::-1].values,
             df["Country Name"].iloc[::-1].values,
             df["Deployment Per Capita"].iloc[::-1].values,
             20,
         )
 
+        modal_id = "population"
+
+    else:
+
+        # Create only page figure, ignore modal
+        fig = horizontal_bar_plot(
+            df["Deployment Per Capita"].iloc[::-1].values,
+            df["Country Name"].iloc[::-1].values,
+            df["Deployment Per Capita"].iloc[::-1].values,
+            20
+        )
+
+        full_graph = None
+
+        modal_id = None
+
+    # Create a card
     # If only 1 country, smaller height
     if df.shape[0] == 1:
-        fig.update_layout(height=100)
+        fig.update_layout(height=120)
     else:
         fig.update_layout(height=120)
 
@@ -339,8 +350,8 @@ def update_population_plot(df_deploy, df_population, year):
         card_texts.dpc_under_title,
         card_texts.dpc_info_circle,
         fig,
-        modal_id="population",
-        full_graph=full_fig,
+        modal_id=modal_id,
+        full_graph=full_graph,
     )
     return card
 
@@ -382,24 +393,18 @@ def update_active_plot(df_deploy, df_active):
     if df.shape[0] > 5:
         df_top_5 = df.head(5)
         condensed = True
-    else:
-        df_top_5 = df
-        condensed = False
 
-    # Create a plot and a card
-    fig = horizontal_bar_plot(
-        df_top_5["Percent of Active Personnel"].iloc[::-1].values,
-        df_top_5["Country Name"].iloc[::-1].values,
-        df_top_5["Percent of Active Personnel"].iloc[::-1].values,
-        100,
-        percentage=True,
-        condensed=condensed,
-    )
+        # Create figures also in modal
+        fig = horizontal_bar_plot(
+            df_top_5["Percent of Active Personnel"].iloc[::-1].values,
+            df_top_5["Country Name"].iloc[::-1].values,
+            df_top_5["Percent of Active Personnel"].iloc[::-1].values,
+            100,
+            percentage=True,
+            condensed=condensed,
+        )
 
-    full_fig = fig
-
-    if condensed:
-        full_fig = horizontal_bar_plot(
+        full_graph = horizontal_bar_plot(
             df["Percent of Active Personnel"].iloc[::-1].values,
             df["Country Name"].iloc[::-1].values,
             df["Percent of Active Personnel"].iloc[::-1].values,
@@ -407,9 +412,27 @@ def update_active_plot(df_deploy, df_active):
             percentage=True,
         )
 
+        modal_id = "active"
+
+    else:
+
+        # Create only page figure, ignore modal
+        fig = horizontal_bar_plot(
+            df["Percent of Active Personnel"].iloc[::-1].values,
+            df["Country Name"].iloc[::-1].values,
+            df["Percent of Active Personnel"].iloc[::-1].values,
+            100,
+            percentage=True,
+        )
+
+        full_graph = None
+
+        modal_id = None
+
+    # Create a card
     # If only 1 country, smaller height
     if df.shape[0] == 1:
-        fig.update_layout(height=100)
+        fig.update_layout(height=120)
     else:
         fig.update_layout(height=120)
 
@@ -418,8 +441,8 @@ def update_active_plot(df_deploy, df_active):
         card_texts.dap_under_title,
         card_texts.dap_info_circle,
         fig,
-        modal_id="active",
-        full_graph=full_fig,
+        modal_id=modal_id,
+        full_graph=full_graph,
     )
     return card
 
@@ -483,11 +506,6 @@ def update_total_deployment_plot(df_deploy):
         df_deploy.groupby(["Country"])["Deployed"].sum().sort_values(ascending=False)
     )
 
-    # Select top 5 deployment countries
-    if len(df_deploy["Country"].unique()) > 5:
-        country_list = list(country_sum.head(5).index)
-        df = df.query("Country in @country_list")
-        condensed = True
 
     # query top 5 organisations to include in the graph
     top_orgs = list(
@@ -515,8 +533,29 @@ def update_total_deployment_plot(df_deploy):
         _calc_total_deploy_precentage, axis=1
     )
     df = df.sort_values(by="Deployed", ascending=False)
-    # Create a figure and a card
-    fig = country_orgs_bar_plot(df, condensed=condensed)
+
+    # Select top 5 deployment countries
+    if len(df_deploy["Country"].unique()) > 5:
+        country_list = list(country_sum.head(5).index)
+        df_top_5 = df.query("Country in @country_list")
+        condensed = True
+
+        # Create figures also in modal
+        fig = country_orgs_bar_plot(df_top_5, condensed=condensed)
+
+        full_graph = country_orgs_bar_plot(df)
+
+        modal_id="total-deployment"
+
+    else:
+        # Create only page figure, ignore modal
+        fig = country_orgs_bar_plot(df)
+        modal_id = None,
+        full_graph = None
+
+    # Update figure height and create a card
+    fig.update_layout(height=250)
+
 
     if len(df["Country"].unique()) == 1:
         card_under_title = f"for {df['Country'].unique()[0]}"
@@ -529,6 +568,8 @@ def update_total_deployment_plot(df_deploy):
         card_under_title,
         card_texts.tdop_info_circle,
         fig,
+        modal_id=modal_id,
+        full_graph=full_graph,
     )
     return card
 
@@ -582,6 +623,7 @@ def update_orgs_bar_plot(df_deploy):
         percentage=True,
         colour=colours[::-1],
     )
+    fig.update_layout(height=137)
     card = summary_graph_card(
         "{:,}".format(total_deployed),
         card_texts.tdp_under_title,
@@ -731,13 +773,13 @@ def active_toggle_modal(n1, n2, is_open):
 
 
 #Total deployment expand graph
-#@app.callback(
-#    Output("full-total-deployment-graph", "is_open"),
-#    [Input("expand_total-deployment", "n_clicks"),
-#     Input("expand-total-deployment-close", "n_clicks")],
-#    [State("full-total-deployment-graph", "is_open")],
-#)
-#def total_deployment_toggle_modal(n1, n2, is_open):
-#    if n1 or n2:
-#        return not is_open
-#    return is_open
+@app.callback(
+    Output("full-total-deployment-graph", "is_open"),
+    [Input("expand_total-deployment", "n_clicks"),
+     Input("expand-total-deployment-close", "n_clicks")],
+    [State("full-total-deployment-graph", "is_open")],
+)
+def total_deployment_toggle_modal(n1, n2, is_open):
+    if n1 or n2:
+        return not is_open
+    return is_open

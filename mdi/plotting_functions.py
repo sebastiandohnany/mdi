@@ -76,7 +76,7 @@ def horizontal_bar_plot(
         barmode="stack",
         yaxis={"categoryorder": "array", "categoryarray": countries},
         font=dict(size=constants.theme["titlefont_size"]),
-        height=120,
+        height=650,
         margin=dict(l=0, r=0, t=0, b=0),
     )
     fig.update_xaxes(
@@ -94,7 +94,7 @@ def horizontal_bar_plot(
                     xref="x1",
                     yref="y1",
                     y=country,
-                    x=max_value + 0.08 * max_value,
+                    x=max_value + 0.03 * max_value,
                     text=value_str,
                     showarrow=False,
                     xshift=15,
@@ -106,10 +106,10 @@ def horizontal_bar_plot(
                     xref="x1",
                     yref="y1",
                     y=country,
-                    x=max_value + 0.08 * max_value,
+                    x=max_value + 0.02 * max_value,
                     text=value_str,
                     showarrow=False,
-                    xshift=10,
+                    xshift=15,
                 )
             )
     fig.update_layout(annotations=annotations)
@@ -156,6 +156,8 @@ def meter_plot(
 
 
 def country_orgs_bar_plot(df, condensed=False):
+    #To supress Settings with copy warning
+    pd.options.mode.chained_assignment = None
     df.rename(columns={"Organisation": "Command"}, inplace=True)
     if len(df["Country"].unique()) == 1:
         fig = px.bar(
@@ -231,7 +233,7 @@ def country_orgs_bar_plot(df, condensed=False):
         paper_bgcolor="rgb(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         legend=dict(bgcolor="rgba(0,0,0,0)"),
-        height=250,
+        height=650,
     )
 
     return fig
@@ -256,17 +258,6 @@ def summary_graph_card(
             style={"text-align": "right", "margin-right":"10px"},
         )
 
-        # Population expand graph
-        @app.callback(
-            Output(f"full-{modal_id}-graph", "is_open"),
-            [Input(f"expand_{modal_id}", "n_clicks"),
-             Input(f"expand-{modal_id}-close", "n_clicks")],
-            [State(f"full-{modal_id}-graph", "is_open")],
-        )
-        def toggle_modal(n1, n2, is_open):
-            if n1 or n2:
-                return not is_open
-            return is_open
 
     info_circle = ""
     if card_info is not None:
@@ -366,18 +357,32 @@ def plot_graph_card(
     text,
     card_info,
     graph,
+    modal_id = None,
+    full_graph = None,
     title_colour=constants.colors["cardName"],
 ):
+    expand_button = ""
+    modal_overlay = ""
+    if full_graph is not None:
+        modal_overlay = modal_overlay_template(modal_id, full_graph)
+        expand_button = html.I(
+            className="fas fa-plus-square",
+            id=f"expand_{modal_id}",
+            style={"text-align": "right", "margin-right": "10px"},
+        )
+
     info_circle = ""
     if card_info is not None:
         info_circle = dbc.Col(
             [
+                expand_button,
                 html.I(
-                    className="fas fa-regular fa-circle-info",
+                    className="fa-regular fa-circle-info",
                     id=f"target_{title}",
                     style={"text-align": "right"},
                 ),
                 dbc.Tooltip(card_info, target=f"target_{title}"),
+                modal_overlay,
             ],
             style={"text-align": "right"},
         )
