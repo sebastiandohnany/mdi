@@ -16,7 +16,7 @@ sbp_info_circle = "You are looking at a two-level chart of troop deployments dis
 
 # Deployment per capita bar plot
 dpc_under_title = "TROOPS PER 100,000 POPULATION"
-dpc_info_circle = "This figure shows the absolute number of deployed troops adjusted to national populations. Select more countries to see how they compare in their relative deployments."
+dpc_info_circle = "This figure shows the absolute number of deployed troops adjusted to national population. Select more countries to see how they compare in their relative deployments."
 
 # Deployment percentage of active troops bar plot
 dap_under_title = "TROOPS PER ACTIVE DUTY PERSONNEL (%)"
@@ -39,4 +39,4 @@ tdp_info_circle = "This figure shows the distribution of troop deployments in di
 # MDI card
 mdi_under_title = "MILITARY DEPLOYMENT INDEX (MDI)"
 mdi_info_circle = ""
-mdi_extra_text = "The Military Deployment Index is a new measure of military deployability across the globe. It can be used to assess military power, commitment and burden-sharing, whether you wish to know more about a specific country, compare more cases or conduct a large-N study. The index combines annual data on absolute troop deployments with data adjusted to population to create a variable that is both more complex and accurate than existent measures. Thanks to its composition, the index offers insight into the ability as well as the willingness of states to deploy troops. It ranges from 1 to 10 and varies each year. See our Methodology for more details."
+mdi_extra_text = "The Military Deployment Index (MDI) is a new measure of military deployability across the globe. It is based on troop deployment data from The Military Balance of the International Institute for Strategic Studies (IISS) and combines absolute figures with values adjusted to population to create a variable that is both more complex and accurate than existing measures. In addition to the index, the dashboard tracks distributions across space, command structures, and operations. "
