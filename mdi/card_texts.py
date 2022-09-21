@@ -17,7 +17,7 @@ sbp_info_circle = "This is a two-level chart of troop deployments distribution. 
 dpc_under_title = "Troops per 100,000 population"
 dpc_info_circle = "This figure shows the absolute number of deployed troops adjusted to national populations. Select more countries to see how they compare in their relative deployments. If many countries are selected, the top five are displayed. Click on plus icon for a full list. Drag the slider above for evolution over time."
 # Deployment percentage of active troops bar plot
-dap_under_title = "Troops per active duty personnel (%)"
+dap_under_title = "Troops per active duty personnel"
 dap_info_circle = "This figure shows the absolute number of deployed troops relative to the size of national militaries. Select more countries to see how they compare in their relative deployments. If many countries are selected, the top five are displayed. Click on the plus icon for a full list. Drag the slider above for evolution over time."
 # Top deployment theatre meter plot
 tdm_under_title = "TOP DEPLOYMENT THEATER"

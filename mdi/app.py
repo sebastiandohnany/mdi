@@ -142,7 +142,7 @@ app.layout = html.Div(
                                                     html.Div(
                                                         [
                                                             html.H6(
-                                                                "Measure and visualisation of troop deployments"
+                                                                "Measure and visualization of troop deployments"
                                                             ),
                                                         ],
                                                     )
@@ -194,10 +194,12 @@ app.layout = html.Div(
                     [
                         dbc.Col(
                             dbc.Card(
-                                html.H6(
+                                html.H5(
                                     card_texts.mdi_extra_text,
                                     className="card-text",
-                                    style={"line-height": "2.3rem"},
+                                    style={
+                                        "line-height": "2rem",
+                                    },
                                 ),
                                 style={
                                     "margin": "0.5rem 0.5rem 0.5rem 0.5rem",
@@ -380,10 +382,8 @@ app.layout = html.Div(
                     ],
                 ),
                 dbc.Row(
-                    [
-                        dbc.Card(id="card-line", style=[constants.card_style])
-                    ],
-                    style={"margin-right": "0.5rem", "margin-left": "0.5rem"}
+                    [dbc.Card(id="card-line", style=[constants.card_style])],
+                    style={"margin-right": "0.5rem", "margin-left": "0.5rem"},
                 ),
                 dbc.Row(
                     [
