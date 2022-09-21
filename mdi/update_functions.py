@@ -168,7 +168,7 @@ def update_line_plot(dfp):
         paper_bgcolor="rgb(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         yaxis_title="Deployed",
-        yaxis_title_standoff=60,
+        yaxis_title_standoff=80,
         yaxis_tickformat=",",
     )
     figure.update_yaxes(
@@ -629,8 +629,77 @@ def update_orgs_bar_plot(df_deploy):
     return card
 
 
-def update_mdi_card(dfp):
-    card = update_line_plot(dfp)
+def update_mdi_plot(dfp):
+    def get_data(dfn, name):
+        data = go.Scatter(
+            x=dfn["Year"],
+            y=dfn["MDI"],
+            name=name,
+            showlegend=False,
+            line=dict(color=constants.country_colors[name]),
+            hovertemplate=f"<b>Country: {name}</b><br>"
+            + "MDI: %{y}"
+            + "<extra></extra>",
+        )
+        return data
+
+    mdi = None
+    for year in dfp["Year"].unique():
+        dfs = index.calculate_mdi(dfp, year)
+        dfs["Year"] = year
+        if mdi is None:
+            mdi = dfs
+        else:
+            mdi = pd.concat([mdi, dfs])
+
+    data = [
+        get_data(mdi[mdi["Country"] == country], country)
+        for country in mdi["Country"].unique()
+    ]
+
+    figure = go.Figure(data=data)
+    figure.update_layout(
+        margin=dict(l=40, r=0, t=0, b=0),
+        height=340,
+        paper_bgcolor="rgb(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        yaxis_title="MDI",
+        yaxis_title_standoff=20,
+        yaxis_tickformat=",",
+    )
+    figure.update_yaxes(
+        title_standoff=constants.theme["title_standoff"],
+        tickfont_size=constants.theme["tickfont_size"],
+        titlefont_size=constants.theme["titlefont_size"],
+    )
+    figure.update_xaxes(
+        title_standoff=constants.theme["title_standoff"],
+        tickfont_size=constants.theme["tickfont_size"],
+        dtick=1,
+    )
+
+    country_list = dfp["Country"].unique()
+
+    figure.for_each_trace(
+        lambda f: figure.add_annotation(
+            x=f.x[-1] + 0.1,
+            y=f.y[-1],
+            text=f.name,
+            font_color=f.line.color,
+            xanchor="left",
+            showarrow=False,
+            font_size=constants.theme["titlefont_size"],
+        )
+        if f.name in country_list
+        else None
+    )
+
+    card = plot_graph_card(
+        card_texts.mdip_title,
+        card_texts.mdip_under_title,
+        card_texts.mdip_info_circle,
+        figure,
+    )
 
     return card
 
@@ -650,6 +719,8 @@ def update_dashboard(selected_countries, year):
 
     dfp_year = dfp[dfp["Year"] == int(year)]
 
+    deployments_over_time_card = update_line_plot(dfp)
+    sunburst_card = update_sunburst_plot(dfp_year)
     population_card = update_population_plot(dfp_year, df_population, str(year))
     active_card = update_active_plot(
         dfp_year, df_active[df_active["Year"] == int(year)]
@@ -657,12 +728,12 @@ def update_dashboard(selected_countries, year):
     deploy_meter_card = update_deployed_meter_plot(dfp_year)
     orgs_countries_card = update_total_deployment_plot(dfp_year)
     orgs_bar_card = update_orgs_bar_plot(dfp_year)
-    mdi_card = update_mdi_card(dfp_year)
+    mdi_card = update_mdi_plot(dfp)
 
     if len(selected_countries) == 1:
         return (
-            update_line_plot(dfp),
-            update_sunburst_plot(dfp_year),
+            deployments_over_time_card,
+            sunburst_card,
             population_card,
             active_card,
             deploy_meter_card,
@@ -673,8 +744,8 @@ def update_dashboard(selected_countries, year):
 
     elif len(selected_countries) == 2:
         return (
-            update_line_plot(dfp),
-            update_sunburst_plot(dfp[dfp["Year"] == int(year)]),
+            deployments_over_time_card,
+            sunburst_card,
             population_card,
             active_card,
             update_two_deployment_meter_plots(dfp_year),
@@ -685,8 +756,8 @@ def update_dashboard(selected_countries, year):
 
     else:
         return (
-            update_line_plot(dfp),
-            update_sunburst_plot(dfp[dfp["Year"] == int(year)]),
+            deployments_over_time_card,
+            sunburst_card,
             population_card,
             active_card,
             deploy_meter_card,

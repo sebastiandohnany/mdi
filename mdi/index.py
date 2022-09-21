@@ -29,6 +29,7 @@ def rescale(values, new_min=0, new_max=100):
 
 
 def calculate_mdi(df_deployments, year):
+    year = str(year)
     df_deployments = df_deployments.sort_values(by="Country")
 
     all_countries = df_deployments["Country"].unique()

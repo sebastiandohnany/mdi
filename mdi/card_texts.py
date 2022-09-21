@@ -36,3 +36,8 @@ tdp_info_circle = "This figure shows the distribution of troop deployments in di
 mdi_under_title = "MILITARY DEPLOYMENT INDEX (MDI)"
 mdi_info_circle = ""
 mdi_extra_text = "The Military Deployment Index (MDI) is a new measure of military deployability across the globe. It is based on troop deployment data from The Military Balance of the International Institute for Strategic Studies (IISS) and combines absolute figures with values adjusted to population to create a variable that is both more complex and accurate than existing measures. In addition to the index, the dashboard tracks distributions across space, command structures, and operations. "
+
+# MDI plot
+mdip_title = "MDI OVER TIME"
+mdip_under_title = ""
+mdip_info_circle = ""
