@@ -163,12 +163,12 @@ def update_line_plot(dfp):
 
     figure = go.Figure(data=data)
     figure.update_layout(
-        margin=dict(l=0, r=0, t=0, b=0),
+        margin=dict(l=90, r=0, t=0, b=0),
         height=340,
         paper_bgcolor="rgb(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         yaxis_title="Deployed",
-        yaxis_title_standoff=80,
+        yaxis_title_standoff=90,
         yaxis_tickformat=",",
     )
     figure.update_yaxes(
@@ -669,12 +669,12 @@ def update_mdi_plot(dfp):
 
     figure = go.Figure(data=data)
     figure.update_layout(
-        margin=dict(l=40, r=0, t=0, b=0),
+        margin=dict(l=50, r=0, t=0, b=0),
         height=340,
         paper_bgcolor="rgb(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         yaxis_title="MDI",
-        yaxis_title_standoff=20,
+        yaxis_title_standoff=30,
         yaxis_tickformat=",",
     )
     figure.update_yaxes(
