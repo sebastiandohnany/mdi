@@ -659,7 +659,7 @@ def country_button_select(all_clicks, none_clicks, nato_clicks, un_clicks, value
         button_id = ctx.triggered[0]["prop_id"].split(".")[0]
 
     if button_id == "country-none-button":
-        return ["USA"]
+        return ["CAN"]
 
     elif button_id == "country-nato-button":
         return constants.nato_countries
