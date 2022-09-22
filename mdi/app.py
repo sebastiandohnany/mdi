@@ -596,7 +596,7 @@ app.layout = html.Div(
                 dbc.Row(
                     [
                         html.Pre(
-                            "How to cite: RAS-NSA 2022. The Military Deployment Index. Available from: www.mdi.ras-nsa.can"
+                            "Suggested citation: Massie, J., Tallová, B., Dohnány, S., Bajnoková, N., (2022) Military Deployment Index. Network for Strategic Analysis. Available at: http://www.mdi.ras-nsa.ca/."
                         )
                     ]
                 ),
