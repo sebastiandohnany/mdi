@@ -1,10 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Roboto:ital,wght@0,400;0,700;1,400;1,700&display=swap');
-*{
+* {
   font-family: 'Lora', serif;
 }
 
-button, label, .rc-slider-mark-text{
+button, label, .select-text, .rc-slider-mark-text, .card-text {
   font-family: 'Roboto', sans-serif;
+}
+
+.mdi-text {
+  font-family: 'Lora', serif;
+  font-size: 1.18rem;
+  line-height: 2.1rem !important;
 }
 
 

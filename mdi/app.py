@@ -66,6 +66,7 @@ for country in list(constants.country_regions.keys()):
                     html.Div(
                         [constants.country_codes[country] + f" ({country})"],
                         style={"color": constants.country_colors[country]},
+                        className="select-text",
                     ),
                 ],
                 style={
@@ -196,10 +197,7 @@ app.layout = html.Div(
                             dbc.Card(
                                 html.H5(
                                     card_texts.mdi_extra_text,
-                                    className="card-text",
-                                    style={
-                                        "line-height": "2rem",
-                                    },
+                                    className="card-text mdi-text",
                                 ),
                                 style={
                                     "margin": "0.5rem 0.5rem 0.5rem 0.5rem",
