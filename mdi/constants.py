@@ -422,6 +422,7 @@ nato_countries = [
     "PRT",
     "ROU",
     "SVK",
+    "SVN",
     "ESP",
     "TUR",
     "GBR",
