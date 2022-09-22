@@ -1,9 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Roboto:ital,wght@0,400;0,700;1,400;1,700&display=swap');
-* {
+body {
   font-family: 'Lora', serif;
 }
 
-button, label, .select-text, .rc-slider-mark-text, .card-text {
+button, label, .select-text, .rc-slider-mark-text, .card-text, .tooltip {
   font-family: 'Roboto', sans-serif;
 }
 
