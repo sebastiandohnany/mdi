@@ -3,7 +3,7 @@ body {
   font-family: 'Lora', serif;
 }
 
-button, label, .select-text, .rc-slider-mark-text, .card-text, .tooltip {
+button, label, .select-text, .rc-slider-mark-text, .card-text, .tooltip, .Select-control {
   font-family: 'Roboto', sans-serif;
 }
 
