@@ -43,6 +43,8 @@ def horizontal_bar_plot(
 
     if len(countries) == 1:
         bar_width_ration = 0.2
+    elif len(countries) == 2:
+        bar_width_ration = 0.4
 
     fig = go.Figure(
         data=[
@@ -101,12 +103,13 @@ def horizontal_bar_plot(
                 )
             )
         else:
+            value_str = value_str + " "
             annotations.append(
                 dict(
                     xref="x1",
                     yref="y1",
                     y=country,
-                    x=max_value + 0.02 * max_value,
+                    x=max_value + 0.03 * max_value,
                     text=value_str,
                     showarrow=False,
                     xshift=15,

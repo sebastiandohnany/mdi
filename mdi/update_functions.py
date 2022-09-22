@@ -256,7 +256,7 @@ def update_sunburst_plot(dfp):
         margin=dict(l=0, r=0, t=0, b=0),
         paper_bgcolor="rgb(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        height=468,
+        height=500,
     )
 
     if len(dfp["Country"].unique()) == 1:
@@ -341,9 +341,11 @@ def update_population_plot(df_deploy, df_population, year):
     # Create a card
     # If only 1 country, smaller height
     if df.shape[0] == 1:
-        fig.update_layout(height=120)
+        fig.update_layout(height=144)
+    elif df.shape[0] == 2:
+        fig.update_layout(height=164)
     else:
-        fig.update_layout(height=120)
+        fig.update_layout(height=144)
 
     card = plot_graph_card(
         card_texts.dpc_under_title,
@@ -432,9 +434,11 @@ def update_active_plot(df_deploy, df_active):
     # Create a card
     # If only 1 country, smaller height
     if df.shape[0] == 1:
-        fig.update_layout(height=120)
+        fig.update_layout(height=144)
+    elif df.shape[0] == 2:
+        fig.update_layout(height=164)
     else:
-        fig.update_layout(height=120)
+        fig.update_layout(height=144)
 
     card = plot_graph_card(
         card_texts.dap_under_title,
@@ -535,7 +539,6 @@ def update_total_deployment_plot(df_deploy):
         _calc_total_deploy_precentage, axis=1
     )
 
-
     # Select top 5 deployment countries
     if len(df_deploy["Country"].unique()) > 5:
         country_list = list(country_sum.head(5).index)
@@ -543,7 +546,9 @@ def update_total_deployment_plot(df_deploy):
         condensed = True
 
         # Create figures also in modal
-        fig = country_orgs_bar_plot(df_top_5, country_order=country_list, condensed=condensed)
+        fig = country_orgs_bar_plot(
+            df_top_5, country_order=country_list, condensed=condensed
+        )
 
         full_graph = country_orgs_bar_plot(df, country_order=country_sum.index)
 

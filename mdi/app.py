@@ -219,108 +219,142 @@ app.layout = html.Div(
                     [
                         dbc.Col(
                             [
-                                dbc.Card(
+                                dbc.Row(
                                     [
-                                        dbc.CardBody(
+                                        dbc.Col(
                                             [
-                                                html.H6(
-                                                    "Drag the slider to select a year",
-                                                    className="card-text",
-                                                ),
-                                                dcc.Slider(
-                                                    id="year-slider",
-                                                    min=df["Year"].min(),
-                                                    max=df["Year"].max(),
-                                                    step=None,
-                                                    value=df["Year"].max(),
-                                                    marks={
-                                                        str(year): str(year)
-                                                        for year in df["Year"].unique()
-                                                    },
-                                                    included=False,
-                                                ),
-                                            ],
-                                        )
-                                    ],
-                                    style=constants.card_style,
-                                ),
-                                dbc.Card(
-                                    [
-                                        dbc.CardBody(
-                                            [
-                                                html.H6(
-                                                    "Start typing to select a country",
-                                                    className="card-text",
-                                                ),
-                                                html.Div(
+                                                dbc.Card(
                                                     [
-                                                        html.Div(
+                                                        dbc.CardBody(
                                                             [
-                                                                dbc.Button(
-                                                                    "Select all",
-                                                                    size="sm",
-                                                                    outline=True,
-                                                                    color="primary",
-                                                                    id="country-all-button",
-                                                                )
+                                                                html.H6(
+                                                                    "Drag the slider to select a year",
+                                                                    className="card-text",
+                                                                ),
+                                                                dcc.Slider(
+                                                                    id="year-slider",
+                                                                    min=df[
+                                                                        "Year"
+                                                                    ].min(),
+                                                                    max=df[
+                                                                        "Year"
+                                                                    ].max(),
+                                                                    step=None,
+                                                                    value=df[
+                                                                        "Year"
+                                                                    ].max(),
+                                                                    marks={
+                                                                        str(year): str(
+                                                                            year
+                                                                        )
+                                                                        for year in df[
+                                                                            "Year"
+                                                                        ].unique()
+                                                                    },
+                                                                    included=False,
+                                                                ),
                                                             ],
-                                                            style={"margin": "5px"},
-                                                        ),
-                                                        html.Div(
-                                                            [
-                                                                dbc.Button(
-                                                                    "Deselect all",
-                                                                    size="sm",
-                                                                    outline=True,
-                                                                    color="primary",
-                                                                    id="country-none-button",
-                                                                )
-                                                            ],
-                                                            style={"margin": "5px"},
-                                                        ),
-                                                        html.Div(
-                                                            [
-                                                                dbc.Button(
-                                                                    "Select all NATO",
-                                                                    size="sm",
-                                                                    outline=True,
-                                                                    color="primary",
-                                                                    id="country-nato-button",
-                                                                )
-                                                            ],
-                                                            style={"margin": "5px"},
-                                                        ),
-                                                        html.Div(
-                                                            [
-                                                                dbc.Button(
-                                                                    "Select all EU",
-                                                                    size="sm",
-                                                                    outline=True,
-                                                                    color="primary",
-                                                                    id="country-eu-button",
-                                                                )
-                                                            ],
-                                                            style={"margin": "5px"},
-                                                        ),
+                                                        )
                                                     ],
-                                                    style={
-                                                        "display": "flex",
-                                                        "flex-direction": "row",
-                                                    },
-                                                ),
-                                                dcc.Dropdown(
-                                                    id="country-filter",
-                                                    options=dropdown_options,
-                                                    value=list(
-                                                        constants.country_regions.keys()
-                                                    ),
-                                                    multi=True,
-                                                    className="dcc_control",
+                                                    style=constants.card_style,
                                                 ),
                                             ]
                                         )
-                                    ],
-                                    style=constants.card_style,
+                                    ]
+                                ),
+                                dbc.Row(
+                                    [
+                                        dbc.Col(
+                                            [
+                                                dbc.Card(
+                                                    [
+                                                        dbc.CardBody(
+                                                            [
+                                                                html.H6(
+                                                                    "Start typing to select a country",
+                                                                    className="card-text",
+                                                                ),
+                                                                html.Div(
+                                                                    [
+                                                                        html.Div(
+                                                                            [
+                                                                                dbc.Button(
+                                                                                    "Select all",
+                                                                                    size="sm",
+                                                                                    outline=True,
+                                                                                    color="primary",
+                                                                                    id="country-all-button",
+                                                                                )
+                                                                            ],
+                                                                            style={
+                                                                                "margin": "5px"
+                                                                            },
+                                                                        ),
+                                                                        html.Div(
+                                                                            [
+                                                                                dbc.Button(
+                                                                                    "Deselect all",
+                                                                                    size="sm",
+                                                                                    outline=True,
+                                                                                    color="primary",
+                                                                                    id="country-none-button",
+                                                                                )
+                                                                            ],
+                                                                            style={
+                                                                                "margin": "5px"
+                                                                            },
+                                                                        ),
+                                                                        html.Div(
+                                                                            [
+                                                                                dbc.Button(
+                                                                                    "Select all NATO",
+                                                                                    size="sm",
+                                                                                    outline=True,
+                                                                                    color="primary",
+                                                                                    id="country-nato-button",
+                                                                                )
+                                                                            ],
+                                                                            style={
+                                                                                "margin": "5px"
+                                                                            },
+                                                                        ),
+                                                                        html.Div(
+                                                                            [
+                                                                                dbc.Button(
+                                                                                    "Select all EU",
+                                                                                    size="sm",
+                                                                                    outline=True,
+                                                                                    color="primary",
+                                                                                    id="country-eu-button",
+                                                                                )
+                                                                            ],
+                                                                            style={
+                                                                                "margin": "5px"
+                                                                            },
+                                                                        ),
+                                                                    ],
+                                                                    style={
+                                                                        "display": "flex",
+                                                                        "flex-direction": "row",
+                                                                    },
+                                                                ),
+                                                                dcc.Dropdown(
+                                                                    id="country-filter",
+                                                                    options=dropdown_options,
+                                                                    value=list(
+                                                                        constants.country_regions.keys()
+                                                                    ),
+                                                                    multi=True,
+                                                                    className="dcc_control",
+                                                                ),
+                                                            ]
+                                                        )
+                                                    ],
+                                                    style=constants.card_style,
+                                                ),
+                                            ]
+                                        )
+                                    ]
                                 ),
                             ],
                             className="col-lg-4 col-md-4 col-12 col-sm-12",
@@ -409,11 +443,29 @@ app.layout = html.Div(
                     [
                         dbc.Col(
                             [
-                                dbc.Card(
-                                    id="card-bar-orgs", style=constants.card_style
+                                dbc.Row(
+                                    [
+                                        dbc.Col(
+                                            [
+                                                dbc.Card(
+                                                    id="card-bar-orgs",
+                                                    style=constants.card_style,
+                                                )
+                                            ]
+                                        )
+                                    ]
                                 ),
-                                dbc.Card(
-                                    id="card-countries-orgs", style=constants.card_style
+                                dbc.Row(
+                                    [
+                                        dbc.Col(
+                                            [
+                                                dbc.Card(
+                                                    id="card-countries-orgs",
+                                                    style=constants.card_style,
+                                                )
+                                            ]
+                                        )
+                                    ]
                                 ),
                             ]
                         ),
