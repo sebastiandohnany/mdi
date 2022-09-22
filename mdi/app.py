@@ -463,6 +463,7 @@ app.layout = html.Div(
                                                     style={
                                                         "color": "inherit",
                                                         "text-decoration": "none",
+                                                        "font-family": "var(--bs-font-monospace)",
                                                     },
                                                 ),
                                             ]
@@ -531,7 +532,10 @@ app.layout = html.Div(
                                 "GitHub",
                                 href="https://github.com/sebastiandohnany/mdi",
                                 target="_blank",
-                                style={"color": "inherit"},
+                                style={
+                                    "color": "inherit",
+                                    "font-family": "var(--bs-font-monospace)",
+                                },
                             ),
                             ". |  Source of data: The International Institute of Strategic Studies.",
                         ]
