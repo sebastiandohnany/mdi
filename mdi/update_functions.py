@@ -535,7 +535,7 @@ def update_total_deployment_plot(df_deploy):
         _calc_total_deploy_precentage, axis=1
     )
 
-
+    df = df.sort_values(by="Deployed", ascending=False)
     # Select top 5 deployment countries
     if len(df_deploy["Country"].unique()) > 5:
         country_list = list(country_sum.head(5).index)
