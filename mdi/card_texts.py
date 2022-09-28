@@ -41,4 +41,4 @@ mdi_extra_text = "The Military Deployment Index (MDI) is a new measure of milita
 # MDI plot
 mdip_title = "Military Deployment Index (MDI)"
 mdip_under_title = ""
-mdip_info_circle = "MDI is calculated for each state on an annual basis. It is composed of Z-scores of absolute deployment figures and deployments adjusted to population. The sum of the respective Z-scores is scaled from 0 to 100, resulting in a single measure of deployability."
+mdip_info_circle = "MDI is calculated for each country on an annual basis. It is a sum of Z-scores for absolute troop deployments and deployments per population scaled from 0 to 100, creating a single measure of deployability."

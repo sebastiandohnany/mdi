@@ -43,6 +43,8 @@ def horizontal_bar_plot(
 
     if len(countries) == 1:
         bar_width_ration = 0.2
+    elif len(countries) == 2:
+        bar_width_ration = 0.4
 
     fig = go.Figure(
         data=[
@@ -101,12 +103,13 @@ def horizontal_bar_plot(
                 )
             )
         else:
+            value_str = value_str + " "
             annotations.append(
                 dict(
                     xref="x1",
                     yref="y1",
                     y=country,
-                    x=max_value + 0.02 * max_value,
+                    x=max_value + 0.03 * max_value,
                     text=value_str,
                     showarrow=False,
                     xshift=15,
@@ -200,6 +203,7 @@ def country_orgs_bar_plot(df, country_order=None, condensed=False):
             xaxis_title=None,
             yaxis_tickformat=",",
             yaxis_title_standoff=60,
+            xaxis_tickangle=45,
             xaxis={"categoryorder": "array", "categoryarray": country_order},
         )
         fig.update_traces(
@@ -209,12 +213,17 @@ def country_orgs_bar_plot(df, country_order=None, condensed=False):
             + "Share: %{customdata[1]:.3}% <br>"
             + "<extra></extra>"
         )
+    if len(df["Country"].unique()) == 2:
+        fig.update_layout(
+            xaxis_tickangle=0,
+        )
 
     if condensed:
         fig.update_layout(
             font=dict(
                 size=12,
             ),
+            xaxis_tickangle=0,
             margin=dict(l=0, r=0, t=30, b=0),
         )
     fig.update_xaxes(

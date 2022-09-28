@@ -1,16 +1,19 @@
 # Methodology
 
-**Suggested citation:** Massie, Justin, Barbora Tallová, Sebastián Dohnány, Natália Bajnoková. 2022. “Military Deployment Index,” Network for Strategic Analysis. Available at: [www.mdi.ras-nsa.ca](http://www.mdi.ras-nsa.ca/)
-
-  
+**Suggested citation:** Massie, J., Tallová, B., Dohnány, S., Bajnoková, N., (2022) *Military Deployment Index*. Network for Strategic Analysis. Available at: [www.mdi.ras-nsa.ca](http://www.mdi.ras-nsa.ca/).
 
 **Project leader:** Justin Massie
 
-**Creators:** Barbora Tallová, Sebastián Dohnány, Natália Bajnoková
- 
+**Conceptualisation and design:** Barbora Tallová
+
+**Developers:** Sebastián Dohnány, Natália Bajnoková
+
 **Source of data:** The Military Balance, International Institute for Strategic Studies
 
-*For data inquiries:* [info@ras-nsa.ca](mailto:info@ras-nsa.ca)
+**Data inquiries:** [info@ras-nsa.ca](mailto:info@ras-nsa.ca)
+
+**Source code openly available at** [github.com/sebastiandohnany/mdi](https://github.com/sebastiandohnany/mdi) under MIT License (2022).
+
 
   
 
@@ -28,12 +31,12 @@ However, there are certain limits to our data. Although we tested for inaccuraci
 
   
 
-The Military Deployment Index is calculated for each state on an annual basis. It is composed of Z-scores of absolute deployment figures and deployments adjusted to population. The sum of the respective Z-scores is scaled from 0 to 100, resulting in a single measure of deployability that takes into account both the total numbers of troops and their numbers per capita.
+The Military Deployment Index is calculated for each country on an annual basis. It is composed of Z-scores for absolute troop deployments and deployments per population. Although related, the correlation between our variables does not exceed .37 in any given year. The sum of the respective Z-scores is scaled from 0 to 100, creating a single measure of deployability that takes into account both the absolute and per capita troop deployments.
   
 
 ## Data and Rules
 
-Data used to create the Military Deployment Index and across our dashboard come from the International Institute for Strategic Studies. Data on population come from the World Bank. The application was developed using the open-source frameworks from [plotly](https://plotly.com/): [plotly.py](https://github.com/plotly/plotly.py) and [Dash](https://github.com/plotly/dash).
+Data used to create the Military Deployment Index and across our dashboard come from the International Institute for Strategic Studies. Data on population come from the World Bank. The app was developed using open-source frameworks from [plotly](https://plotly.com/): [plotly.py](https://github.com/plotly/plotly.py) and [Dash](https://github.com/plotly/dash).
 
   
 
