@@ -176,24 +176,20 @@ app.layout = html.Div(
                 dbc.Row(
                     [
                         dbc.Col(
-                            dbc.Card(
+                            [dbc.Card(
                                 html.H5(
                                     card_texts.mdi_extra_text,
                                     className="card-text mdi-text",
                                 ),
-                                style={
-                                    "margin": "0.5rem 0.5rem 0.5rem 0.5rem",
-                                    "background": "#FEBDB9",
-                                    "height": "96%",
-                                    "padding": "1rem 1rem 1rem 1rem",
-                                },
-                            )
+                                style=constants.mdi_col_style,
+                            )], style=constants.row_style
                         ),
                         dbc.Col(
                             [
                                 dbc.Card(id="card-mdi", style=constants.card_style),
                             ],
-                            className="col-lg-8, col-md-8 col-12 col-sm-12",
+                            className="col-lg-8, col-md-8 col-sm-12",
+                            style=constants.row_style
                         ),
                     ]
                 ),
@@ -318,6 +314,7 @@ app.layout = html.Div(
                                                                     style={
                                                                         "display": "flex",
                                                                         "flex-direction": "row",
+                                                                        "flex-wrap": "wrap",
                                                                     },
                                                                 ),
                                                                 dcc.Dropdown(
@@ -332,7 +329,7 @@ app.layout = html.Div(
                                                             ]
                                                         )
                                                     ],
-                                                    style=constants.card_style,
+                                                    style=constants.map_col_style,
                                                 ),
                                             ]
                                         )
@@ -388,15 +385,17 @@ app.layout = html.Div(
                                             ),
                                         ),
                                     ],
-                                    style=constants.card_style,
+                                    style=constants.map_col_style,
                                 )
                             ],
                             className="col-lg-8, col-md-8 col-12 col-sm-12",
                         ),
-                    ],
+                    ], style=constants.row_style
                 ),
                 dbc.Row(
-                    [dbc.Card(id="card-line", style={"background": "white"})],
+                    [
+                        dbc.Card(id="card-line", style={"background": "white"})
+                    ],
                     style={"margin": "0.5rem 0.5rem 0.5rem 0.5rem"},
                 ),
                 dbc.Row(
@@ -404,20 +403,26 @@ app.layout = html.Div(
                         dbc.Col(
                             [
                                 dbc.Card(
-                                    id="card-population", style=constants.card_style
+                                    id="card-population", style=constants.card_style,
                                 )
-                            ],
-                            className="col-lg-4 col-md-4 col-12 col-sm-12",
+                            ], style=constants.row_style,
+                            className="col-lg-4 col-md-12 col-12 col-sm-12",
                         ),
                         dbc.Col(
                             [
-                                dbc.Card(id="card-active", style=constants.card_style),
-                            ],
-                            className="col-lg-4 col-md-4 col-12 col-sm-12",
+                                dbc.Card(
+                                    id="card-active", style=constants.card_style,
+                                ),
+                            ], style=constants.row_style,
+                            className="col-lg-4 col-md-12 col-12 col-sm-12",
                         ),
                         dbc.Col(
-                            [dbc.Card(id="card-theatre", style=constants.card_style)],
-                            className="col-lg-4 col-md-4 col-12 col-sm-12",
+                            [
+                                dbc.Card(
+                                    id="card-theatre", style=constants.card_style
+                                )
+                            ], style=constants.row_style,
+                            className="col-lg-4 col-md-12 col-12 col-sm-12",
                         ),
                     ],
                 ),
@@ -435,7 +440,7 @@ app.layout = html.Div(
                                                 )
                                             ]
                                         )
-                                    ]
+                                    ], style=constants.row_style
                                 ),
                                 dbc.Row(
                                     [
@@ -447,20 +452,20 @@ app.layout = html.Div(
                                                 )
                                             ]
                                         )
-                                    ]
+                                    ], style=constants.row_style
                                 ),
-                            ]
+                            ],
                         ),
-                        dbc.Col(
+                        dbc.Col([
                             dbc.Card(id="card-sunburst", style=constants.card_style),
+                        ], style=constants.row_style
                         ),
-                    ]
+                    ],
                 ),
                 dcc.Store(id="selected-countries"),
                 dcc.Store(id="selected-year"),
             ],
             style={"background-color": "#fafafa"},
-            # style={"fontFamily": constants.theme["fontFamily"]},
             fluid=True,
         ),
         html.Footer(

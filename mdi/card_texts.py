@@ -13,8 +13,8 @@ dot_info_circle = "This figure shows the evolution of troop deployments over tim
 sbp_title = "Troop deployments by command structure and operation"
 sbp_under_title = "FOR ALL SELECTED COUNTRIES"
 sbp_info_circle = "This is a two-level chart of troop deployments distribution. The inner circle shows the share of troop deployments under different command entities like security organizations and operation leaders. The outer circle shows the share of troop deployments in different operations. The color of each operation corresponds to its respective command. Click on any item in the inner circle to see troop deployments distribution in different operations for a specific command. Data are aggregated if more than one country is selected. Drag the slider above for evolution over time."
-# Deployment per capita bar plot
-dpc_under_title = "Troops per 100,000 population"
+# Deployment per capita bar plot (keep \b in title to maintain cards alignment on sm and md screen size)
+dpc_under_title = "Troops per 100,000 population \b"
 dpc_info_circle = "This figure shows the absolute number of deployed troops adjusted to national populations. Select more countries to see how they compare in their relative deployments. If many countries are selected, the top five are displayed. Click on plus icon for a full list. Drag the slider above for evolution over time."
 # Deployment percentage of active troops bar plot
 dap_under_title = "Troops per active duty personnel"

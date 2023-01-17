@@ -256,7 +256,6 @@ def update_sunburst_plot(dfp):
         margin=dict(l=0, r=0, t=0, b=0),
         paper_bgcolor="rgb(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        height=500,
     )
 
     if len(dfp["Country"].unique()) == 1:
@@ -339,13 +338,11 @@ def update_population_plot(df_deploy, df_population, year):
         modal_id = None
 
     # Create a card
-    # If only 1 country, smaller height
+    #Graph height to level out cards in one row
     if df.shape[0] == 1:
-        fig.update_layout(height=144)
-    elif df.shape[0] == 2:
-        fig.update_layout(height=164)
+        fig.update_layout(height=134)
     else:
-        fig.update_layout(height=144)
+        fig.update_layout(height=164)
 
     card = plot_graph_card(
         card_texts.dpc_under_title,
@@ -432,13 +429,11 @@ def update_active_plot(df_deploy, df_active):
         modal_id = None
 
     # Create a card
-    # If only 1 country, smaller height
+    #Graph height to level out cards in one row
     if df.shape[0] == 1:
-        fig.update_layout(height=144)
-    elif df.shape[0] == 2:
-        fig.update_layout(height=164)
+        fig.update_layout(height=134)
     else:
-        fig.update_layout(height=144)
+        fig.update_layout(height=164)
 
     card = plot_graph_card(
         card_texts.dap_under_title,
@@ -460,6 +455,13 @@ def update_deployed_meter_plot(df_deploy):
 
     # Create a figure and a card
     fig = meter_plot(highest_percentage, df.max(), {"min": 0, "max": 100})
+
+    #Graph height to level out cards in one row
+    if df_deploy["Country"].unique().shape[0] == 1:
+        fig.update_layout(height=134)
+    else:
+        fig.update_layout(height=164)
+
     card = summary_graph_card_small(
         df.idxmax(),
         card_texts.tdm_under_title,
@@ -490,6 +492,10 @@ def update_two_deployment_meter_plots(df_deploy):
             {"min": 0, "max": 100},
             bar_colour=constants.country_colors[country],
         )
+
+        # Graph height to level out cards in one row
+        fig.update_layout(height=164)
+
         top_theatres.append(
             {
                 "Country": country,

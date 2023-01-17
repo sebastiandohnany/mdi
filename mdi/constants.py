@@ -10,7 +10,13 @@ blue = "#0075BB"
 red = "#B81E23"
 
 colors = {"background": "#111111", "text": "black", "title": red, "cardName": "black"}
-card_style = {"margin": "0.5rem 0.5rem 0.5rem 0.5rem", "background": "white"}
+card_style = {"margin-left": "0.5rem", "margin-right": "0.5rem", "background": "white", "height":"98%"}
+mdi_col_style = {"margin-left": "0.5rem", "margin-right": "0.5rem", "background": "#FEBDB9", "height":"98%",
+                 "padding": "1rem 1rem 1rem 1rem"}
+
+map_col_style = {"margin-left": "0.5rem", "margin-right": "0.5rem", "background": "white",
+                 "margin-bottom":"0.5rem", "margin-top":"0.5rem"}
+row_style = {"margin-bottom":"0.5rem", "margin-top":"0.5rem"}
 
 organisation_colors = {
     "USA": "rgb(186, 12, 47)",
