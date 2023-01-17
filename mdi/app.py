@@ -1,39 +1,21 @@
-import pandas as pd
-import numpy as np
 import os
 
+import pandas as pd
+from dotenv import load_dotenv
+
 from dash import html, dcc, Input, Output, State, ctx
+import dash_bootstrap_components as dbc
+from dash_bootstrap_templates import load_figure_template
 
 from .server import app
-
-server = app.server
 from . import constants, card_texts
 
-import dash_bootstrap_components as dbc
 
-# import plotly.io as pio
-
-from dotenv import load_dotenv
+server = app.server
 
 load_dotenv()
 ROOT = os.getenv("PROJECT_ROOT")
 
-
-# Default plot theme
-# import plotly.graph_objects as go
-
-
-# pio.templates["mdi_plots"] = go.layout.Template(
-#     layout_annotations=[
-#         dict(
-#             font=dict(family="Open Sans"),
-#         )
-#     ]
-# )
-# pio.templates.default = "plotly_white+mdi_plots"
-
-
-from dash_bootstrap_templates import load_figure_template
 
 load_figure_template("litera")
 
@@ -487,89 +469,86 @@ app.layout = html.Div(
                     [
                         dbc.Col(
                             [
-                                dbc.Row(
-                                    html.Pre(
+                                html.Div(
                                         [
                                             "Network for Strategic Analysis (NSA)  |  "
                                             "Robert Sutherland Hall, Suite 403, Queen's University, 138 Union St  |  "
-                                            "Kingston (Ontario)  K7L 3N6 Canada ",
+                                            "Kingston (Ontario)  K7L 3N6 Canada",
                                             html.Br(),
                                         ]
                                     ),
-                                ),
-                                dbc.Row(
+                                html.Div(
                                     [
-                                        html.Pre(
+                                        html.I(className="fas fa-phone fa-xs"),
+                                        " +1 613 533-2381  |  ",
+                                        html.A(
                                             [
-                                                html.I(className="fas fa-phone fa-xs"),
-                                                " +1 613 533-2381  |  ",
-                                                html.A(
-                                                    [
-                                                        html.I(
-                                                            className="fas fa-envelope fa-xs"
-                                                        ),
-                                                        " info@ras-nsa.ca",
-                                                    ],
-                                                    href="mailto:info@ras-nsa.ca",
-                                                    target="_blank",
-                                                    style={
-                                                        "color": "inherit",
-                                                        "text-decoration": "none",
-                                                        "font-family": "var(--bs-font-monospace)",
-                                                    },
+                                                html.I(
+                                                    className="fas fa-envelope fa-xs"
                                                 ),
-                                            ]
-                                        )
-                                    ]
+                                                " info@ras-nsa.ca",
+                                            ],
+                                            href="mailto:info@ras-nsa.ca",
+                                            target="_blank",
+                                            style={
+                                                "color": "inherit",
+                                                "text-decoration": "none",
+                                                "font-family": "var(--bs-font-monospace)",
+                                            },
+                                        ),
+                                    ],
+                                    style={
+                                        "margin-top": "0.5vh",
+                                    }
                                 ),
                             ],
-                            className="col-10",
+                            className="col-lg-10 col-md-10 col-12 col-sm-12",
                         ),
                         dbc.Col(
-                            dbc.Row(
-                                [
-                                    html.Pre(
-                                        [
-                                            html.A(
-                                                html.I(
-                                                    className="fa-brands fa-facebook fa-xl"
-                                                ),
+                            [
+                                html.Div(
+                                    [
+                                        html.A(
+                                            html.I(
+                                                className="fa-brands fa-facebook fa-xl"
+                                            ),
                                                 href="https://www.facebook.com/networkforstrategicanalysis/",
                                                 target="_blank",
                                                 style={"color": "inherit"},
                                             ),
-                                            "  ",
-                                            html.A(
-                                                html.I(
-                                                    className="fa-brands fa-linkedin fa-xl"
-                                                ),
-                                                href="https://www.linkedin.com/company/ras-nsa/",
-                                                target="_blank",
-                                                style={"color": "inherit"},
+                                        "  ",
+                                        html.A(
+                                            html.I(
+                                                className="fa-brands fa-linkedin fa-xl"
                                             ),
-                                            "  ",
-                                            html.A(
-                                                html.I(
-                                                    className="fa-brands fa-twitter fa-xl"
-                                                ),
-                                                href="https://twitter.com/RAS_NSA",
-                                                target="_blank",
-                                                style={"color": "inherit"},
+                                            href="https://www.linkedin.com/company/ras-nsa/",
+                                            target="_blank",
+                                            style={"color": "inherit"},
+                                        ),
+                                        "  ",
+                                        html.A(
+                                            html.I(
+                                                className="fa-brands fa-twitter fa-xl"
                                             ),
-                                            "  ",
-                                            html.A(
-                                                html.I(
-                                                    className="fa-brands fa-youtube fa-xl"
-                                                ),
-                                                href="https://www.youtube.com/playlist?list=PLz41uVKaYyLT0m0MVtPn8W0l3aVJhTPPd",
-                                                target="_blank",
-                                                style={"color": "inherit"},
+                                            href="https://twitter.com/RAS_NSA",
+                                            target="_blank",
+                                            style={"color": "inherit"},
+                                        ),
+                                        "  ",
+                                        html.A(
+                                            html.I(
+                                                className="fa-brands fa-youtube fa-xl"
                                             ),
-                                        ]
-                                    )
-                                ]
-                            ),
-                            style={"text-align": "right"},
+                                            href="https://www.youtube.com/playlist?list=PLz41uVKaYyLT0m0MVtPn8W0l3aVJhTPPd",
+                                            target="_blank",
+                                            style={"color": "inherit"},
+                                        ),
+                                    ]
+                                )
+                            ],
+                            style={"text-align": "right",
+                                   "margin-bottom": "1vh"
+                                   },
                         ),
                     ],
                     style={
@@ -577,38 +556,50 @@ app.layout = html.Div(
                     },
                 ),
                 dbc.Row(
-                    html.Pre(
-                        [
-                            "Source code available from ",
-                            html.A(
-                                "GitHub",
-                                href="https://github.com/sebastiandohnany/mdi",
-                                target="_blank",
-                                style={
-                                    "color": "inherit",
-                                    "font-family": "var(--bs-font-monospace)",
-                                },
-                            ),
-                            ". |  Source of data: The International Institute of Strategic Studies.",
-                        ]
-                    )
+                    [
+                        html.Div(
+                            [
+                                "Source code available from ",
+                                html.A(
+                                    "GitHub",
+                                    href="https://github.com/sebastiandohnany/mdi",
+                                    target="_blank",
+                                    style={
+                                        "color": "inherit",
+                                        "font-family": "var(--bs-font-monospace)",
+                                    },
+                                ),
+                                ". |  Source of data: The International Institute of Strategic Studies.",
+                            ]
+                        )
+                    ],
+                    style={
+                        "margin-bottom": "2vh",
+                    }
                 ),
                 dbc.Row(
                     [
-                        html.Pre(
+                        html.Div(
                             "Suggested citation: Massie, J., Tallová, B., Dohnány, S., Bajnoková, N., (2022) Military Deployment Index. Network for Strategic Analysis. Available at: http://www.mdi.ras-nsa.ca/."
                         )
-                    ]
+                    ],
+                    style={
+                        "margin-bottom": "2vh",
+                    }
                 ),
                 dbc.Row(
                     [
-                        html.Pre(
+                        html.Div(
                             [
                                 "\u00A9",
                                 " 2022 Barbora Tallová, Sebastián Dohnány, Natália Bajnoková",
                             ]
                         )
-                    ]
+                    ],
+                    style={
+                        "margin-bottom": "2vh",
+                        "margin-top": "2vh",
+                    }
                 ),
             ],
             style={
@@ -619,7 +610,9 @@ app.layout = html.Div(
                 "padding-right": "var(--bs-gutter-x, 1.4rem)",
                 "color": "gray",
                 "background-color": "#fafafa",
-                "fontSize": 15,
+                "fontSize": 13,
+                'letter-spacing': '.05rem',
+                'word-spacing': '0.3rem',
             },
         ),
     ],
