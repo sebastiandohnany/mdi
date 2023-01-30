@@ -1,0 +1,265 @@
+Country,Country Name,Year,Percent of Active Personnel,Total Deployed
+CAN,Canada,2014,1.9,1279
+SVK,Slovakia,2014,3.0,479
+ALB,Albania,2014,0.4,37
+BGR,Bulgaria,2014,1.1,353
+CZE,Czech Republic,2014,1.8,311
+FRA,France,2014,3.1,6787
+GRC,Greece,2014,0.1,186
+MKD,Republic of Macedonia,2014,2.4,188
+NLD,Netherlands,2014,1.7,625
+POL,Poland,2014,0.7,693
+ROU,Romania,2014,0.7,486
+SVN,Slovenia,2014,4.6,351
+ESP,Spain,2014,0.8,1021
+TUR,Turkey,2014,0.2,1050
+GBR,United Kingdom,2014,1.0,1517
+DEU,Germany,2014,1.5,2740
+ITA,Italy,2014,2.0,3459
+LVA,Latvia,2014,1.2,64
+LTU,Lithuania,2014,0.8,92
+LUX,Luxembourg,2014,3.0,27
+BEL,Belgium,2014,1.1,353
+EST,Estonia,2014,0.5,27
+HUN,Hungary,2014,2.2,589
+PRT,Portugal,2014,0.8,285
+AUS,Australia,2014,2.0,1134
+HRV,Croatia,2014,1.2,198
+DNK,Denmark,2014,2.2,379
+KOR,Republic of Korea,2014,0.1,346
+MNE,Montenegro,2014,1.4,29
+NZL,New Zealand,2014,0.5,39
+NOR,Norway,2014,0.5,116
+USA,United States,2014,2.4,33880
+JPN,Japan,2014,0.1,271
+CAN,Canada,2015,2.3,1532
+SVK,Slovakia,2015,1.4,229
+ALB,Albania,2015,0.8,62
+BGR,Bulgaria,2015,0.5,158
+CZE,Czech Republic,2015,1.5,334
+FRA,France,2015,2.6,5426
+GRC,Greece,2015,0.1,194
+MKD,Republic of Macedonia,2015,1.1,87
+NLD,Netherlands,2015,2.2,796
+POL,Poland,2015,0.5,525
+ROU,Romania,2015,1.1,783
+SVN,Slovenia,2015,4.6,346
+ESP,Spain,2015,0.9,1108
+TUR,Turkey,2015,0.2,1207
+GBR,United Kingdom,2015,0.8,1225
+DEU,Germany,2015,1.2,2185
+ITA,Italy,2015,1.6,2828
+LVA,Latvia,2015,0.7,38
+LTU,Lithuania,2015,0.5,78
+LUX,Luxembourg,2015,3.0,27
+BEL,Belgium,2015,0.6,171
+EST,Estonia,2015,1.3,72
+HUN,Hungary,2015,3.3,869
+PRT,Portugal,2015,0.8,264
+AUS,Australia,2015,2.6,1487
+HRV,Croatia,2015,1.0,169
+DNK,Denmark,2015,1.5,257
+KOR,Republic of Korea,2015,0.1,662
+MNE,Montenegro,2015,1.0,21
+NZL,New Zealand,2015,1.7,149
+NOR,Norway,2015,0.7,172
+USA,United States,2015,1.1,14823
+JPN,Japan,2015,0.1,272
+CAN,Canada,2016,2.2,1363
+SVK,Slovakia,2016,1.6,254
+ALB,Albania,2016,0.8,65
+BGR,Bulgaria,2016,0.5,172
+CZE,Czech Republic,2016,1.7,374
+FRA,France,2016,2.6,5346
+GRC,Greece,2016,0.1,189
+MKD,Republic of Macedonia,2016,1.0,83
+NLD,Netherlands,2016,1.8,648
+POL,Poland,2016,0.6,579
+ROU,Romania,2016,1.2,864
+SVN,Slovenia,2016,4.2,307
+ESP,Spain,2016,0.9,1085
+TUR,Turkey,2016,0.4,1570
+GBR,United Kingdom,2016,1.0,1534
+DEU,Germany,2016,1.5,2583
+ITA,Italy,2016,2.4,4151
+LVA,Latvia,2016,0.7,39
+LTU,Lithuania,2016,0.3,43
+LUX,Luxembourg,2016,3.1,28
+BEL,Belgium,2016,1.1,334
+EST,Estonia,2016,1.6,102
+HUN,Hungary,2016,2.9,774
+PRT,Portugal,2016,0.9,262
+AUS,Australia,2016,2.6,1505
+HRV,Croatia,2016,1.0,160
+DNK,Denmark,2016,3.2,539
+KOR,Republic of Korea,2016,0.1,672
+MNE,Montenegro,2016,1.0,20
+NZL,New Zealand,2016,2.1,188
+NOR,Norway,2016,1.4,347
+USA,United States,2016,1.3,16838
+JPN,Japan,2016,0.1,272
+CAN,Canada,2017,1.9,1195
+SVK,Slovakia,2017,1.6,252
+ALB,Albania,2017,1.5,122
+BGR,Bulgaria,2017,0.7,231
+CZE,Czech Republic,2017,1.8,392
+FRA,France,2017,2.8,5709
+GRC,Greece,2017,0.1,191
+MKD,Republic of Macedonia,2017,0.5,43
+NLD,Netherlands,2017,2.4,833
+POL,Poland,2017,0.7,763
+ROU,Romania,2017,1.5,1030
+SVN,Slovenia,2017,4.9,353
+ESP,Spain,2017,1.4,1685
+TUR,Turkey,2017,0.3,1091
+GBR,United Kingdom,2017,2.3,3467
+DEU,Germany,2017,1.9,3428
+ITA,Italy,2017,2.8,4867
+LVA,Latvia,2017,0.7,37
+LTU,Lithuania,2017,0.3,58
+LUX,Luxembourg,2017,2.9,26
+BEL,Belgium,2017,1.8,512
+EST,Estonia,2017,1.2,79
+HUN,Hungary,2017,3.3,920
+PRT,Portugal,2017,0.8,239
+AUS,Australia,2017,2.5,1410
+HRV,Croatia,2017,1.0,155
+DNK,Denmark,2017,2.8,454
+KOR,Republic of Korea,2017,0.1,696
+MNE,Montenegro,2017,1.3,25
+NZL,New Zealand,2017,2.2,200
+NOR,Norway,2017,1.8,437
+USA,United States,2017,2.2,30265
+JPN,Japan,2017,0.0,4
+CAN,Canada,2018,2.0,1329
+SVK,Slovakia,2018,3.0,483
+ALB,Albania,2018,2.8,227
+BGR,Bulgaria,2018,0.8,243
+CZE,Czech Republic,2018,2.1,473
+FRA,France,2018,2.6,5329
+GRC,Greece,2018,0.2,296
+MKD,Republic of Macedonia,2018,1.1,89
+NLD,Netherlands,2018,2.8,981
+POL,Poland,2018,1.0,1189
+ROU,Romania,2018,1.6,1111
+SVN,Slovenia,2018,4.8,345
+ESP,Spain,2018,1.6,1956
+TUR,Turkey,2018,0.3,1160
+GBR,United Kingdom,2018,3.2,4791
+DEU,Germany,2018,1.9,3421
+ITA,Italy,2018,2.8,4813
+LVA,Latvia,2018,1.1,66
+LTU,Lithuania,2018,0.7,136
+LUX,Luxembourg,2018,3.0,27
+BEL,Belgium,2018,1.9,512
+EST,Estonia,2018,2.3,154
+HUN,Hungary,2018,3.1,871
+PRT,Portugal,2018,1.7,464
+AUS,Australia,2018,2.8,1613
+HRV,Croatia,2018,3.2,485
+DNK,Denmark,2018,4.4,642
+KOR,Republic of Korea,2018,0.1,623
+MNE,Montenegro,2018,1.3,26
+NZL,New Zealand,2018,2.3,205
+NOR,Norway,2018,1.1,264
+USA,United States,2018,2.0,27551
+JPN,Japan,2018,0.0,4
+CAN,Canada,2019,1.8,1184
+SVK,Slovakia,2019,3.2,510
+ALB,Albania,2019,2.4,192
+BGR,Bulgaria,2019,0.5,197
+CZE,Czech Republic,2019,2.9,655
+FRA,France,2019,2.7,5494
+GRC,Greece,2019,0.2,272
+MKD,Republic of Macedonia,2019,0.6,52
+NLD,Netherlands,2019,1.4,501
+POL,Poland,2019,1.1,1376
+ROU,Romania,2019,1.6,1115
+SVN,Slovenia,2019,4.5,326
+ESP,Spain,2019,1.7,2102
+TUR,Turkey,2019,0.3,1189
+GBR,United Kingdom,2019,2.5,3700
+DEU,Germany,2019,1.8,3200
+ITA,Italy,2019,2.6,4283
+LVA,Latvia,2019,0.8,58
+LTU,Lithuania,2019,0.6,133
+LUX,Luxembourg,2019,0.4,4
+BEL,Belgium,2019,1.7,447
+EST,Estonia,2019,1.9,124
+HUN,Hungary,2019,3.0,842
+PRT,Portugal,2019,1.8,501
+AUS,Australia,2019,2.6,1495
+HRV,Croatia,2019,1.6,245
+DNK,Denmark,2019,3.1,446
+KOR,Republic of Korea,2019,0.1,613
+MNE,Montenegro,2019,1.7,41
+NZL,New Zealand,2019,1.8,172
+NOR,Norway,2019,1.8,430
+USA,United States,2019,1.9,25996
+JPN,Japan,2019,0.0,4
+CAN,Canada,2020,2.0,1319
+SVK,Slovakia,2020,3.1,497
+ALB,Albania,2020,1.9,154
+BGR,Bulgaria,2020,0.5,199
+CZE,Czech Republic,2020,1.6,407
+FRA,France,2020,3.0,6027
+GRC,Greece,2020,0.2,277
+MKD,Republic of Macedonia,2020,0.7,56
+NLD,Netherlands,2020,1.7,506
+POL,Poland,2020,1.3,1507
+ROU,Romania,2020,1.6,1112
+SVN,Slovenia,2020,4.4,309
+ESP,Spain,2020,1.7,2028
+TUR,Turkey,2020,1.2,4236
+GBR,United Kingdom,2020,2.2,3226
+DEU,Germany,2020,1.6,2964
+ITA,Italy,2020,2.8,4684
+LVA,Latvia,2020,0.5,28
+LTU,Lithuania,2020,0.5,108
+LUX,Luxembourg,2020,2.4,10
+BEL,Belgium,2020,1.0,253
+EST,Estonia,2020,2.4,172
+HUN,Hungary,2020,2.6,721
+PRT,Portugal,2020,1.9,531
+AUS,Australia,2020,1.5,864
+HRV,Croatia,2020,1.4,213
+DNK,Denmark,2020,4.1,624
+KOR,Republic of Korea,2020,0.1,692
+MNE,Montenegro,2020,1.7,39
+NZL,New Zealand,2020,1.8,166
+NOR,Norway,2020,1.4,335
+USA,United States,2020,0.9,12515
+JPN,Japan,2020,0.0,6
+CAN,Canada,2021,1.8,1227
+SVK,Slovakia,2021,2.5,440
+ALB,Albania,2021,0.7,53
+BGR,Bulgaria,2021,0.1,44
+CZE,Czech Republic,2021,1.3,348
+FRA,France,2021,3.5,7203
+GRC,Greece,2021,0.2,234
+MKD,Republic of Macedonia,2021,0.9,74
+NLD,Netherlands,2021,1.3,450
+POL,Poland,2021,1.1,1244
+ROU,Romania,2021,0.3,244
+SVN,Slovenia,2021,4.1,285
+ESP,Spain,2021,1.6,2022
+TUR,Turkey,2021,0.2,762
+GBR,United Kingdom,2021,2.2,3416
+DEU,Germany,2021,0.9,1619
+ITA,Italy,2021,3.0,4786
+LVA,Latvia,2021,1.6,139
+LTU,Lithuania,2021,0.4,82
+LUX,Luxembourg,2021,5.4,22
+BEL,Belgium,2021,1.9,474
+EST,Estonia,2021,2.0,141
+HUN,Hungary,2021,2.5,857
+PRT,Portugal,2021,2.3,626
+AUS,Australia,2021,1.1,665
+HRV,Croatia,2021,1.5,250
+DNK,Denmark,2021,2.6,407
+KOR,Republic of Korea,2021,0.1,542
+MNE,Montenegro,2021,0.6,15
+NZL,New Zealand,2021,0.5,45
+NOR,Norway,2021,1.3,321
+USA,United States,2021,0.8,10983
+JPN,Japan,2021,0.0,4
