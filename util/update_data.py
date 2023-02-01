@@ -24,9 +24,9 @@ class UpdateData:
         for year in df_deploy["Year"].unique():
         # Calculate deployment per 100,000 capita for each country
             for country in df_deploy["Country"].unique():
-                total_deployed = df_deploy[(df_deploy["Country"] == country) & (df_deploy["Year"] == year)]["Deployed"].sum()
+                total_deployed = df_deploy.query("Country == @country & Year == @year")["Deployed"].sum()
 
-                population = int(df_population[df_population["Country"] == country][str(year)])
+                population = int(df_population.query("Country == @country")[str(year)])
                 country_name = constants.country_codes[country]
 
                 df = pd.concat(
@@ -72,10 +72,8 @@ class UpdateData:
 
         for year in df_deploy["Year"].unique():
             for country in df_deploy["Country"].unique():
-                total_deployed = df_deploy[(df_deploy["Country"] == country) & (df_deploy["Year"] == year)]["Deployed"].sum()
-                active_personnel = int(
-                    df_active[(df_active["Country"] == country) & (df_active["Year"]==year)]["Personnel_Count"]
-                )
+                total_deployed = df_deploy.query("Country == @country & Year == @year")["Deployed"].sum()
+                active_personnel = int( df_active.query("Country == @country & Year == @year")["Personnel_Count"])
                 country_name = constants.country_codes[country]
 
                 df = pd.concat(
@@ -112,22 +110,10 @@ class UpdateData:
 
         for year in df_deploy["Year"].unique():
             for country in df_deploy["Country"].unique():
-                df_country = df_deploy[(df_deploy["Country"] == country) & (df_deploy["Year"] == year)]
+                df_country = df_deploy.query("Country == @country & Year == @year")
                 country_sum = df_country["Deployed"].sum()
 
-                # query top 5 organisations
-                top_orgs = list(
-                    df_country.groupby(["Organisation"])
-                    .sum()
-                    .sort_values(by="Deployed", ascending=False)
-                    .head(5)
-                    .index
-                )
-
-                # Rename all other orgs to "Other" and sum
-                if len(df_country["Organisation"].unique()) > 5:
-                    df_country.loc[~df_country["Organisation"].isin(top_orgs), "Organisation"] = "Other"
-                df_country = df_country.groupby(["Country", "Organisation", "Year"])["Deployed"].sum().reset_index()
+                df_country = df_country.groupby(['Country', 'Organisation', "Year"])['Deployed'].sum().reset_index()
 
                 def _calc_total_deploy_percentage(row):
                     percentage = percentage_calculate(
@@ -140,6 +126,7 @@ class UpdateData:
                 df_country["Percentage of Total Deployment"] = df_country.apply(
                     _calc_total_deploy_percentage, axis=1
                 )
+
                 df = pd.concat([df, df_country.loc[:, ["Country", "Year", "Organisation", "Deployed", "Percentage of Total Deployment"]]])
 
         df.to_csv(ROOT + 'data/top_organisations.csv', index=False)
