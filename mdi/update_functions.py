@@ -1,31 +1,23 @@
 import pandas as pd
-import numpy as np
-from collections import Counter
 
 from dash import Input, Output, State, exceptions
-import plotly.express as px
 import plotly.graph_objects as go
 
+#Graph functions and styling
 from .server import app
 from . import constants, card_texts
 from .plotting_functions import (
     horizontal_bar_plot,
     percentage_calculate,
     summary_graph_card,
-    plot_graph_card,
     meter_plot,
     country_orgs_bar_plot,
     comparison_summary_graph_card,
-    summary_graph_card_small,
-    modal_overlay_template,
-)
 
-from . import index
+)
 
 # data
 from .app import df_deployments, df_presence, mapbox_access_token, ROOT
-
-# index.calculate_mdi(df_deployments)
 
 # default store
 selected_countries_default = pd.Series(
@@ -47,8 +39,6 @@ def update_map(selected_year, selected_countries, military_presence):
                 allowoverlap=True,
                 color=dfn.Color,
                 opacity=0.5,
-                # size=np.log2(dfp.Deployed, out=np.zeros_like(
-                #     dfp.Deployed), where=(dfp.Deployed != 0)).values,
                 size=dfn.Deployed,
                 sizeref=20,
                 sizemin=2,
@@ -106,14 +96,12 @@ def update_map(selected_year, selected_countries, military_presence):
         plot_bgcolor="rgba(0,0,0,0)",
     )
 
-    # filter and sort
-    dfp = df_deployments.query("Country in @selected_countries")
-    dfp = dfp[dfp["Year"] == selected_year].sort_values(by="Country")
+    query = "Country in @selected_countries & Year == @selected_year"
 
-    dfp_presence = df_presence.query("Country in @selected_countries")
-    dfp_presence = dfp_presence[dfp_presence["Year"] == selected_year].sort_values(
-        by="Country"
-    )
+    # filter and sort
+    dfp = df_deployments.query(query).sort_values(by="Country")
+
+    dfp_presence = df_presence.query(query).sort_values(by="Country")
 
     # generate
     data = [
@@ -155,12 +143,15 @@ def update_line_plot(dfp):
             + "<extra></extra>",
         )
         return data
+    #List of countries
+    country_list = dfp["Country"].unique()
 
     data = [
         get_data(dfp[dfp["Country"] == country], country)
-        for country in dfp["Country"].unique()
+        for country in country_list
     ]
 
+    #Make figure
     figure = go.Figure(data=data)
     figure.update_layout(
         margin=dict(l=90, r=0, t=0, b=0),
@@ -171,6 +162,7 @@ def update_line_plot(dfp):
         yaxis_title_standoff=90,
         yaxis_tickformat=",",
     )
+
     figure.update_yaxes(
         title_standoff=constants.theme["title_standoff"],
         tickfont_size=constants.theme["tickfont_size"],
@@ -182,8 +174,7 @@ def update_line_plot(dfp):
         dtick=1,
     )
 
-    country_list = dfp["Country"].unique()
-
+    #Add annotation for each line
     figure.for_each_trace(
         lambda f: figure.add_annotation(
             x=f.x[-1] + 0.1,
@@ -198,7 +189,8 @@ def update_line_plot(dfp):
         else None
     )
 
-    card = plot_graph_card(
+    #Make a card
+    card = summary_graph_card(
         card_texts.dot_title,
         card_texts.dot_under_title,
         card_texts.dot_info_circle,
@@ -209,13 +201,16 @@ def update_line_plot(dfp):
 
 
 def update_sunburst_plot(dfp):
+    #Filter numbers by organisations and mission
     dfm = dfp.groupby(["Organisation", "MissionName"])["Deployed"].sum()
     dfm = dfm.to_frame().reset_index()
 
     dfo = dfp.groupby(["Organisation"])["Deployed"].sum()
 
+    #List of orgs
     orgs = list(dfm.Organisation.unique())
 
+    #Make a plot
     data = go.Sunburst(
         ids=orgs
         + [x + y for x, y in zip(list(dfm.Organisation), list(dfm.MissionName))],
@@ -247,12 +242,14 @@ def update_sunburst_plot(dfp):
         plot_bgcolor="rgba(0,0,0,0)",
     )
 
+    #Change subtitle if only one country selected
     if len(dfp["Country"].unique()) == 1:
         card_under_title = f"FOR {dfp['Country'].unique()[0]}"
     else:
         card_under_title = card_texts.sbp_under_title
 
-    card = plot_graph_card(
+    #Make card
+    card = summary_graph_card(
         card_texts.sbp_title,
         card_under_title,
         card_texts.sbp_info_circle,
@@ -277,7 +274,6 @@ def update_population_plot(df_deployment_capita):
             df_top_5["Country Name"].iloc[::-1].values,
             df_top_5["Deployment Per Capita"].iloc[::-1].values,
             20,
-            condensed=condensed,
         )
 
         full_graph = horizontal_bar_plot(
@@ -310,7 +306,7 @@ def update_population_plot(df_deployment_capita):
     else:
         fig.update_layout(height=164)
 
-    card = plot_graph_card(
+    card = summary_graph_card(
         card_texts.dpc_under_title,
         "",
         card_texts.dpc_info_circle,
@@ -328,12 +324,9 @@ def update_active_plot(df_active_personnel):
     #Graph in modal (only if more than 5 countries selected)
     full_graph = None
     modal_id = None
-    condensed = False
 
     # If more than 5 countries, select top 5
     if df.shape[0] > 5:
-        df = df.head(5)
-        condensed = True
 
         full_graph = horizontal_bar_plot(
             df["Percent of Active Personnel"].iloc[::-1].values,
@@ -345,14 +338,14 @@ def update_active_plot(df_active_personnel):
 
         modal_id = "active"
 
+    df = df.head(5)
     # Figure in the card
     fig = horizontal_bar_plot(
         df["Percent of Active Personnel"].iloc[::-1].values,
         df["Country Name"].iloc[::-1].values,
         df["Percent of Active Personnel"].iloc[::-1].values,
         100,
-        percentage=True,
-        condensed=condensed
+        percentage=True
     )
 
     # Create a card
@@ -362,7 +355,7 @@ def update_active_plot(df_active_personnel):
     else:
         fig.update_layout(height=164)
 
-    card = plot_graph_card(
+    card = summary_graph_card(
         card_texts.dap_under_title,
         "",
         card_texts.dap_info_circle,
@@ -389,11 +382,12 @@ def update_deployed_meter_plot(df_deploy):
     else:
         fig.update_layout(height=164)
 
-    card = summary_graph_card_small(
+    card = summary_graph_card(
         df.idxmax(),
         card_texts.tdm_under_title,
         card_texts.tdm_info_circle,
         fig,
+        title_colour_highlighted=True
     )
 
     return card
@@ -403,16 +397,20 @@ def update_two_deployment_meter_plots(df_deploy):
     top_theatres = []
 
     for country in df_deploy["Country"].unique():
-        total_deployed = df_deploy[df_deploy["Country"] == country]["Deployed"].sum()
+        #Calculate total deployment
+        total_deployed = df_deploy.query("Country == @country")["Deployed"].sum()
+        #Calculate deployments for each theatre
         country_theatres = (
-            df_deploy[df_deploy["Country"] == country]
+            df_deploy.query("Country == @country")
             .groupby(["Theatre"])["Deployed"]
             .sum()
         )
+        #Find top theatre and its percentual contribution
         top_theatre = country_theatres[country_theatres == country_theatres.max()]
         top_theatre_percentage = percentage_calculate(
             country_theatres.max(), total_deployed, scaling=100
         )
+        #Make meter plot
         fig = meter_plot(
             top_theatre_percentage,
             country_theatres.max(),
@@ -432,6 +430,7 @@ def update_two_deployment_meter_plots(df_deploy):
                 "Graph": fig,
             }
         )
+    #Make card
     card = comparison_summary_graph_card(
         top_theatres[0], top_theatres[1], card_info=card_texts.tdm_info_circle
     )
@@ -440,14 +439,27 @@ def update_two_deployment_meter_plots(df_deploy):
 
 def update_total_deployment_plot(df_deployment_top_org):
 
-    #TODO minor change from previous version, instead of using top 5 organisations from all countries combined,
-    # we look at top 5 organisation for each country. Which approach better?
-    country_sum = (df_deployment_top_org.groupby(["Country"])["Deployed"].sum().sort_values(ascending=False))
+    country_deployment_sum = (df_deployment_top_org.groupby(["Country"])["Deployed"].sum().sort_values(ascending=False))
     df_deployment_top_org = df_deployment_top_org.sort_values(by="Deployed", ascending=False)
 
-    # Select top 5 deployment countries
+    #Select top 5 orgs
+    top5_orgs = list(
+        df_deployment_top_org.groupby(["Organisation"])
+        .sum()
+        .sort_values(by="Deployed", ascending=False)
+        .head(5)
+        .index
+    )
+
+    # If more than 5 orgs, rename all other orgs not in top 5 to "Other"
+    if len(df_deployment_top_org["Organisation"].unique()) > 5:
+        df_deployment_top_org.loc[~df_deployment_top_org["Organisation"].isin(top5_orgs[:5]),
+                                  "Organisation"] = "Other"
+
+    df_deployment_top_org = df_deployment_top_org.sort_values(by="Deployed", ascending=False)
+    # If more than 5 countries create a card with modal where you can see all countries
     if len(df_deployment_top_org["Country"].unique()) > 5:
-        country_list = list(country_sum.head(5).index)
+        country_list = list(country_deployment_sum.head(5).index)
         df_top_5 = df_deployment_top_org.query("Country in @country_list")
         condensed = True
 
@@ -455,27 +467,29 @@ def update_total_deployment_plot(df_deployment_top_org):
         fig = country_orgs_bar_plot(
             df_top_5, country_order=country_list, condensed=condensed
         )
-
-        full_graph = country_orgs_bar_plot(df_deployment_top_org, country_order=country_sum.index)
+        #Graph containing all coutnries
+        full_graph = country_orgs_bar_plot(df_deployment_top_org, country_order=country_deployment_sum.index)
 
         modal_id = "total-deployment"
 
     else:
         # Create only page figure, ignore modal
-        fig = country_orgs_bar_plot(df_deployment_top_org, country_order=country_sum.index)
+        fig = country_orgs_bar_plot(df_deployment_top_org, country_order=country_deployment_sum.index)
         modal_id = (None,)
         full_graph = None
 
     # Update figure height and create a card
     fig.update_layout(height=250)
 
+    #Change card subtitle if only one country selected
     if len(df_deployment_top_org["Country"].unique()) == 1:
         card_under_title = f"FOR {df_deployment_top_org['Country'].unique()[0]}"
 
     else:
         card_under_title = card_texts.tdop_under_title
 
-    card = plot_graph_card(
+    #Make card
+    card = summary_graph_card(
         card_texts.tdop_title,
         card_under_title,
         card_texts.tdop_info_circle,
@@ -487,21 +501,22 @@ def update_total_deployment_plot(df_deployment_top_org):
 
 
 def update_orgs_bar_plot(df_deploy):
-    df = df_deploy.copy()
+    #Calculate total deployment
     total_deployed = df_deploy["Deployed"].sum()
 
     # Query top 5 organisations, rest goes under other
     top_orgs = (
-        df.groupby(["Organisation"])
+        df_deploy.groupby(["Organisation"])
         .sum()
         .sort_values(by="Deployed", ascending=False)
         .head(5)
     )
 
-    # Orgs names, deployments and colours
+    # List of orgs names, deployments and colours
     deployed_numbers = list(top_orgs["Deployed"])
     deployed_names_orgs = list(top_orgs.index)
 
+    #If more than 5 orgs, rest goes under other
     if len(df_deploy["Organisation"].unique()) > 5:
         deployed_names_orgs.append("Other")
         other_orgs = total_deployed - top_orgs["Deployed"].sum()
@@ -515,7 +530,7 @@ def update_orgs_bar_plot(df_deploy):
             deployment_percentage.append(percentage)
         else:
             deployment_percentage.append(int(percentage))
-
+    #Orgs colours to use for bar graph
     colours = [
         constants.organisation_colors.get(
             org,
@@ -536,11 +551,13 @@ def update_orgs_bar_plot(df_deploy):
         colour=colours[::-1],
     )
     fig.update_layout(height=137)
+    #summary_graph_card
     card = summary_graph_card(
         "{:,}".format(total_deployed),
         card_texts.tdp_under_title,
         card_texts.tdp_info_circle,
         fig,
+        title_colour_highlighted=True
     )
     return card
 
@@ -558,10 +575,13 @@ def update_mdi_plot(mdi):
             + "<extra></extra>",
         )
         return data
+    #Get all countries
+    country_list = mdi["Country"].unique()
 
+    #Make the mdi summary figure
     data = [
-        get_data(mdi[mdi["Country"] == country], country)
-        for country in mdi["Country"].unique()
+        get_data(mdi.query("Country== @country"), country)
+        for country in country_list
     ]
 
     figure = go.Figure(data=data)
@@ -585,8 +605,7 @@ def update_mdi_plot(mdi):
         dtick=1,
     )
 
-    country_list = mdi["Country"].unique()
-
+    #Add annotation to each line
     figure.for_each_trace(
         lambda f: figure.add_annotation(
             x=f.x[-1] + 0.1,
@@ -601,7 +620,7 @@ def update_mdi_plot(mdi):
         else None
     )
 
-    card = plot_graph_card(
+    card = summary_graph_card(
         card_texts.mdip_title,
         card_texts.mdip_under_title,
         card_texts.mdip_info_circle,
@@ -612,23 +631,30 @@ def update_mdi_plot(mdi):
 
 
 def update_dashboard(selected_countries, year):
+    #Load data
+    #Deployments data
     dfp = df_deployments
-
+    #MDI values for all countries and years
     df_mdi = pd.read_csv(ROOT + "data/mdi.csv", delimiter=",")
+    #Active personnel data for all countries and years
     df_active_personnel = pd.read_csv(ROOT + "data/active_personnel.csv", delimiter=",")
+    #Deployments per capita for all countries and years
     df_deployment_capita = pd.read_csv(ROOT + "data/deployment_per_capita.csv", delimiter=",")
+    #Top oragnisations for each country per year
     df_deployment_top_org = pd.read_csv(ROOT + "data/top_organisations.csv", delimiter=",")
+
     if not selected_countries:
         raise exceptions.PreventUpdate
 
+    #Query data based on chosen countries and year
     dfp = dfp.query("Country in @selected_countries")
     df_active_personnel = df_active_personnel.query("Country in @selected_countries & Year == @year")
     df_deployment_capita = df_deployment_capita.query("Country in @selected_countries & Year == @year")
     df_deployment_top_org = df_deployment_top_org.query("Country in @selected_countries & Year == @year")
-    # TODO: maybe unnecessary to choose which one
-
+    df_mdi = df_mdi.query("Country in @selected_countries")
     dfp_year = dfp[dfp["Year"] == int(year)]
 
+    #Get all cards inside the layout
     deployments_over_time_card = update_line_plot(dfp)
     sunburst_card = update_sunburst_plot(dfp_year)
     population_card = update_population_plot(df_deployment_capita)
@@ -638,19 +664,8 @@ def update_dashboard(selected_countries, year):
     orgs_bar_card = update_orgs_bar_plot(dfp_year)
     mdi_card = update_mdi_plot(df_mdi)
 
-    if len(selected_countries) == 1:
-        return (
-            deployments_over_time_card,
-            sunburst_card,
-            population_card,
-            active_card,
-            deploy_meter_card,
-            orgs_countries_card,
-            orgs_bar_card,
-            mdi_card,
-        )
-
-    elif len(selected_countries) == 2:
+    #If 2 countries use comparison meter plots
+    if len(selected_countries) == 2:
         return (
             deployments_over_time_card,
             sunburst_card,

@@ -517,9 +517,9 @@ app.layout = html.Div(
                                             html.I(
                                                 className="fa-brands fa-facebook fa-xl"
                                             ),
-                                                href="https://www.facebook.com/networkforstrategicanalysis/",
-                                                target="_blank",
-                                                style={"color": "inherit"},
+                                            href="https://www.facebook.com/networkforstrategicanalysis/",
+                                            target="_blank",
+                                            style={"color": "inherit"},
                                             ),
                                         "  ",
                                         html.A(
