@@ -22,6 +22,7 @@ button, label, .select-text, .rc-slider-mark-text, .card-text, .tooltip, .Select
 
 #year-slider {
     padding: 0px 10px 25px !important;
+    font-family: 'Roboto', sans-serif;
 }
 
 .btn-outline-primary {
@@ -59,4 +60,15 @@ button, label, .select-text, .rc-slider-mark-text, .card-text, .tooltip, .Select
   .form-check-input:checked {
     background-color: #795548;
     border-color: #795548;
+  }
+
+  #country-filter .Select.dcc_control.is-open {
+    max-height: 100%;
+    overflow-y:visible;
+    z-index: 2
+  }
+
+  #country-filter .Select.dcc_control {
+      max-height: 29rem;
+      overflow-y:auto;
   }

@@ -15,7 +15,7 @@ mdi_col_style = {"margin-left": "0.5rem", "margin-right": "0.5rem", "background"
                  "padding": "1rem 1rem 1rem 1rem"}
 
 map_col_style = {"margin-left": "0.5rem", "margin-right": "0.5rem", "background": "white",
-                 "margin-bottom":"0.5rem", "margin-top":"0.5rem"}
+                 "margin-bottom": "0.5rem", "margin-top": "0.5rem", "height": "37.5rem"}
 row_style = {"margin-bottom":"0.5rem", "margin-top":"0.5rem"}
 
 organisation_colors = {

@@ -30,6 +30,15 @@ df["Color"] = df["Country"].replace(to_replace=constants.country_colors)
 df_deployments = df[df["MissionType"] == "Operation"]
 df_presence = df[df["MissionType"] == "MilitaryPresence"]
 
+#Year slider marks dictionary, this is necessary for disabling labels for odd years
+year_slider_marks = {}
+for year in df["Year"].unique():
+    if year % 2 == 0:
+        year_slider_marks[str(year)] = str(year)
+    else:
+        year_slider_marks[str(year)] = ""
+
+
 dropdown_options = []
 for country in list(constants.country_regions.keys()):
     if country == "default":
@@ -197,49 +206,43 @@ app.layout = html.Div(
                     [
                         dbc.Col(
                             [
-                                dbc.Row(
+                                dbc.Card(
                                     [
-                                        dbc.Col(
+                                        dbc.CardBody(
                                             [
-                                                dbc.Card(
-                                                    [
-                                                        dbc.CardBody(
-                                                            [
-                                                                html.H6(
-                                                                    "Drag the slider to select a year",
-                                                                    className="card-text",
-                                                                ),
-                                                                dcc.Slider(
-                                                                    id="year-slider",
-                                                                    min=df[
-                                                                        "Year"
-                                                                    ].min(),
-                                                                    max=df[
-                                                                        "Year"
-                                                                    ].max(),
-                                                                    step=None,
-                                                                    value=df[
-                                                                        "Year"
-                                                                    ].max(),
-                                                                    marks={
-                                                                        str(year): str(
-                                                                            year
-                                                                        )
-                                                                        for year in df[
-                                                                            "Year"
-                                                                        ].unique()
-                                                                    },
-                                                                    included=False,
-                                                                ),
-                                                            ],
-                                                        )
-                                                    ],
-                                                    style=constants.card_style,
+                                                html.H6(
+                                                    "Drag the slider to select a year",
+                                                    className="card-text",
                                                 ),
-                                            ]
+                                                dcc.Slider(
+                                                    id="year-slider",
+                                                    min=df[
+                                                            "Year"
+                                                        ].min(),
+                                                    max=df[
+                                                            "Year"
+                                                    ].max(),
+                                                    step=None,
+                                                    value=df[
+                                                        "Year"
+                                                    ].max(),
+                                                    marks=year_slider_marks,
+                                                    tooltip={"placement":"top", "always_visible": True},
+                                                    included=False,
+                                                ),
+                                            ],
                                         )
-                                    ]
+                                    ],
+                                    style=constants.card_style,
                                 ),
+                            ]
+                        )
+                    ]
+                ),
+                dbc.Row(
+                    [
+                        dbc.Col(
+                            [
                                 dbc.Row(
                                     [
                                         dbc.Col(
@@ -317,15 +320,18 @@ app.layout = html.Div(
                                                                         "flex-wrap": "wrap",
                                                                     },
                                                                 ),
-                                                                dcc.Dropdown(
-                                                                    id="country-filter",
-                                                                    options=dropdown_options,
-                                                                    value=list(
-                                                                        constants.country_regions.keys()
+                                                                html.Div([
+                                                                    dcc.Dropdown(
+                                                                        id="country-filter",
+                                                                        options=dropdown_options,
+                                                                        value=list(
+                                                                            constants.country_regions.keys()
+                                                                        ),
+                                                                        multi=True,
+                                                                        className="dcc_control",
                                                                     ),
-                                                                    multi=True,
-                                                                    className="dcc_control",
-                                                                ),
+                                                                ])
+
                                                             ]
                                                         )
                                                     ],
