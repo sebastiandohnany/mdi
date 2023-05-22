@@ -3,13 +3,13 @@ import os
 import pandas as pd
 from dotenv import load_dotenv
 
-from dash import html, dcc, Input, Output, State, ctx
+from dash import html, dcc, Input, Output, State, ctx, callback_context
 import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import load_figure_template
 
 from .server import app
 from . import constants, card_texts
-
+from .country_filter import country_filter_card, parse_content
 
 server = app.server
 
@@ -37,40 +37,6 @@ for year in df["Year"].unique():
         year_slider_marks[str(year)] = str(year)
     else:
         year_slider_marks[str(year)] = ""
-
-
-dropdown_options = []
-for country in list(constants.country_regions.keys()):
-    if country == "default":
-        pass
-    else:
-        option_dictionary = {
-            "label": html.Div(
-                [
-                    html.I(
-                        className="fas fa-solid fa-circle fa-2xs",
-                        style={
-                            "color": constants.country_colors[country],
-                            "margin-right": "5px",
-                        },
-                    ),
-                    html.Div(
-                        [constants.country_codes[country] + f" ({country})"],
-                        style={"color": constants.country_colors[country]},
-                        className="select-text",
-                    ),
-                ],
-                style={
-                    "display": "flex",
-                    "align-items": "center",
-                    "justify-content": "center",
-                },
-            ),
-            "value": country,
-            "search": constants.country_codes[country],
-        }
-        dropdown_options.append(option_dictionary)
-
 
 # methodology file, modal, button
 with open(ROOT + "assets/methodology.md", "r") as f:
@@ -249,91 +215,7 @@ app.layout = html.Div(
                                             [
                                                 dbc.Card(
                                                     [
-                                                        dbc.CardBody(
-                                                            [
-                                                                html.H6(
-                                                                    "Start typing to select a country",
-                                                                    className="card-text",
-                                                                ),
-                                                                html.Div(
-                                                                    [
-                                                                        html.Div(
-                                                                            [
-                                                                                dbc.Button(
-                                                                                    "Select all",
-                                                                                    size="sm",
-                                                                                    outline=True,
-                                                                                    color="primary",
-                                                                                    id="country-all-button",
-                                                                                )
-                                                                            ],
-                                                                            style={
-                                                                                "margin": "5px"
-                                                                            },
-                                                                        ),
-                                                                        html.Div(
-                                                                            [
-                                                                                dbc.Button(
-                                                                                    "Deselect all",
-                                                                                    size="sm",
-                                                                                    outline=True,
-                                                                                    color="primary",
-                                                                                    id="country-none-button",
-                                                                                )
-                                                                            ],
-                                                                            style={
-                                                                                "margin": "5px"
-                                                                            },
-                                                                        ),
-                                                                        html.Div(
-                                                                            [
-                                                                                dbc.Button(
-                                                                                    "Select all NATO",
-                                                                                    size="sm",
-                                                                                    outline=True,
-                                                                                    color="primary",
-                                                                                    id="country-nato-button",
-                                                                                )
-                                                                            ],
-                                                                            style={
-                                                                                "margin": "5px"
-                                                                            },
-                                                                        ),
-                                                                        html.Div(
-                                                                            [
-                                                                                dbc.Button(
-                                                                                    "Select all EU",
-                                                                                    size="sm",
-                                                                                    outline=True,
-                                                                                    color="primary",
-                                                                                    id="country-eu-button",
-                                                                                )
-                                                                            ],
-                                                                            style={
-                                                                                "margin": "5px"
-                                                                            },
-                                                                        ),
-                                                                    ],
-                                                                    style={
-                                                                        "display": "flex",
-                                                                        "flex-direction": "row",
-                                                                        "flex-wrap": "wrap",
-                                                                    },
-                                                                ),
-                                                                html.Div([
-                                                                    dcc.Dropdown(
-                                                                        id="country-filter",
-                                                                        options=dropdown_options,
-                                                                        value=list(
-                                                                            constants.country_regions.keys()
-                                                                        ),
-                                                                        multi=True,
-                                                                        className="dcc_control",
-                                                                    ),
-                                                                ])
-
-                                                            ]
-                                                        )
+                                                        country_filter_card()
                                                     ],
                                                     style=constants.map_col_style,
                                                 ),
@@ -634,6 +516,7 @@ app.layout = html.Div(
 )
 
 from . import update_functions
+from . import country_filter
 
 # methodology modal popup
 @app.callback(
@@ -646,30 +529,92 @@ def toggle_modal(n1, n2, is_open):
         return not is_open
     return is_open
 
-
+#####
+# Unfortunately have None, None for each return as there is a bug inside the dcc.Upload so it's not allowing you to
+# re-upload the same file (would have to refresh the page), workaround is to set the content of Upload to None
+#####
 @app.callback(
     Output(component_id="country-filter", component_property="value"),
+    Output(component_id='upload', component_property='contents'),
+    Output(component_id='upload', component_property='filename'),
+    Output(component_id="upload-alert", component_property="children"),
+    Output(component_id="upload-alert", component_property="is_open"),
+    Output(component_id="upload-alert", component_property="color"),
     Input(component_id="country-all-button", component_property="n_clicks"),
     Input(component_id="country-none-button", component_property="n_clicks"),
     Input(component_id="country-nato-button", component_property="n_clicks"),
     Input(component_id="country-eu-button", component_property="n_clicks"),
+    Input(component_id="upload", component_property="contents"),
+    Input(component_id='upload', component_property='filename'),
     State(component_id="country-filter", component_property="value"),
 )
-def country_button_select(all_clicks, none_clicks, nato_clicks, un_clicks, value):
+def country_button_select(all_clicks, none_clicks, nato_clicks, un_clicks, contents, filename, value):
+    """
+    :return: country_list, upload_filename=None (because of the bug), upload_contents=None (because of the bug),
+             upload_alert_message ("" if no alert), upload_alert_open (False if no alert), upload_alert_color ("" if no alert)
+    """
 
     if not ctx.triggered:
         button_id = "No clicks yet"
     else:
         button_id = ctx.triggered[0]["prop_id"].split(".")[0]
 
+    upload_filename = None
+    upload_contents = None
+    #Set arbitrary message, as long as upload_alert_open=False
+    upload_alert_message = "Couldn't upload the file"
+    upload_alert_open = False
+    upload_alert_colour = "danger"
+
     if button_id == "country-none-button":
-        return ["CAN"]
+        return ["CAN"], upload_filename, upload_filename, upload_alert_message, upload_alert_open, upload_alert_colour
 
     elif button_id == "country-nato-button":
-        return constants.nato_countries
+        return constants.nato_countries, upload_filename, upload_filename, upload_alert_message, upload_alert_open, \
+               upload_alert_colour
 
     elif button_id == "country-eu-button":
-        return constants.eu_countries
+        return constants.eu_countries, upload_filename, upload_filename, upload_alert_message, upload_alert_open, \
+               upload_alert_colour
+
+    elif button_id == "upload":
+        if contents is not None:
+            df = parse_content(contents, filename)
+
+            if df is not None:
+                country_list = df["countries"]
+
+                wrong_codes = list(set(country_list).difference(constants.country_regions.keys()))
+
+                #Filter out any countries with wrong format
+                country_list = list(set(country_list).intersection(constants.country_regions.keys()))
+
+                if wrong_codes:
+                    upload_alert_message = f"The following country codes are invalid: {wrong_codes}"
+                    upload_alert_open = True
+
+                    return country_list, upload_filename, upload_contents, upload_alert_message , upload_alert_open, \
+                           upload_alert_colour
+                else:
+                    upload_alert_message = "Successfully uploaded the country list"
+                    upload_alert_open = True
+                    upload_alert_colour = "success"
+                    return country_list, upload_filename, upload_contents, upload_alert_message , upload_alert_open, \
+                           upload_alert_colour
+
+            else:
+                upload_alert_open = True
+                return [], upload_filename, upload_contents, upload_alert_message, upload_alert_open, \
+                       upload_alert_colour
+        else:
+            upload_alert_open = True
+            return [], upload_filename, upload_contents, upload_alert_message, upload_alert_open, \
+                   upload_alert_colour
 
     else:
-        return list(constants.country_regions.keys())
+        return list(constants.country_regions.keys()), upload_filename, upload_contents, upload_alert_message, \
+               upload_alert_open, upload_alert_colour
+
+
+if __name__ == '__main__':
+    app.run_server()
