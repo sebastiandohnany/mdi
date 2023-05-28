@@ -29,6 +29,42 @@ def format_number(number):
     else:
         return str(round(number, 1))
 
+#Simple time series
+def line_chart(data_groups):
+    """
+
+    :param data_groups: list of dictionaries of datasets
+    :return:
+    """
+    fig = go.Figure()
+
+    for data_group in data_groups:
+        fig.add_trace(go.Scatter(x=data_group["x"], y=data_group["y"],
+                                 mode='lines+markers',
+                                 name='lines+markers',
+                                 showlegend=False,
+                                 line=dict(color=data_group["colour"]),
+                                 hovertemplate=f"{data_group['x_label']}" + " : %{x}<br>"
+                                               + f"{data_group['y_label']}" + ": %{y:,}"
+                                               + "<extra></extra>",
+                                 ))
+
+    fig.update_layout(title=data_groups[0]["title"],
+                      xaxis_title=data_groups[0]["x_label"],
+                      yaxis_title=data_groups[0]["y_label"])
+    fig.update_yaxes(
+        title_standoff=constants.theme["title_standoff"],
+        tickfont_size=constants.theme["tickfont_size"],
+        titlefont_size=constants.theme["titlefont_size"],
+    )
+    fig.update_xaxes(
+        title_standoff=constants.theme["title_standoff"],
+        tickfont_size=constants.theme["tickfont_size"],
+        dtick=1,
+    )
+
+    return fig
+
 #Figrue with "floating" bars
 def horizontal_bar_plot(
     values,
@@ -271,6 +307,18 @@ def summary_graph_card(
     title_colour=constants.colors["cardName"],
     title_colour_highlighted=False
 ):
+    """
+
+    :param title: Card title
+    :param text: Card description
+    :param card_info: Text inside info circle
+    :param graph: Graph inside the card
+    :param modal_id: Modal id (valid if want to expand a graph through a plus-button)
+    :param full_graph: Graph inside modal (valid if want to expand a graph through a plus-button)
+    :param title_colour: Card title colour
+    :param title_colour_highlighted: If true, title colour has larger font size and is in red colour
+    :return: Dash card element
+    """
 
     #Title styling for the card
     title_text = html.H5(str(title),
@@ -343,7 +391,7 @@ def summary_graph_card(
                 className="card-text",
             ),
             #Graph
-            dcc.Graph(figure=graph, config=graph_config) if graph else "",
+            dcc.Graph(figure=graph, config=graph_config, id=f"graph_{modal_id}") if graph else "",
         ]
     )
 

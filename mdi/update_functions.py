@@ -13,7 +13,7 @@ from .plotting_functions import (
     meter_plot,
     country_orgs_bar_plot,
     comparison_summary_graph_card,
-
+    line_chart
 )
 
 # data
@@ -366,7 +366,7 @@ def update_active_plot(df_active_personnel):
     return card
 
 
-def update_deployed_meter_plot(df_deploy):
+def update_deployed_meter_plot(df_deploy, df_deploy_all_years):
     df = df_deploy.groupby(["Theatre"])["Deployed"].sum()
     total_deployed = df_deploy["Deployed"].sum()
 
@@ -382,11 +382,25 @@ def update_deployed_meter_plot(df_deploy):
     else:
         fig.update_layout(height=164)
 
+    #Create a figure to put inside the modal
+    #Query deployment to the top theatre, groups deployment by years and sum total deployment for each year
+    top_theatre_timeseries = df_deploy_all_years.query(f'Theatre == @df.idxmax()').groupby(["Year"])["Deployed"].sum()
+    figure_dict = {"x":top_theatre_timeseries.index.values,
+                   "y":top_theatre_timeseries.values,
+                   "title": f"Total deployment to {df.idxmax()} for all selected countries over time",
+                   "x_label": "Year",
+                   "y_label": "Total deployment",
+                   "colour":constants.red}
+    fig_modal = line_chart([figure_dict])
+
+
     card = summary_graph_card(
         df.idxmax(),
         card_texts.tdm_under_title,
         card_texts.tdm_info_circle,
         fig,
+        modal_id="top-theatre",
+        full_graph=fig_modal,
         title_colour_highlighted=True
     )
 
@@ -431,9 +445,7 @@ def update_two_deployment_meter_plots(df_deploy):
             }
         )
     #Make card
-    card = comparison_summary_graph_card(
-        top_theatres[0], top_theatres[1], card_info=card_texts.tdm_info_circle
-    )
+    card = comparison_summary_graph_card(top_theatres[0], top_theatres[1], card_info=card_texts.tdm_info_circle )
     return card
 
 
@@ -659,7 +671,7 @@ def update_dashboard(selected_countries, year):
     sunburst_card = update_sunburst_plot(dfp_year)
     population_card = update_population_plot(df_deployment_capita)
     active_card = update_active_plot(df_active_personnel)
-    deploy_meter_card = update_deployed_meter_plot(dfp_year)
+    deploy_meter_card = update_deployed_meter_plot(dfp_year, dfp)
     orgs_countries_card = update_total_deployment_plot(df_deployment_top_org)
     orgs_bar_card = update_orgs_bar_plot(dfp_year)
     mdi_card = update_mdi_plot(df_mdi)
@@ -777,3 +789,19 @@ def total_deployment_toggle_modal(n1, n2, is_open):
     if n1 or n2:
         return not is_open
     return is_open
+
+
+# Top theatre deployment modal
+@app.callback(
+    Output("full-top-theatre-graph", "is_open"),
+    [
+        Input("expand_top-theatre", "n_clicks"),
+        Input("expand-top-theatre-close", "n_clicks"),
+    ],
+    [State("full-top-theatre-graph", "is_open")],
+)
+def top_theatre_toggle_modal(n1, n2, is_open):
+    if n1 or n2:
+        return not is_open
+    return is_open
+
