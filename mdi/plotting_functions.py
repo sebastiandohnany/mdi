@@ -32,7 +32,6 @@ def format_number(number):
 #Simple time series
 def line_chart(data_groups):
     """
-
     :param data_groups: list of dictionaries of datasets
     :return:
     """
@@ -74,14 +73,25 @@ def horizontal_bar_plot(
     percentage=False,
     colour=constants.colors["title"],
 ):
-
-    #Width of floating bar, less countries = thicker bar
+    """
+    :param values: The values based on which to show the bar "depth"
+    :param countries: List of country names/theatres to display on left side of the bars
+    :param bar_labels: The numbers (bar labels) to display on the right side of the bars
+    :param max_value:  The maximum value w.r.t which to calculate the bar "depth"
+    :param percentage: If displayed bar labels are percentages = True and it will display the percentage sign
+    :param colour: colour of the bars
+    :return: bar graph
+    """
+    #Width of floating bar and graph heigh, less countries = thicker bar & larger height
+    height = 650
     if len(countries) == 1:
         bar_width_ration = 0.2
     elif len(countries) == 2:
         bar_width_ration = 0.4
     else:
         bar_width_ration = 0.5
+        if len(countries) > 35:
+            height=800
 
     #Make the plot
     fig = go.Figure(
@@ -120,7 +130,7 @@ def horizontal_bar_plot(
         barmode="stack",
         yaxis={"categoryorder": "array", "categoryarray": countries},
         font=dict(size=constants.theme["titlefont_size"]),
-        height=650,
+        height=height,
         margin=dict(l=0, r=0, t=0, b=0),
     )
     fig.update_xaxes(
@@ -152,8 +162,17 @@ def horizontal_bar_plot(
 
 #Meter plot
 def meter_plot(
-    indicator_value, absolute_value, range, bar_colour=constants.colors["title"]
+    indicator_value, absolute_value, range, bar_colour=constants.colors["title"], indicator_font_size=30
 ):
+    """
+    :param indicator_value: The percentage value used to display the meter plot
+    :param absolute_value: Absolute value (corresponding to the percentage) to display at the bottom of the plot
+    :param range: The meter range in form: {"min": 0, "max": 100} (if percentage)
+    :param bar_colour: Colour of the meter bar
+    :param indicator_font_size: Font size of the percentage value displayed. If smaller plot (in the case of the meter
+                                plot in oce card) use smaller font size
+    :return: Meter plot
+    """
     #Set the meter range and styling
     gauge = {
         "axis": {"visible": False, "range": [0, 100]},
@@ -174,7 +193,7 @@ def meter_plot(
                 gauge= gauge,
                 domain={"row": 0, "column": 100},
                 #Add percentage value bellow the meter
-                number={"suffix": "%", "font": {"size": 30}},
+                number={"suffix": "%", "font": {"size": indicator_font_size}},
             )
         ]
     )
@@ -295,6 +314,46 @@ def country_orgs_bar_plot(df, country_order=None, condensed=False):
 
     return fig
 
+def _card_extras(card_info=None, title="", full_graph=None, modal_id=""):
+    # Define expand_button&modal_overlay as empty
+    expand_button = ""
+    modal_overlay = ""
+    # If want to include the full graph in modal (i.e if more than 5 countries selected)
+    if full_graph is not None:
+        modal_overlay = modal_overlay_template(modal_id, full_graph)
+        expand_button = html.I(
+            className="fas fa-plus-square",
+            id=f"expand_{modal_id}",
+            style={"text-align": "right", "margin-right": "10px"},
+        )
+
+    # Define info cricle
+    info_circle = ""
+    # If want to include info about the card
+    if card_info is not None:
+        card_extras = dbc.Col(
+            [
+                expand_button,
+                html.I(
+                    className="fas fa-regular fa-circle-info",
+                    id=f"target_{title}",
+                    style={"text-align": "right"},
+                ),
+                dbc.Tooltip(card_info, target=f"target_{title}"),
+                modal_overlay,
+            ],
+            style={"text-align": "right"},
+        )
+    else:
+        card_extras = dbc.Col(
+            [
+                expand_button,
+                modal_overlay,
+            ],
+            style={"text-align": "right"},
+        )
+
+    return card_extras
 
 #Cards with summary plots
 def summary_graph_card(
@@ -340,35 +399,8 @@ def summary_graph_card(
                              }
                              )
 
-    #Define expand_button&modal_overlay as empty
-    expand_button = ""
-    modal_overlay = ""
-    #If want to include the full graph in modal (i.e if more than 5 countries selected)
-    if full_graph is not None:
-        modal_overlay = modal_overlay_template(modal_id, full_graph)
-        expand_button = html.I(
-            className="fas fa-plus-square",
-            id=f"expand_{modal_id}",
-            style={"text-align": "right", "margin-right": "10px"},
-        )
-
-    #Define info cricle
-    info_circle = ""
-    #If want to include info about the card
-    if card_info is not None:
-        info_circle = dbc.Col(
-            [
-                expand_button,
-                html.I(
-                    className="fas fa-regular fa-circle-info",
-                    id=f"target_{title}",
-                    style={"text-align": "right"},
-                ),
-                dbc.Tooltip(card_info, target=f"target_{title}"),
-                modal_overlay,
-            ],
-            style={"text-align": "right"},
-        )
+    #info circle and modal
+    card_extras = _card_extras(card_info=card_info, title=title, full_graph=full_graph, modal_id=modal_id)
 
     #Make the card
     card = dbc.CardBody(
@@ -382,7 +414,7 @@ def summary_graph_card(
                         ],
                         className="col-9",
                     ),
-                    info_circle,
+                    card_extras,
                 ]
             ),
             #Subtitle
@@ -398,7 +430,11 @@ def summary_graph_card(
     return card
 
 #Card for two graphs (i.e two meter plots when 2 countries selected)
-def comparison_summary_graph_card(side_1, side_2, card_info):
+def comparison_summary_graph_card(side_1, side_2, card_info, full_graph=None, modal_id=None):
+
+    # info circle and modal
+    card_extras = _card_extras(card_info=card_info, title="", full_graph=full_graph, modal_id=modal_id)
+
     card = dbc.CardBody(
         [
             dbc.Row(
@@ -427,18 +463,13 @@ def comparison_summary_graph_card(side_1, side_2, card_info):
                                 },
                             )
                         ],
-                        className="col-5",
+                        className="col-3",
                     ),
                     dbc.Col(
                         [
-                            html.I(
-                                className="fas fa-regular fa-circle-info",
-                                id="target",
-                                style={"text-align": "right"},
-                            ),
-                            dbc.Tooltip(card_info, target="target"),
+                            card_extras
                         ],
-                        className="col-1",
+                        className="col-3",
                         style={"text-align": "right"},
                     ),
                 ]

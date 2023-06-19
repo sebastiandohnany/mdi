@@ -367,14 +367,21 @@ def update_active_plot(df_active_personnel):
 
 
 def update_deployed_meter_plot(df_deploy, df_deploy_all_years):
-    df = df_deploy.groupby(["Theatre"])["Deployed"].sum()
+    #Group by theatre and calculate total deployment for each theatre
+    df = df_deploy.groupby(["Theatre"])["Deployed"].sum().to_frame()
+    #Total deployment for all theatres
     total_deployed = df_deploy["Deployed"].sum()
 
+    #Deployment percentage for each theatre compared to total deployment
+    df["Percentage"] = df/ total_deployed * 100
+    #Sort df
+    df = df.sort_values('Percentage')
+
     # Theatre with the highest percentage deployment
-    highest_percentage = percentage_calculate(df.max(), total_deployed, scaling=100)
+    highest_percentage = df["Percentage"].max()
 
     # Create a figure and a card
-    fig = meter_plot(highest_percentage, df.max(), {"min": 0, "max": 100})
+    fig = meter_plot(highest_percentage, df["Deployed"].max(), {"min": 0, "max": 100})
 
     #Graph height to level out cards in one row
     if df_deploy["Country"].unique().shape[0] == 1:
@@ -383,19 +390,22 @@ def update_deployed_meter_plot(df_deploy, df_deploy_all_years):
         fig.update_layout(height=164)
 
     #Create a figure to put inside the modal
-    #Query deployment to the top theatre, groups deployment by years and sum total deployment for each year
-    top_theatre_timeseries = df_deploy_all_years.query(f'Theatre == @df.idxmax()').groupby(["Year"])["Deployed"].sum()
-    figure_dict = {"x":top_theatre_timeseries.index.values,
-                   "y":top_theatre_timeseries.values,
-                   "title": f"Total deployment to {df.idxmax()} for all selected countries over time",
-                   "x_label": "Year",
-                   "y_label": "Total deployment",
-                   "colour":constants.red}
-    fig_modal = line_chart([figure_dict])
 
+    #TODO: MAYBE I'LL USE IT LATER - keep for time series purposes, delete later if not used
+    #Query deployment to the top theatre, groups deployment by years and sum total deployment for each year
+
+    #top_theatre_timeseries = df_deploy_all_years.query(f'Theatre == @df.idxmax()').groupby(["Year"])["Deployed"].sum()
+    #figure_dict = {"x":top_theatre_timeseries.index.values,
+    #               "y":top_theatre_timeseries.values,
+    #               "title": f"Total deployment to {df.idxmax()} for all selected countries over time",
+    #               "x_label": "Year",
+    #               "y_label": "Total deployment",
+    #               "colour":constants.red}
+    #fig_modal = line_chart([figure_dict])
+    fig_modal = horizontal_bar_plot(df["Percentage"], df.index, df["Deployed"], highest_percentage, percentage=False)
 
     card = summary_graph_card(
-        df.idxmax(),
+        df["Percentage"].idxmax(),
         card_texts.tdm_under_title,
         card_texts.tdm_info_circle,
         fig,
@@ -430,6 +440,7 @@ def update_two_deployment_meter_plots(df_deploy):
             country_theatres.max(),
             {"min": 0, "max": 100},
             bar_colour=constants.country_colors[country],
+            indicator_font_size=20
         )
 
         # Graph height to level out cards in one row
@@ -444,8 +455,24 @@ def update_two_deployment_meter_plots(df_deploy):
                 "Graph": fig,
             }
         )
+    # Making a modal plot
+    # Group by theatre and calculate total deployment for each theatre
+    df = df_deploy.groupby(["Theatre"])["Deployed"].sum().to_frame()
+    # Total deployment for all theatres
+    total_deployed = df_deploy["Deployed"].sum()
+
+    # Deployment percentage for each theatre compared to total deployment
+    df["Percentage"] = df / total_deployed * 100
+    # Sort df and make the plot
+    df = df.sort_values('Percentage')
+    # Theatre with the highest percentage deployment
+    highest_percentage = df["Percentage"].max()
+
+    fig_modal = horizontal_bar_plot(df["Percentage"], df.index, df["Deployed"], highest_percentage, percentage=False)
+
     #Make card
-    card = comparison_summary_graph_card(top_theatres[0], top_theatres[1], card_info=card_texts.tdm_info_circle )
+    card = comparison_summary_graph_card(top_theatres[0], top_theatres[1], card_info=card_texts.tdm_info_circle,
+                                         full_graph=fig_modal, modal_id="top-theatre")
     return card
 
 
