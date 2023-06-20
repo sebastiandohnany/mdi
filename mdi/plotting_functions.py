@@ -83,15 +83,16 @@ def horizontal_bar_plot(
     :return: bar graph
     """
     #Width of floating bar and graph heigh, less countries = thicker bar & larger height
-    height = 650
+    font_size = constants.theme["titlefont_size"]
     if len(countries) == 1:
         bar_width_ration = 0.2
     elif len(countries) == 2:
         bar_width_ration = 0.4
     else:
         bar_width_ration = 0.5
-        if len(countries) > 35:
-            height=800
+        if len(countries) > 10:
+            font_size-=3
+
 
     #Make the plot
     fig = go.Figure(
@@ -129,8 +130,8 @@ def horizontal_bar_plot(
         plot_bgcolor="rgba(0,0,0,0)",
         barmode="stack",
         yaxis={"categoryorder": "array", "categoryarray": countries},
-        font=dict(size=constants.theme["titlefont_size"]),
-        height=height,
+        font=dict(size=font_size),
+        height=650,
         margin=dict(l=0, r=0, t=0, b=0),
     )
     fig.update_xaxes(
@@ -221,6 +222,11 @@ def country_orgs_bar_plot(df, country_order=None, condensed=False):
     pd.options.mode.chained_assignment = None
     df.rename(columns={"Organisation": "Command"}, inplace=True)
 
+    # Width of floating bar and graph height, less countries = thicker bar & larger height
+    font_size = constants.theme["titlefont_size"]
+    if len(df["Country"].unique()) > 10:
+            font_size -= 3
+
     #If one country make bars horizontal
     if len(df["Country"].unique()) == 1:
         #Select which data to plot on which axis, graph orientation and axes styling
@@ -277,6 +283,7 @@ def country_orgs_bar_plot(df, country_order=None, condensed=False):
         xaxis_tickformat=xaxis_tickformat,
         yaxis_tickformat=yaxis_tickformat,
         xaxis=xaxis,
+        font=dict(size=font_size),
     )
     fig.update_traces(hovertemplate=hover_template)
 
@@ -512,12 +519,12 @@ def modal_overlay_template(id, graph):
     modal = dbc.Modal(
         [
             dbc.ModalBody(
-                dcc.Graph(figure=graph, config=graph_config), id=f"expand-{id}-md"
+                dcc.Graph(figure=graph, config=graph_config, style={"height":graph.layout.height}), id=f"expand-{id}-md"
             ),
             dbc.ModalFooter(dbc.Button("Close", id=f"expand-{id}-close")),
         ],
         id=f"full-{id}-graph",
-        size="xl",
+        size="lg",
     )
 
     return modal
