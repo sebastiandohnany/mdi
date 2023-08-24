@@ -1,0 +1,13 @@
+[Unit]
+Description=Gunicorn instance to serve mdi
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/mdi
+Environment="PATH=/home/ubuntu/mdi/venv/bin"
+ExecStart=/home/ubuntu/mdi/venv/bin/gunicorn --workers 3 --bind unix:mdi.sock -m 007 wsgi:app
+
+[Install]
+WantedBy=multi-user.target
