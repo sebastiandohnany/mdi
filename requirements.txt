@@ -1,3 +1,4 @@
+dash
 autopep8
 black
 dash-bootstrap-templates
@@ -10,4 +11,4 @@ pipupgrade
 python-dotenv
 scipy
 toml
-uwsgi
+gunicorn
