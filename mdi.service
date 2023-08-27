@@ -7,7 +7,7 @@ User=ubuntu
 Group=www-data
 WorkingDirectory=/home/ubuntu/mdi
 Environment="PATH=/home/ubuntu/mdi/venv/bin"
-ExecStart=/home/ubuntu/mdi/venv/bin/gunicorn --workers 1 --bind unix:mdi.sock -m 007 wsgi:server
+ExecStart=/home/ubuntu/mdi/venv/bin/gunicorn --workers 2 --timeout 120 --bind unix:mdi.sock -m 007 wsgi:server
 
 [Install]
 WantedBy=multi-user.target
